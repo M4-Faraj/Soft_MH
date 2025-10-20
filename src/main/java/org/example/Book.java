@@ -1,25 +1,27 @@
 package org.example;
 
-import javax.swing.*;
-
-public class Books {
+public class Book {
      private String name;
      private String author;
     private String ISBN;
+    private boolean borrowed;
 
-    public Books(String Name, String author, String ISBN) {
+    public Book(String Name, String author, String ISBN) {
         this.name = Name;
         this.author = author;
         this.ISBN = ISBN;
     }
-    puplic void updateName(String Name){
+    public void updateName(String Name){
         this.name=Name;
     }
-    puplic void updateAuthor(String author){
+    public void updateAuthor(String author){
         this.author=author;
     }
-    puplic void updateISBN(String ISBN){
+    public void updateISBN(String ISBN){
         this.ISBN=ISBN;
+    }
+    public void updateborrowed(boolean borrowed){
+        this.borrowed=borrowed;
     }
 
     public String getName(){
@@ -30,6 +32,9 @@ public class Books {
     }
     public String getISBN(){
         return ISBN;
+    }
+    public boolean isborrowed(){
+        return borrowed;
     }
 
 }
