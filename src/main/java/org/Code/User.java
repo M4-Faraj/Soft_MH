@@ -3,6 +3,7 @@ package org.Code;
 public class User {
     private String firstName;
     private String lastName;
+    private String username;
     private String email;
     private String password;
     private String []books;
@@ -26,6 +27,13 @@ public class User {
     }
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+    /// /////////////////////////////////////User Name
+    public String getUsername() {
+        return username;
+    }
+    public void setUsername(String username) {
+        this.username = username;
     }
     /// /////////////////////////////////////email
     public String getEmail() {
