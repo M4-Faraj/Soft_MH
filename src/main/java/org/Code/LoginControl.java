@@ -16,22 +16,24 @@ public class LoginControl {
         String fileName = "src/main/infoBase/Admin.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
-            String line = br.readLine(); // read first line
-
-            if (line != null) {
-                String[] parts = line.split(","); // split by comma
-                String fileUsername = parts[0];
-                String filePassword = parts[1];
-                if(fileUsername.equals(this.username) && filePassword.equals(this.password)){
-                    return true;
+            String line;
+            while ((line = br.readLine()) != null) {
+                String[] parts = line.split(",");
+                if (parts.length >= 2) {
+                    String fileUsername = parts[0].trim();
+                    String filePassword = parts[1].trim();
+                    if (fileUsername.equals(username) && filePassword.equals(password)) {
+                        return true;
+                    }
                 }
             }
-
         } catch (IOException e) {
-            return false;
+            e.printStackTrace();
         }
-    return false;
+
+        return false;
     }
+
     public boolean isRegisteredUser(String username, String password) {
         String fileName = "src/main/infoBase/Users.txt";
 
@@ -41,13 +43,13 @@ public class LoginControl {
             // Read all lines
             while ((line = br.readLine()) != null) {
                 String[] parts = line.split(","); // split by comma
-                if (parts.length < 2) continue;   // skip invalid lines
+                if (parts.length < 6) continue;   // skip invalid lines
 
-                String fileUsername = parts[0].trim();
-                String filePassword = parts[1].trim();
+                String fileUsername = parts[2].trim();
+                String filePassword = parts[4].trim();
 
                 // Check if username and password match
-                if (username.equals(this.username) && password.equals(this.password)) {
+                if (fileUsername.equals(username) && filePassword.equals(password)) {
                     return true; // found a match
                 }
             }
@@ -57,9 +59,12 @@ public class LoginControl {
 
         return false; // no match found
     }
+    public LoginControl(){
+
+    }
 
 /// ////////////////////////////a called class to log in
-    public LoginControl(){
+    public LoginControl(String S){
         Scanner input = new Scanner(System.in);
         Admin MH=new Admin("MH","1234");
         System.out.print("Choose a Number: \n(1)-Login \n(2)-Signup\n");
@@ -74,13 +79,14 @@ public class LoginControl {
             if(isAdmin(this.username,this.password)){
 
             System.out.println("You are an Admin");
+            AdminControl MHA=new AdminControl();
 
         }else if(isRegisteredUser(this.username,this.password)){
             System.out.println("You are an Registered User");
+            UserControl MHU=new UserControl();
         }
 
         }else if(readNumber.equals("2")){
-
             System.out.println("Not Yet");
         }
     }

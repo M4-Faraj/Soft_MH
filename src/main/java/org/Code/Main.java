@@ -9,7 +9,7 @@ public class Main {
 
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
-        LoginControl MH = new LoginControl();
+        LoginControl MH = new LoginControl("1");
 
 
     }
