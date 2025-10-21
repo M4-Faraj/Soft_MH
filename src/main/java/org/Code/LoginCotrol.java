@@ -29,6 +29,7 @@ public class LoginCotrol {
         } catch (IOException e) {
             return false;
         }
+    return false;
     }
     public boolean isRegisteredUser() {
         String fileName = "Users.txt";

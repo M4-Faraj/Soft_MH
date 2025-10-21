@@ -6,10 +6,11 @@ public class Book {
     private String ISBN;
     private boolean borrowed;
 
-    public Book(String Name, String author, String ISBN) {
+    public Book(String Name, String author, String ISBN, boolean borrowed) {
         this.name = Name;
         this.author = author;
         this.ISBN = ISBN;
+        this.borrowed = borrowed;
     }
     public void updateName(String Name){
         this.name=Name;
