@@ -8,11 +8,13 @@ public class User {
     private String password;
     private String []books;
 
-    public User(String firstName, String lastName, String email, String password) {
+    public User(String firstName, String lastName,String username, String email, String password, String[] books) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.books = books;
+        this.username = username;
     }
     /// /////////////////////////////////////F name
     public String getFirstName() {
