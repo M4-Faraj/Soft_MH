@@ -34,8 +34,9 @@ public class Book {
     public String getISBN(){
         return ISBN;
     }
-    public boolean isborrowed(){
+    public boolean isBorrowed(){
         return borrowed;
     }
+
 
 }
