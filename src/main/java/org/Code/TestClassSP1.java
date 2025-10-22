@@ -1,12 +1,12 @@
 package org.Code;
 
-public class TestClassSP2 {
+public class TestClassSP1 {
 
-    public static void adminLogin () {
-        String TestUserName="MOF";
-        String TestPassword="123";
+    public static void adminLoginTest () {
+        String testUserName="MOF";
+        String testPassword="123";
 
-    LoginControl MH=new LoginControl(TestUserName,TestPassword);
+    LoginControl MH=new LoginControl(testUserName,testPassword);
     if(MH.isAdmin("MOF","123")||MH.isRegisteredUser("MOF","123")){
         System.out.println("Testing for false admin input:true");
     }
@@ -49,19 +49,23 @@ public class TestClassSP2 {
 
     }
     public void userLogout () {
-    }
-
-    public void bookBorrow(){
 
     }
-    public void bookOverDue(){
+    private boolean isAddedBook(Book book) {
+return false;
+    }
+    public void adminAddBookTest(){
 
     }
-    public void bookPayFine(){
-
+    public boolean existsBook(String searchedWord){
+return false;
     }
+    
+    public void userSearchBookTest(){
+    }
+
 
     public static  void main(String[] args) {
-        adminLogin();
+        adminLoginTest();
     }
 }

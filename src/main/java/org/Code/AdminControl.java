@@ -4,7 +4,7 @@ public class AdminControl {
 
     public void addBook(String Name, String author, String ISBN, boolean borrowed){
         Book e=new Book(Name,author,ISBN,borrowed);
-    FileControler.BooksList.add(e);
+    FileControler.addBook(e);
     }
 
     public Book searchBook(String searchedWord){

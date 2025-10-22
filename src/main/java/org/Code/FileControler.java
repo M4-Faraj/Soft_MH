@@ -1,8 +1,6 @@
 package org.Code;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 
 public class FileControler {
@@ -74,7 +72,18 @@ public static void fillBooksData(){
             System.out.println("Error reading file: " + e.getMessage());
         }
     }
+    public static void addBook(Book book) {
+        String fileName = "src/main/infoBase/Books.txt";
 
+        try (BufferedWriter bw = new BufferedWriter(new FileWriter(fileName, true))) {
+            // Format: Name,Author,ISBN,Borrowed
+            bw.write(book.getName() + "," + book.getAuthor() + "," + book.getISBN() + "," + book.isBorrowed());
+            bw.newLine(); // move to the next line
+            System.out.println("Book added successfully!");
+        } catch (IOException e) {
+            System.out.println("Error writing to file: " + e.getMessage());
+        }
+    }
 
     public static void main(String[] args) {
         fillBooksData();
