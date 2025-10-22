@@ -25,6 +25,24 @@ public class Book {
         this.borrowed=borrowed;
     }
 
+    public boolean isBorrowed() {
+        return borrowed;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+ public void setISBN(String ISBN) {
+        this.ISBN = ISBN;
+ }
+ public void setborrowed(boolean borrowed) {
+        this.borrowed=borrowed;
+ }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public String getName(){
         return name;
     }
