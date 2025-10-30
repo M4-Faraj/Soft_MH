@@ -1,10 +1,13 @@
 package org.Code;
 
+import java.time.LocalDate;
+
 public class Book {
      private String name;
      private String author;
     private String ISBN;
     private boolean borrowed;
+    private LocalDate overDue;
 
     public Book(String Name, String author, String ISBN, boolean borrowed) {
         this.name = Name;
@@ -21,7 +24,7 @@ public class Book {
     public void updateISBN(String ISBN){
         this.ISBN=ISBN;
     }
-    public void updateborrowed(boolean borrowed){
+    public void updateBorrowed(boolean borrowed){
         this.borrowed=borrowed;
     }
 
@@ -37,7 +40,7 @@ public class Book {
  }
  public void setborrowed(boolean borrowed) {
         this.borrowed=borrowed;
- }
+    }
 
     public void setName(String name) {
         this.name = name;

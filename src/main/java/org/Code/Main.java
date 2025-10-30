@@ -10,7 +10,13 @@ public class Main {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
         LoginControl MH = new LoginControl("1");
+        Admin MH=new Admin("MH","1234");
+        System.out.print("enter UserName:");
+        String readUsername=input.nextLine();
 
+        System.out.print("enter Password:");
+        String readPassword=input.nextLine();
+        MH.login(readUsername, readPassword);
 
     }
 }

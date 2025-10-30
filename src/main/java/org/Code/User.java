@@ -7,6 +7,7 @@ public class User {
     private String email;
     private String password;
     private String []books;
+    private double fine = 0;
 
     public User(String firstName, String lastName,String username, String email, String password, String[] books) {
         this.firstName = firstName;
@@ -60,5 +61,28 @@ public class User {
         }else{
             return false;
         }
+    }
+    public double getFine() {
+        return fine;
+    }
+
+    public void addFine(double amount) {
+        fine += amount;
+    }
+
+    public void payFine(double amount) {
+        if (amount <= 0) {
+            System.out.println("Invalid payment amount!");
+            return;
+        }
+
+        fine -= amount;
+        if (fine < 0) fine = 0;
+
+        System.out.println("Fine paid. Remaining balance: " + fine);
+    }
+
+    public boolean hasOutstandingFine() {
+        return fine > 0;
     }
 }
