@@ -24,7 +24,7 @@ public class Book {
     public void updateISBN(String ISBN){
         this.ISBN=ISBN;
     }
-    public void updateborrowed(boolean borrowed){
+    public void updateBorrowed(boolean borrowed){
         this.borrowed=borrowed;
     }
 
