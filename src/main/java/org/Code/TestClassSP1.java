@@ -21,19 +21,6 @@ public class TestClassSP1 {
             System.out.println("Testing for true admin input: false");
         }
 
-        if(MH.isAdmin("LOLO","555")||MH.isRegisteredUser("LOLO","555")){
-            System.out.println("Testing for false user input: true");
-    }
-    else{
-        System.out.println("Testing for false user input: false");
-        }
-    if(MH.isAdmin("johndoe","1234")||MH.isRegisteredUser("johndoe","1234")){
-            System.out.println("Testing for true user input: true");
-    }
-    else{
-            System.out.println("Testing for true user input: false");
-    }
-
 
 
 
@@ -45,7 +32,25 @@ public class TestClassSP1 {
     public void adminLogout () {
 
     }
-    public void userLogin () {
+   static public void userLogin () {
+        String testUserName="MOF";
+        String testPassword="123";
+
+        LoginControl MH=new LoginControl(testUserName,testPassword);
+
+        if(MH.isAdmin("LOLO","555")||MH.isRegisteredUser("LOLO","555")){
+            System.out.println("Testing for false user input: true");
+        }
+        else{
+            System.out.println("Testing for false user input: false");
+        }
+        if(MH.isAdmin("johndoe","1234")||MH.isRegisteredUser("johndoe","1234")){
+            System.out.println("Testing for true user input: true");
+        }
+        else{
+            System.out.println("Testing for true user input: false");
+        }
+
 
     }
     public void userLogout () {
@@ -67,5 +72,6 @@ return false;
 
     public static  void main(String[] args) {
         adminLoginTest();
+        userLogin();
     }
 }
