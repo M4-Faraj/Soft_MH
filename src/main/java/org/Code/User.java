@@ -8,6 +8,8 @@ public class User {
     private String password;
     private String []books;
     private double fine = 0;
+    private boolean isAdmin = false;
+
 
     public User(String firstName, String lastName,String username, String email, String password, String[] books) {
         this.firstName = firstName;
@@ -85,4 +87,13 @@ public class User {
     public boolean hasOutstandingFine() {
         return fine > 0;
     }
+
+    public boolean isAdmin() {
+        return isAdmin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.isAdmin = admin;
+    }
+
 }

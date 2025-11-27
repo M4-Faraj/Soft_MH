@@ -7,12 +7,28 @@ import java.util.List;
 public class BookControl {
     private Books books;
     private List<Loan> loans = new ArrayList<>();
+    private Users users;
+
 
     public BookControl(Books books){
         this.books = books;
     }
 
     public void borrowBook (User user , String searchedWord){
+        if (user.hasOutstandingFine()) {
+            System.out.println("Cannot borrow until fine is fully paid. Outstanding balance: "
+                    + user.getFine());
+            return;
+        }
+
+        List<Loan> overdueLoans = getOverDueBooks(LocalDate.now());
+        for (Loan l : overdueLoans) {
+            if (l.getUser().equals(user)) {
+                System.out.println("Cannot borrow because you have overdue books. Please return them first.");
+                return;
+            }
+        }
+
         Book book = books.searchBook(searchedWord);
         if(book == null){
             System.out.println("Book not found!");
@@ -45,5 +61,28 @@ public class BookControl {
         user.payFine(amount);
     }
 
+    public void unregisterUser(User admin, User targetUser) {
+
+        if (!admin.isAdmin()) {
+            System.out.println("Only admins can unregister users.");
+            return;
+        }
+
+        if (targetUser.getFine() > 0) {
+            System.out.println("Cannot unregister user. They have unpaid fines: "
+                    + targetUser.getFine());
+            return;
+        }
+
+        for (Loan loan : loans) {
+            if (loan.getUser().equals(targetUser) && !loan.isReturned()) {
+                System.out.println("Cannot unregister user. They have active or overdue loans.");
+                return;
+            }
+        }
+
+        users.removeUser(targetUser);
+        System.out.println("User successfully unregistered.");
+    }
 
 }
