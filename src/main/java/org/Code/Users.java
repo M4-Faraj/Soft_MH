@@ -10,4 +10,16 @@ public class Users {
     public void fill(){
 
     }
+
+    public void addUser(User user) {
+        registeredUser.add(user);
+    }
+
+    public void removeUser(User user) {
+        registeredUser.remove(user);
+    }
+
+    public List<User> getAllUsers() {
+        return registeredUser;
+    }
 }
