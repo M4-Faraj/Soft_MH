@@ -12,7 +12,7 @@ public class LoginControl {
         this.username = username;
         this.password = password;
     }
-    public boolean isAdmin(String username, String password) {
+    public static boolean isAdmin(String username, String password) {
         String fileName = "src/main/infoBase/Admin.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
@@ -34,7 +34,7 @@ public class LoginControl {
         return false;
     }
 
-    public boolean isRegisteredUser(String username, String password) {
+    public static boolean isRegisteredUser(String username, String password) {
         String fileName = "src/main/infoBase/Users.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {

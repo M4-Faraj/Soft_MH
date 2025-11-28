@@ -6,41 +6,61 @@ public class User {
     private String username;
     private String email;
     private String password;
-    private String []books;
+    private String[] books;
     private double fine = 0;
     private boolean isAdmin = false;
 
+    // === Constructors ===
 
-    public User(String firstName, String lastName,String username, String email, String password, String[] books) {
+    // Constructor الأساسي اللي بتستخدمه في SignUp
+    public User(String firstName, String lastName, String username,
+                String email, String password, String[] books) {
         this.firstName = firstName;
-        this.lastName = lastName;
-        this.email = email;
-        this.password = password;
-        this.books = books;
-        this.username = username;
+        this.lastName  = lastName;
+        this.username  = username;
+        this.email     = email;
+        this.password  = password;
+        this.books     = (books != null) ? books : new String[0];
     }
-    /// /////////////////////////////////////F name
+
+    // Constructor بدون books → يخلق مصفوفة فاضية
+    public User(String firstName, String lastName, String username,
+                String email, String password) {
+        this(firstName, lastName, username, email, password, new String[0]);
+    }
+
+    // Constructor فاضي لو حابب تنشئ وبعدين تعبّي بالـ setters
+    public User() {
+        this("", "", "", "", "", new String[0]);
+    }
+
+    // === Getters & Setters ===
+
+    // First name
     public String getFirstName() {
         return firstName;
     }
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
-    /// /////////////////////////////////////L name
+
+    // Last name
     public String getLastName() {
         return lastName;
     }
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
-    /// /////////////////////////////////////User Name
+
+    // Username
     public String getUsername() {
         return username;
     }
     public void setUsername(String username) {
         this.username = username;
     }
-    /// /////////////////////////////////////email
+
+    // Email
     public String getEmail() {
         return email;
     }
@@ -48,22 +68,24 @@ public class User {
         this.email = email;
     }
 
-    /// /////////////////////////////////////pass
+    // Password
     public String getPassword() {
         return password;
     }
     public void setPassword(String password) {
         this.password = password;
     }
-    public boolean allowedBooks(){
 
-        if(books.length>2){
-            return true;
-
-        }else{
-            return false;
-        }
+    // Books
+    public String[] getBooks() {
+        return books;
     }
+    public void setBooks(String[] books) {
+        this.books = (books != null) ? books : new String[0];
+    }
+
+    // === Fine & Admin stuff ===
+
     public double getFine() {
         return fine;
     }
@@ -96,4 +118,10 @@ public class User {
         this.isAdmin = admin;
     }
 
+    // === Helper ===
+
+    // هل عدد الكتب أكبر من 2؟
+    public boolean allowedBooks() {
+        return books != null && books.length > 2;
+    }
 }

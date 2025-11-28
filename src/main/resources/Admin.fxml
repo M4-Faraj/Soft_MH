@@ -8,6 +8,7 @@
 
 <BorderPane xmlns="http://javafx.com/javafx/24"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.Code.GAdminControl"
             prefWidth="1200.0" prefHeight="700.0"
             style="-fx-background-color: #020617;">
 
@@ -30,6 +31,7 @@
 
                 <Button fx:id="btnLogoutAdmin"
                         text="Logout"
+                        onAction="#onLogoutAdmin"
                         style="-fx-background-color: #b91c1c;
                                -fx-text-fill: #f9fafb;
                                -fx-font-size: 13px;
@@ -291,6 +293,7 @@
                                     <children>
                                         <Button fx:id="btnClearBookForm"
                                                 text="Clear"
+                                                onAction="#onClearBookForm"
                                                 style="-fx-background-color: transparent;
                                                        -fx-text-fill: #9ca3af;
                                                        -fx-border-color: #4b5563;
@@ -300,6 +303,7 @@
 
                                         <Button fx:id="btnAddBook"
                                                 text="Add"
+                                                onAction="#onAddBook"
                                                 style="-fx-background-color: #16a34a;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -309,6 +313,7 @@
 
                                         <Button fx:id="btnUpdateBook"
                                                 text="Update"
+                                                onAction="#onUpdateBook"
                                                 style="-fx-background-color: #1d4ed8;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -318,6 +323,7 @@
 
                                         <Button fx:id="btnDeleteBook"
                                                 text="Delete"
+                                                onAction="#onDeleteBook"
                                                 style="-fx-background-color: #ef4444;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -453,6 +459,7 @@
                                     <children>
                                         <Button fx:id="btnClearUserForm"
                                                 text="Clear"
+                                                onAction="#onClearUserForm"
                                                 style="-fx-background-color: transparent;
                                                        -fx-text-fill: #9ca3af;
                                                        -fx-border-color: #4b5563;
@@ -462,6 +469,7 @@
 
                                         <Button fx:id="btnAddUser"
                                                 text="Add"
+                                                onAction="#onAddUser"
                                                 style="-fx-background-color: #16a34a;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -471,6 +479,7 @@
 
                                         <Button fx:id="btnUpdateUser"
                                                 text="Update"
+                                                onAction="#onUpdateUser"
                                                 style="-fx-background-color: #1d4ed8;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -480,6 +489,7 @@
 
                                         <Button fx:id="btnDeleteUser"
                                                 text="Delete"
+                                                onAction="#onDeleteUser"
                                                 style="-fx-background-color: #ef4444;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -537,6 +547,7 @@
 
                                         <Button fx:id="btnSearchLoans"
                                                 text="Search"
+                                                onAction="#onSearchLoans"
                                                 style="-fx-background-color: #1d4ed8;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -566,6 +577,7 @@
                                     <children>
                                         <Button fx:id="btnMarkReturned"
                                                 text="Mark as Returned"
+                                                onAction="#onMarkReturned"
                                                 style="-fx-background-color: #16a34a;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -575,6 +587,7 @@
 
                                         <Button fx:id="btnMarkOverdue"
                                                 text="Mark as Overdue"
+                                                onAction="#onMarkOverdue"
                                                 style="-fx-background-color: #f97316;
                                                        -fx-text-fill: #0f172a;
                                                        -fx-font-size: 13px;
@@ -635,6 +648,7 @@
                                     <children>
                                         <Button fx:id="btnGenerateReport"
                                                 text="Generate"
+                                                onAction="#onGenerateReport"
                                                 style="-fx-background-color: #1d4ed8;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;
@@ -644,6 +658,7 @@
 
                                         <Button fx:id="btnExportReport"
                                                 text="Export"
+                                                onAction="#onExportReport"
                                                 style="-fx-background-color: #16a34a;
                                                        -fx-text-fill: #f9fafb;
                                                        -fx-font-size: 13px;

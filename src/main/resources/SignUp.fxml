@@ -14,6 +14,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/24"
             xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.Code.GSignUpControler"
             prefWidth="900.0" prefHeight="550.0"
             style="-fx-background-color: #020617;">
 
@@ -171,27 +172,30 @@
                                               -fx-font-size: 11px;"/>
 
                                 <!-- Buttons row -->
+                                <!-- Buttons row -->
                                 <HBox spacing="10.0" alignment="CENTER_RIGHT">
                                     <children>
                                         <Button fx:id="btnBackToLogin"
                                                 text="Back to Login"
+                                                onAction="#onBackToLogin"
                                                 style="-fx-background-color: transparent;
-                                                       -fx-text-fill: #9ca3af;
-                                                       -fx-font-size: 13px;
-                                                       -fx-border-color: #4b5563;
-                                                       -fx-border-radius: 999;
-                                                       -fx-background-radius: 999;
-                                                       -fx-padding: 6 16 6 16;"/>
+                       -fx-text-fill: #9ca3af;
+                       -fx-font-size: 13px;
+                       -fx-border-color: #4b5563;
+                       -fx-border-radius: 999;
+                       -fx-background-radius: 999;
+                       -fx-padding: 6 16 6 16;"/>
 
                                         <Button fx:id="btnCreateAccount"
                                                 text="Create Account"
                                                 defaultButton="true"
+                                                onAction="#onCreate"
                                                 style="-fx-background-color: #16a34a;
-                                                       -fx-text-fill: #f9fafb;
-                                                       -fx-font-size: 13px;
-                                                       -fx-font-weight: bold;
-                                                       -fx-background-radius: 999;
-                                                       -fx-padding: 8 22 8 22;"/>
+                       -fx-text-fill: #f9fafb;
+                       -fx-font-size: 13px;
+                       -fx-font-weight: bold;
+                       -fx-background-radius: 999;
+                       -fx-padding: 8 22 8 22;"/>
                                     </children>
                                     <padding>
                                         <Insets top="10.0"/>

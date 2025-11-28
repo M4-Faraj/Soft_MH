@@ -5,28 +5,42 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/copilot.data.migration.agent.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/META-INF/maven/archetype.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/pom.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/main/java/App.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/GLoginController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/GSignUpControler.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/tests/GUserControl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/uiDesigner.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/InfoBase/Admin.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/InfoBase/Books.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/InfoBase/Borrowed_Books.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/InfoBase/Users.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/InfoBase/fines.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/AdminControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/AdminControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/BookControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/BookControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/LoginControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/LoginControl.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/LoginControlGUI.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/LoginControlGUI.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org.code/Admin.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Admin.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org.code/SignUp.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/SignUp.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org.code/User.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/User.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/org.code/loginGui.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/loginGui.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/SignupControl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/UserControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/UserControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/Admin.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/Admin.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/SignUp.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/SignUp.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/loginGui.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/loginGui.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaFXApplication" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -70,10 +84,10 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
+    "project.structure.last.edited": "Global Libraries",
     "project.structure.proportion": "0.15",
     "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.lookFeel",
+    "settings.editor.selected.configurable": "preferences.JavaFX",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -108,12 +122,16 @@
       <option name="presentableId" value="Default" />
       <updated>1764336143610</updated>
       <workItem from="1764336146309" duration="976000" />
-      <workItem from="1764337184221" duration="2427000" />
+      <workItem from="1764337184221" duration="13560000" />
     </task>
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>

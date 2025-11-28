@@ -1,5 +1,9 @@
 package org.Code;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,12 +18,31 @@ public class BookControl {
         this.books = books;
     }
 
+    public int numberOfBorrowedBooks() {
+        String filePath = "src/main/InfoBase/Borrowed_Books.txt";
+        Path path = Paths.get(filePath).toAbsolutePath();
+
+        if (!Files.exists(path)) {
+            return 0; // لو الملف مش موجود اعتبره فاضي
+        }
+
+        try {
+            return (int) Files.lines(path).count();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
+
     public void borrowBook (User user , String searchedWord){
         if (user.hasOutstandingFine()) {
             System.out.println("Cannot borrow until fine is fully paid. Outstanding balance: "
                     + user.getFine());
             return;
         }
+
+
 
         List<Loan> overdueLoans = getOverDueBooks(LocalDate.now());
         for (Loan l : overdueLoans) {

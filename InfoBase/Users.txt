@@ -1,0 +1,6 @@
+0,mof,mof,,mof,,00
+mof,mof,molo,,11,null|null,0.0,false
+mof,mof,moll,,11,null|null,0.0,false
+mof,lol,moo,,11,null|null,0.0,false
+mof,mof,mof,,11,null|null,0.0,false
+mof,mof,mof,,1234,null|null,0.0,false

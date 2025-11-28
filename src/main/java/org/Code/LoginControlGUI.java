@@ -1,25 +1,24 @@
-package org.Code;   // <-- عدّل اسم الباكج حسب مجلدك (شرحته تحت)
+
+package org.Code;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class LoginControlGUI extends Application {
 
-    public static void main() {
-        // يستدعي Application.launch الحقيقية من JavaFX
-        launch();
+    public static void main(String[] args) {
+        launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        // تأكد أن الملف اسمه LoginGui.fxml في resources
-        FXMLLoader loader = new FXMLLoader(
-                LoginControlGUI.class.getResource("/loginGui.fxml")
-        );
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/loginGui.fxml"));
+        Parent root = loader.load();
 
-        Scene scene = new Scene(loader.load());
+        Scene scene = new Scene(root);
         primaryStage.setScene(scene);
         primaryStage.setTitle("MH Library Login");
         primaryStage.show();
