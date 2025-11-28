@@ -1,4 +1,4 @@
-package org.Code;
+package org.Code.tests;
 
 public class TestClassS2 {
     public void bookBorrow(){

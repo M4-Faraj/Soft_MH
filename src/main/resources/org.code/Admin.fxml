@@ -1,0 +1,682 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<BorderPane xmlns="http://javafx.com/javafx/24"
+            xmlns:fx="http://javafx.com/fxml/1"
+            prefWidth="1200.0" prefHeight="700.0"
+            style="-fx-background-color: #020617;">
+
+    <!-- TOP BAR -->
+    <top>
+        <HBox spacing="10.0"
+              style="-fx-background-color: #020617; -fx-padding: 12 24 12 24;">
+            <children>
+                <Label text="MH Library - Admin Portal"
+                       style="-fx-text-fill: #e5e7eb;
+                              -fx-font-size: 24px;
+                              -fx-font-weight: bold;"/>
+
+                <Region HBox.hgrow="ALWAYS"/>
+
+                <Label fx:id="lblAdminName"
+                       text="Admin: root"
+                       style="-fx-text-fill: #9ca3af;
+                              -fx-font-size: 13px;"/>
+
+                <Button fx:id="btnLogoutAdmin"
+                        text="Logout"
+                        style="-fx-background-color: #b91c1c;
+                               -fx-text-fill: #f9fafb;
+                               -fx-font-size: 13px;
+                               -fx-font-weight: bold;
+                               -fx-background-radius: 999;
+                               -fx-padding: 6 16 6 16;"/>
+            </children>
+        </HBox>
+    </top>
+
+    <!-- RIGHT DECORATIVE PANEL -->
+    <right>
+        <AnchorPane prefWidth="260.0"
+                    style="-fx-background-color: linear-gradient(to bottom, #020617, #111827);">
+            <children>
+                <ImageView fx:id="imgSideAdmin"
+                           fitWidth="260.0"
+                           fitHeight="700.0"
+                           preserveRatio="true"
+                           pickOnBounds="true"
+                           opacity="0.9">
+                    <image>
+                    </image>
+                </ImageView>
+
+                <VBox spacing="6.0"
+                      layoutX="20.0"
+                      layoutY="480.0">
+                    <children>
+                        <Label text="Admin Panel"
+                               style="-fx-text-fill: #e5e7eb;
+                                      -fx-font-size: 16px;
+                                      -fx-font-weight: bold;"/>
+                        <Label text="Manage books, users, and borrowing records in one place."
+                               wrapText="true"
+                               maxWidth="220.0"
+                               style="-fx-text-fill: #9ca3af;
+                                      -fx-font-size: 12px;"/>
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </right>
+
+    <!-- CENTER: ADMIN TABS -->
+    <center>
+        <TabPane fx:id="tabPaneAdmin"
+                 tabClosingPolicy="UNAVAILABLE"
+                 style="-fx-padding: 12 12 12 12;">
+            <tabs>
+
+                <!-- TAB 1: DASHBOARD -->
+                <Tab text="Dashboard">
+                    <content>
+                        <VBox spacing="18.0"
+                              style="-fx-padding: 18 16 18 16;">
+                            <children>
+                                <Label text="Overview"
+                                       style="-fx-text-fill: #e5e7eb;
+                                              -fx-font-size: 18px;
+                                              -fx-font-weight: bold;"/>
+
+                                <HBox spacing="12.0">
+                                    <children>
+                                        <VBox spacing="6.0"
+                                              style="-fx-background-color: #0b1120;
+                                                     -fx-background-radius: 12;
+                                                     -fx-padding: 12 16 12 16;">
+                                            <children>
+                                                <Label text="Total Books"
+                                                       style="-fx-text-fill: #9ca3af;
+                                                              -fx-font-size: 12px;"/>
+                                                <Label fx:id="lblTotalBooks"
+                                                       text="0"
+                                                       style="-fx-text-fill: #e5e7eb;
+                                                              -fx-font-size: 20px;
+                                                              -fx-font-weight: bold;"/>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="6.0"
+                                              style="-fx-background-color: #0b1120;
+                                                     -fx-background-radius: 12;
+                                                     -fx-padding: 12 16 12 16;">
+                                            <children>
+                                                <Label text="Active Users"
+                                                       style="-fx-text-fill: #9ca3af;
+                                                              -fx-font-size: 12px;"/>
+                                                <Label fx:id="lblTotalUsers"
+                                                       text="0"
+                                                       style="-fx-text-fill: #e5e7eb;
+                                                              -fx-font-size: 20px;
+                                                              -fx-font-weight: bold;"/>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="6.0"
+                                              style="-fx-background-color: #0b1120;
+                                                     -fx-background-radius: 12;
+                                                     -fx-padding: 12 16 12 16;">
+                                            <children>
+                                                <Label text="Borrowed Books"
+                                                       style="-fx-text-fill: #9ca3af;
+                                                              -fx-font-size: 12px;"/>
+                                                <Label fx:id="lblBorrowedCount"
+                                                       text="0"
+                                                       style="-fx-text-fill: #e5e7eb;
+                                                              -fx-font-size: 20px;
+                                                              -fx-font-weight: bold;"/>
+                                            </children>
+                                        </VBox>
+
+                                        <VBox spacing="6.0"
+                                              style="-fx-background-color: #0b1120;
+                                                     -fx-background-radius: 12;
+                                                     -fx-padding: 12 16 12 16;">
+                                            <children>
+                                                <Label text="Overdue Loans"
+                                                       style="-fx-text-fill: #9ca3af;
+                                                              -fx-font-size: 12px;"/>
+                                                <Label fx:id="lblOverdueCountAdmin"
+                                                       text="0"
+                                                       style="-fx-text-fill: #f97316;
+                                                              -fx-font-size: 20px;
+                                                              -fx-font-weight: bold;"/>
+                                            </children>
+                                        </VBox>
+                                    </children>
+                                </HBox>
+
+                                <Separator/>
+
+                                <Label text="Recent Activity"
+                                       style="-fx-text-fill: #e5e7eb;
+                                              -fx-font-size: 15px;
+                                              -fx-font-weight: bold;"/>
+
+                                <TableView fx:id="tblRecentActivity"
+                                           VBox.vgrow="ALWAYS"
+                                           style="-fx-background-color: #020617;
+                                                  -fx-border-color: #111827;
+                                                  -fx-border-radius: 8;
+                                                  -fx-background-radius: 8;">
+                                    <columns>
+                                        <TableColumn fx:id="colActTime" text="Time" prefWidth="150.0"/>
+                                        <TableColumn fx:id="colActUser" text="User" prefWidth="170.0"/>
+                                        <TableColumn fx:id="colActAction" text="Action" prefWidth="300.0"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- TAB 2: MANAGE BOOKS -->
+                <Tab text="Manage Books">
+                    <content>
+                        <VBox spacing="12.0"
+                              style="-fx-padding: 16 12 16 12;">
+                            <children>
+                                <Label text="Books Management"
+                                       style="-fx-text-fill: #e5e7eb;
+                                              -fx-font-size: 16px;
+                                              -fx-font-weight: bold;"/>
+
+                                <!-- BOOK FORM -->
+                                <GridPane hgap="10.0" vgap="8.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" prefWidth="120.0"/>
+                                        <ColumnConstraints prefWidth="260.0"/>
+                                        <ColumnConstraints prefWidth="120.0"/>
+                                        <ColumnConstraints prefWidth="260.0"/>
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="Book ID:"
+                                               GridPane.rowIndex="0" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtBookId"
+                                                   GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Title:"
+                                               GridPane.rowIndex="1" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtBookTitle"
+                                                   GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Author:"
+                                               GridPane.rowIndex="0" GridPane.columnIndex="2"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtBookAuthor"
+                                                   GridPane.rowIndex="0" GridPane.columnIndex="3"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Category:"
+                                               GridPane.rowIndex="1" GridPane.columnIndex="2"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <ComboBox fx:id="cmbBookCategory"
+                                                  GridPane.rowIndex="1" GridPane.columnIndex="3"
+                                                  promptText="Select category"
+                                                  style="-fx-background-color: #020617;
+                                                         -fx-text-fill: #e5e7eb;
+                                                         -fx-border-color: #374151;
+                                                         -fx-border-radius: 8;
+                                                         -fx-background-radius: 8;"/>
+
+                                        <Label text="Year:"
+                                               GridPane.rowIndex="2" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtBookYear"
+                                                   GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Quantity:"
+                                               GridPane.rowIndex="2" GridPane.columnIndex="2"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtBookQuantity"
+                                                   GridPane.rowIndex="2" GridPane.columnIndex="3"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Description:"
+                                               GridPane.rowIndex="3" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextArea fx:id="txtBookDescription"
+                                                  GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                                  GridPane.columnSpan="3"
+                                                  prefRowCount="2"
+                                                  style="-fx-background-color: #020617;
+                                                         -fx-background-radius: 8;
+                                                         -fx-text-fill: #e5e7eb;
+                                                         -fx-border-color: #374151;
+                                                         -fx-border-radius: 8;"/>
+                                    </children>
+                                </GridPane>
+
+                                <!-- BOOK ACTION BUTTONS -->
+                                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="btnClearBookForm"
+                                                text="Clear"
+                                                style="-fx-background-color: transparent;
+                                                       -fx-text-fill: #9ca3af;
+                                                       -fx-border-color: #4b5563;
+                                                       -fx-border-radius: 999;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 16 6 16;"/>
+
+                                        <Button fx:id="btnAddBook"
+                                                text="Add"
+                                                style="-fx-background-color: #16a34a;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+
+                                        <Button fx:id="btnUpdateBook"
+                                                text="Update"
+                                                style="-fx-background-color: #1d4ed8;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+
+                                        <Button fx:id="btnDeleteBook"
+                                                text="Delete"
+                                                style="-fx-background-color: #ef4444;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+                                    </children>
+                                </HBox>
+
+                                <!-- BOOKS TABLE -->
+                                <TableView fx:id="tblAdminBooks"
+                                           VBox.vgrow="ALWAYS"
+                                           style="-fx-background-color: #020617;
+                                                  -fx-border-color: #111827;
+                                                  -fx-border-radius: 8;
+                                                  -fx-background-radius: 8;">
+                                    <columns>
+                                        <TableColumn fx:id="colAdminBookId" text="ID" prefWidth="60.0"/>
+                                        <TableColumn fx:id="colAdminBookTitle" text="Title" prefWidth="230.0"/>
+                                        <TableColumn fx:id="colAdminBookAuthor" text="Author" prefWidth="150.0"/>
+                                        <TableColumn fx:id="colAdminBookCategory" text="Category" prefWidth="120.0"/>
+                                        <TableColumn fx:id="colAdminBookYear" text="Year" prefWidth="70.0"/>
+                                        <TableColumn fx:id="colAdminBookQuantity" text="Qty" prefWidth="60.0"/>
+                                        <TableColumn fx:id="colAdminBookStatus" text="Status" prefWidth="90.0"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- TAB 3: MANAGE USERS -->
+                <Tab text="Manage Users">
+                    <content>
+                        <VBox spacing="12.0"
+                              style="-fx-padding: 16 12 16 12;">
+                            <children>
+                                <Label text="Users Management"
+                                       style="-fx-text-fill: #e5e7eb;
+                                              -fx-font-size: 16px;
+                                              -fx-font-weight: bold;"/>
+
+                                <GridPane hgap="10.0" vgap="8.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" prefWidth="120.0"/>
+                                        <ColumnConstraints prefWidth="260.0"/>
+                                        <ColumnConstraints prefWidth="120.0"/>
+                                        <ColumnConstraints prefWidth="260.0"/>
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="User ID:"
+                                               GridPane.rowIndex="0" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtUserId"
+                                                   GridPane.rowIndex="0" GridPane.columnIndex="1"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Full Name:"
+                                               GridPane.rowIndex="1" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtUserFullName"
+                                                   GridPane.rowIndex="1" GridPane.columnIndex="1"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Username:"
+                                               GridPane.rowIndex="0" GridPane.columnIndex="2"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtUserUsername"
+                                                   GridPane.rowIndex="0" GridPane.columnIndex="3"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Role:"
+                                               GridPane.rowIndex="1" GridPane.columnIndex="2"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <ComboBox fx:id="cmbUserRole"
+                                                  GridPane.rowIndex="1" GridPane.columnIndex="3"
+                                                  promptText="Select role"
+                                                  style="-fx-background-color: #020617;
+                                                         -fx-text-fill: #e5e7eb;
+                                                         -fx-border-color: #374151;
+                                                         -fx-border-radius: 8;
+                                                         -fx-background-radius: 8;"/>
+
+                                        <Label text="Email:"
+                                               GridPane.rowIndex="2" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtUserEmail"
+                                                   GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Phone:"
+                                               GridPane.rowIndex="2" GridPane.columnIndex="2"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <TextField fx:id="txtUserPhone"
+                                                   GridPane.rowIndex="2" GridPane.columnIndex="3"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Label text="Status:"
+                                               GridPane.rowIndex="3" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <ComboBox fx:id="cmbUserStatus"
+                                                  GridPane.rowIndex="3" GridPane.columnIndex="1"
+                                                  promptText="Active / Blocked"
+                                                  style="-fx-background-color: #020617;
+                                                         -fx-text-fill: #e5e7eb;
+                                                         -fx-border-color: #374151;
+                                                         -fx-border-radius: 8;
+                                                         -fx-background-radius: 8;"/>
+                                    </children>
+                                </GridPane>
+
+                                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="btnClearUserForm"
+                                                text="Clear"
+                                                style="-fx-background-color: transparent;
+                                                       -fx-text-fill: #9ca3af;
+                                                       -fx-border-color: #4b5563;
+                                                       -fx-border-radius: 999;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 16 6 16;"/>
+
+                                        <Button fx:id="btnAddUser"
+                                                text="Add"
+                                                style="-fx-background-color: #16a34a;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+
+                                        <Button fx:id="btnUpdateUser"
+                                                text="Update"
+                                                style="-fx-background-color: #1d4ed8;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+
+                                        <Button fx:id="btnDeleteUser"
+                                                text="Delete"
+                                                style="-fx-background-color: #ef4444;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+                                    </children>
+                                </HBox>
+
+                                <TableView fx:id="tblAdminUsers"
+                                           VBox.vgrow="ALWAYS"
+                                           style="-fx-background-color: #020617;
+                                                  -fx-border-color: #111827;
+                                                  -fx-border-radius: 8;
+                                                  -fx-background-radius: 8;">
+                                    <columns>
+                                        <TableColumn fx:id="colAdminUserId" text="ID" prefWidth="60.0"/>
+                                        <TableColumn fx:id="colAdminUserName" text="Full Name" prefWidth="180.0"/>
+                                        <TableColumn fx:id="colAdminUserUsername" text="Username" prefWidth="130.0"/>
+                                        <TableColumn fx:id="colAdminUserRole" text="Role" prefWidth="90.0"/>
+                                        <TableColumn fx:id="colAdminUserEmail" text="Email" prefWidth="180.0"/>
+                                        <TableColumn fx:id="colAdminUserPhone" text="Phone" prefWidth="110.0"/>
+                                        <TableColumn fx:id="colAdminUserStatus" text="Status" prefWidth="80.0"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- TAB 4: BORROWING RECORDS -->
+                <Tab text="Borrowing Records">
+                    <content>
+                        <VBox spacing="12.0"
+                              style="-fx-padding: 16 12 16 12;">
+                            <children>
+                                <HBox spacing="10.0" alignment="CENTER_LEFT">
+                                    <children>
+                                        <Label text="Borrowing Records"
+                                               style="-fx-text-fill: #e5e7eb;
+                                                      -fx-font-size: 16px;
+                                                      -fx-font-weight: bold;"/>
+
+                                        <Region HBox.hgrow="ALWAYS"/>
+
+                                        <TextField fx:id="txtSearchLoans"
+                                                   promptText="Search by user or book..."
+                                                   prefWidth="220.0"
+                                                   style="-fx-background-color: #020617;
+                                                          -fx-background-radius: 8;
+                                                          -fx-text-fill: #e5e7eb;
+                                                          -fx-prompt-text-fill: #6b7280;
+                                                          -fx-border-color: #374151;
+                                                          -fx-border-radius: 8;"/>
+
+                                        <Button fx:id="btnSearchLoans"
+                                                text="Search"
+                                                style="-fx-background-color: #1d4ed8;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+                                    </children>
+                                </HBox>
+
+                                <TableView fx:id="tblAdminLoans"
+                                           VBox.vgrow="ALWAYS"
+                                           style="-fx-background-color: #020617;
+                                                  -fx-border-color: #111827;
+                                                  -fx-border-radius: 8;
+                                                  -fx-background-radius: 8;">
+                                    <columns>
+                                        <TableColumn fx:id="colLoanIdAdmin" text="Loan ID" prefWidth="80.0"/>
+                                        <TableColumn fx:id="colLoanUserAdmin" text="User" prefWidth="160.0"/>
+                                        <TableColumn fx:id="colLoanBookAdmin" text="Book" prefWidth="220.0"/>
+                                        <TableColumn fx:id="colLoanStartAdmin" text="Borrowed On" prefWidth="120.0"/>
+                                        <TableColumn fx:id="colLoanDueAdmin" text="Due Date" prefWidth="120.0"/>
+                                        <TableColumn fx:id="colLoanStatusAdmin" text="Status" prefWidth="100.0"/>
+                                    </columns>
+                                </TableView>
+
+                                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="btnMarkReturned"
+                                                text="Mark as Returned"
+                                                style="-fx-background-color: #16a34a;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+
+                                        <Button fx:id="btnMarkOverdue"
+                                                text="Mark as Overdue"
+                                                style="-fx-background-color: #f97316;
+                                                       -fx-text-fill: #0f172a;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+                <!-- TAB 5: REPORTS -->
+                <Tab text="Reports">
+                    <content>
+                        <VBox spacing="14.0"
+                              style="-fx-padding: 18 14 18 14;">
+                            <children>
+                                <Label text="Reports and Analytics"
+                                       style="-fx-text-fill: #e5e7eb;
+                                              -fx-font-size: 16px;
+                                              -fx-font-weight: bold;"/>
+
+                                <GridPane hgap="10.0" vgap="10.0">
+                                    <columnConstraints>
+                                        <ColumnConstraints halignment="RIGHT" prefWidth="120.0"/>
+                                        <ColumnConstraints prefWidth="260.0"/>
+                                    </columnConstraints>
+                                    <children>
+                                        <Label text="From:"
+                                               GridPane.rowIndex="0" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <DatePicker fx:id="dpReportFrom"
+                                                    GridPane.rowIndex="0" GridPane.columnIndex="1"/>
+
+                                        <Label text="To:"
+                                               GridPane.rowIndex="1" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <DatePicker fx:id="dpReportTo"
+                                                    GridPane.rowIndex="1" GridPane.columnIndex="1"/>
+
+                                        <Label text="Report Type:"
+                                               GridPane.rowIndex="2" GridPane.columnIndex="0"
+                                               style="-fx-text-fill: #d1d5db;"/>
+                                        <ComboBox fx:id="cmbReportType"
+                                                  GridPane.rowIndex="2" GridPane.columnIndex="1"
+                                                  promptText="Select report"
+                                                  style="-fx-background-color: #020617;
+                                                         -fx-text-fill: #e5e7eb;
+                                                         -fx-border-color: #374151;
+                                                         -fx-border-radius: 8;
+                                                         -fx-background-radius: 8;"/>
+                                    </children>
+                                </GridPane>
+
+                                <HBox spacing="10.0" alignment="CENTER_RIGHT">
+                                    <children>
+                                        <Button fx:id="btnGenerateReport"
+                                                text="Generate"
+                                                style="-fx-background-color: #1d4ed8;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+
+                                        <Button fx:id="btnExportReport"
+                                                text="Export"
+                                                style="-fx-background-color: #16a34a;
+                                                       -fx-text-fill: #f9fafb;
+                                                       -fx-font-size: 13px;
+                                                       -fx-font-weight: bold;
+                                                       -fx-background-radius: 999;
+                                                       -fx-padding: 6 18 6 18;"/>
+                                    </children>
+                                </HBox>
+
+                                <Label text="Report Preview"
+                                       style="-fx-text-fill: #9ca3af;
+                                              -fx-font-size: 13px;"/>
+
+                                <TableView fx:id="tblReportPreview"
+                                           VBox.vgrow="ALWAYS"
+                                           style="-fx-background-color: #020617;
+                                                  -fx-border-color: #111827;
+                                                  -fx-border-radius: 8;
+                                                  -fx-background-radius: 8;">
+                                    <!-- أعمدة عامة، تقدر تعدّلها حسب نوع التقرير -->
+                                    <columns>
+                                        <TableColumn fx:id="colReportCol1" text="Column 1" prefWidth="200.0"/>
+                                        <TableColumn fx:id="colReportCol2" text="Column 2" prefWidth="200.0"/>
+                                        <TableColumn fx:id="colReportCol3" text="Column 3" prefWidth="200.0"/>
+                                    </columns>
+                                </TableView>
+                            </children>
+                        </VBox>
+                    </content>
+                </Tab>
+
+            </tabs>
+        </TabPane>
+    </center>
+
+</BorderPane>

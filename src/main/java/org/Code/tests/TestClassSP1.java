@@ -1,4 +1,7 @@
-package org.Code;
+package org.Code.tests;
+
+import org.Code.Book;
+import org.Code.LoginControl;
 
 public class TestClassSP1 {
 

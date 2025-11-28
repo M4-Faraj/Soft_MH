@@ -20,12 +20,5 @@ public class Admin {
         this.password = password;
     }
 
-    public boolean login(String username, String password) {
-        if(username.equals(this.username) && password.equals(this.password)) {
-            System.out.println("You are now an admin");
-            return true;
-        }
-        System.out.println("you r not an admin");
-        return false;
-    }
+  
 }

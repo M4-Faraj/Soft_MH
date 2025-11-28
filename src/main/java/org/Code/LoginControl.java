@@ -64,31 +64,6 @@ public class LoginControl {
     }
 
 /// ////////////////////////////a called class to log in
-    public LoginControl(String S){
-        Scanner input = new Scanner(System.in);
-        Admin MH=new Admin("MH","1234");
-        System.out.print("Choose a Number: \n(1)-Login \n(2)-Signup\n");
-        String readNumber=input.nextLine();
 
-        if(readNumber.equals("1")){
-            System.out.println("Enter Username or Email:");
-            this.username=input.nextLine();
-
-            System.out.println("Enter Password:");
-            this.password=input.nextLine();
-            if(isAdmin(this.username,this.password)){
-
-            System.out.println("You are an Admin");
-            AdminControl MHA=new AdminControl();
-
-        }else if(isRegisteredUser(this.username,this.password)){
-            System.out.println("You are an Registered User");
-            UserControl MHU=new UserControl();
-        }
-
-        }else if(readNumber.equals("2")){
-            System.out.println("Not Yet");
-        }
-    }
 
 }

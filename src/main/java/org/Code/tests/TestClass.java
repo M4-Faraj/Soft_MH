@@ -1,4 +1,4 @@
-package org.Code;
+package org.Code.tests;
 
 public class TestClass {
 
