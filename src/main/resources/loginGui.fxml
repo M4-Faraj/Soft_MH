@@ -12,7 +12,7 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx/24"
             xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="mh.ui.LoginController"
+            fx:controller="org.Code.LoginControl"
             prefWidth="900.0" prefHeight="550.0"
             style="-fx-background-color: #020617;">
 

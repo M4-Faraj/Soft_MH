@@ -7,16 +7,16 @@ import javafx.stage.Stage;
 
 public class LoginControlGUI extends Application {
 
-    public static void main(String[] args) {
+    public static void main() {
         // يستدعي Application.launch الحقيقية من JavaFX
-        launch(args);
+        launch();
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
         // تأكد أن الملف اسمه LoginGui.fxml في resources
         FXMLLoader loader = new FXMLLoader(
-                LoginControlGUI.class.getResource("/LoginGui.fxml")
+                LoginControlGUI.class.getResource("/loginGui.fxml")
         );
 
         Scene scene = new Scene(loader.load());
