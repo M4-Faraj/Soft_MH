@@ -8,12 +8,22 @@ import java.util.Scanner;
 public class LoginControl {
     private String username;
     private String password;
+    private static String adminFilePath = "src/main/infoBase/Admin.txt";
+    private static String USERS_FILE_PATH = "src/main/infoBase/Users.txt";
+
+
+    public static void setAdminFilePath(String path) {
+        adminFilePath = path;
+    }
+    public static void setUsersFilePath(String path) {
+        USERS_FILE_PATH = path;  // replace the hardcoded "src/main/infoBase/Users.txt"
+    }
     public LoginControl(String username, String password) {
         this.username = username;
         this.password = password;
     }
     public static boolean isAdmin(String username, String password) {
-        String fileName = "src/main/infoBase/Admin.txt";
+        String fileName = "src/main/InfoBase/Admin.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
@@ -35,7 +45,7 @@ public class LoginControl {
     }
 
     public static boolean isRegisteredUser(String username, String password) {
-        String fileName = "src/main/infoBase/Users.txt";
+        String fileName = "src/main/InfoBase/Users.txt";
 
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             String line;
