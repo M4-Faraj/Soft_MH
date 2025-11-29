@@ -2,6 +2,7 @@ package org.Code;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -11,7 +12,9 @@ import javafx.scene.Scene;
 import javafx.fxml.FXMLLoader;
 import javafx.stage.Stage;
 
+import javax.swing.*;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class GAdminControl {
 
@@ -41,13 +44,14 @@ public class GAdminControl {
     @FXML private TextField txtBookTitle;
     @FXML private TextField txtBookAuthor;
     @FXML private ComboBox<String> cmbBookCategory;
-    @FXML private TextField txtBookYear;
+    @FXML private TextField txtISBN;
     @FXML private TextField txtBookQuantity;
     @FXML private TextArea txtBookDescription;
 
     @FXML private Button btnClearBookForm;
     @FXML private Button btnAddBook;
     @FXML private Button btnUpdateBook;
+    @FXML private Button btnSearchBook;
     @FXML private Button btnDeleteBook;
 
     @FXML private TableView<Book> tblAdminBooks;
@@ -254,7 +258,7 @@ public class GAdminControl {
         txtBookId.clear();
         txtBookTitle.clear();
         txtBookAuthor.clear();
-        txtBookYear.clear();
+        txtISBN.clear();
         txtBookQuantity.clear();
         txtBookDescription.clear();
         if (cmbBookCategory != null) {
@@ -275,7 +279,7 @@ public class GAdminControl {
 
         Book b = new Book(title, author, id, false);
         FileControler.BooksList.add(b);
-        FileControler.addBook(b);
+        FileControler.addBookAsync(b);
 
         tblAdminBooks.getItems().add(b);
         lblTotalBooks.setText(String.valueOf(FileControler.BooksList.size()));
@@ -284,7 +288,41 @@ public class GAdminControl {
     }
 
     @FXML
+    private void onSearchBook() {
+        // JOptionPane to ask for the keyword
+        String keyword = JOptionPane.showInputDialog(
+                null,
+                "Enter book name / author / ISBN:",
+                "Search Book",
+                JOptionPane.QUESTION_MESSAGE
+        );
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            // user cancelled or empty input → do nothing
+            return;
+        }
+
+        // Use FileControler.searchBook
+        ArrayList<Book> found = FileControler.searchBooksContains(keyword.trim());
+
+        ObservableList<Book> data = FXCollections.observableArrayList(found);
+        tblAdminBooks.setItems(data);
+
+        // optional: if you want a message when nothing found
+        if (found.isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    null,
+                    "No books found for: " + keyword,
+                    "Search Result",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+        }
+    }
+
+    @FXML
     private void onUpdateBook(ActionEvent event) {
+        setupBooksTable();
+
         Book selected = tblAdminBooks.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showAlert("Warning", "Select a book to update.");
@@ -358,6 +396,7 @@ public class GAdminControl {
 
     @FXML
     private void onUpdateUser(ActionEvent event) {
+        setupUsersTable();
         User selected = tblAdminUsers.getSelectionModel().getSelectedItem();
         if (selected == null) {
             showAlert("Warning", "Select a user to update.");
@@ -426,6 +465,30 @@ public class GAdminControl {
         showAlert("Info", "Report export not implemented yet.");
     }
 
+
+
+
+
+
+
+
+
+
+
+public void onSearchUser(ActionEvent actionEvent) {
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     // ========= HELPER CLASSES =========
 
     public static class ActivityRow {
@@ -493,5 +556,7 @@ public class GAdminControl {
         a.setHeaderText(null);
         a.setContentText(msg);
         a.showAndWait();
-    }
 }
+
+}
+

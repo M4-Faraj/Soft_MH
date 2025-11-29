@@ -1,6 +1,7 @@
 package org.Code;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 public class Loan {
     private Book book;
@@ -22,4 +23,12 @@ public class Loan {
     public LocalDate getDueDate() { return dueDate; }
     public boolean isReturned() { return returned; }
     public void setReturned(boolean returned) { this.returned = returned; }
+    public LocalDate getStartDate() { return borrowDate; }
+
+    // 🔹 NEW: احسب رسوم الـ loan
+    // إذا مدة الإعارة (من start لحد due) أكبر من 28 يوم → 10 شيكل، غير هيك 0
+    public double getLoanFee() {
+        long days = ChronoUnit.DAYS.between(borrowDate, dueDate);
+        return days > 28 ? 10.0 : 0.0;
+    }
 }

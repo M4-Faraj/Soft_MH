@@ -9,6 +9,8 @@ public class User {
     private String[] books;
     private double fine = 0;
     private boolean isAdmin = false;
+    private boolean isLibrarian = false;
+
 
     // === Constructors ===
 
@@ -93,6 +95,8 @@ public class User {
     public void addFine(double amount) {
         fine += amount;
     }
+    public boolean isLibrarian() { return isLibrarian; }
+    public void setLibrarian(boolean librarian) { isLibrarian = librarian; }
 
     public void payFine(double amount) {
         if (amount <= 0) {

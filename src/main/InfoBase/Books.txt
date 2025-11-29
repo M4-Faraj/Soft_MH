@@ -1,2 +1,3 @@
-Mof,Mof,123,true
-Lofo,Mof,124,true
+Mof,Mof,123,false
+Lofo,Mof,124,false
+Get,mom,122,false
