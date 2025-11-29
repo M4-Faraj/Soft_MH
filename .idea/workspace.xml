@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/UserControlTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/InfoBase/Users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/InfoBase/Users.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/LoginControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/LoginControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/LoginControlTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/LoginControlTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,6 +59,8 @@
     "Application.LoginControlGUI.executor": "Run",
     "Application.Unnamed.executor": "Run",
     "Application.org.Code.LoginControlGUI.executor": "Run",
+    "JUnit.Code in SoftWare.executor": "Coverage",
+    "JUnit.java in SoftWare.executor": "Coverage",
     "JUnit.org.Code in Soft_MH.executor": "Run",
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
@@ -83,12 +90,11 @@
       <recent name="org.Code" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.LoginControlGUI">
+  <component name="RunManager" selected="JUnit.Code in SoftWare">
     <configuration name="LoginControlGUI" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="23" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="org.Code.LoginControlGUI" />
-      <module name="Soft_MH" />
+      <module name="SoftWare" />
       <option name="VM_PARAMETERS" value="--module-path &quot;E:\BS\javafx-sdk-24.0.1\lib&quot; --add-modules javafx.controls,javafx.fxml " />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -109,32 +115,10 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BookControlTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="Code in SoftWare" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SoftWare" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.Code.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.Code" />
-      <option name="MAIN_CLASS_NAME" value="org.Code.BookControlTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BooksTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SoftWare" />
-      <extension name="coverage">
-        <pattern>
-          <option name="PATTERN" value="org.Code.*" />
-          <option name="ENABLED" value="true" />
-        </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.Code" />
-      <option name="MAIN_CLASS_NAME" value="org.Code.BooksTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java/org/Code" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -150,6 +134,14 @@
       <option name="PACKAGE_NAME" value="org.Code" />
       <option name="MAIN_CLASS_NAME" value="org.Code.FileControlerTest" />
       <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="java in SoftWare" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SoftWare" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -172,19 +164,19 @@
     </configuration>
     <list>
       <item itemvalue="Application.LoginControlGUI" />
+      <item itemvalue="JUnit.Code in SoftWare" />
+      <item itemvalue="JUnit.java in SoftWare" />
       <item itemvalue="JUnit.AdminTest" />
-      <item itemvalue="JUnit.BookControlTest" />
-      <item itemvalue="JUnit.BooksTest" />
       <item itemvalue="JUnit.FileControlerTest" />
       <item itemvalue="JUnit.org.Code in Soft_MH" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="JUnit.Code in SoftWare" />
+        <item itemvalue="JUnit.java in SoftWare" />
         <item itemvalue="JUnit.org.Code in Soft_MH" />
         <item itemvalue="JUnit.FileControlerTest" />
         <item itemvalue="JUnit.AdminTest" />
-        <item itemvalue="JUnit.BooksTest" />
-        <item itemvalue="JUnit.BookControlTest" />
       </list>
     </recent_temporary>
   </component>
