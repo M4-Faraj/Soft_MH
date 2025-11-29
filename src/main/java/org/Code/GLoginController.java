@@ -58,7 +58,7 @@ public class GLoginController {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/Librarian.fxml"));
                 Parent root = loader.load();
 
-                User librarian = LoginControl.getLibrarianUser(username, password);
+                User librarian = LoginControl.getLibrarian(username, password);
 
                 GLibrarianControl controller = loader.getController();
                 controller.setLibrarian(librarian);
