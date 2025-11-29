@@ -34,7 +34,6 @@ public class BookControl {
         }
     }
 
-
     public void borrowBook (User user , String searchedWord){
         if (user.hasOutstandingFine()) {
             System.out.println("Cannot borrow until fine is fully paid. Outstanding balance: "
@@ -108,4 +107,10 @@ public class BookControl {
         System.out.println("User successfully unregistered.");
     }
 
+    public List<Loan> getLoans() {
+        return loans;
+    }
+    public void setUsers(Users users) {
+        this.users = users;
+    }
 }
