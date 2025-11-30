@@ -1,3 +1,1 @@
-Mof,Mof,123,false
-Lofo,Mof,124,false
-Get,mom,122,false
+Harry Potter,J.K. Rowling,123,false
