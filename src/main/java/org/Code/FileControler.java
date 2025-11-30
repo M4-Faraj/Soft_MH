@@ -21,7 +21,7 @@ public class FileControler {
     public static final String LIBRARIANS_PATH = "src/main/InfoBase/Librarian.txt";
     public static final String PRICES_PATH = "src/main/InfoBase/Prices.txt";
     public static final String MAILS_PATH = "src/main/InfoBase/Mails.txt";
-    public static final String LOANS_PATH = "src/main/InfoBase/Mails.txt";
+    public static final String LOANS_PATH = "src/main/InfoBase/Loan.txt"; // أو Loans.txt حسب اسم الملف عندك
 
 
     public static final ArrayList<User> LibrarianList = new ArrayList<>();
@@ -37,17 +37,44 @@ public class FileControler {
     }
 
     // ===================== ASYNC LOADERS (Threads) =====================
-    public static void addBorrowedBook(String isbn, String name, String user) {
-        // 1) Append to Borrowed_Books.txt
+    // الأساس: يكتب Book أو CD حسب الـ type
+    private static void addBorrowedMediaCore(String id,
+                                             String title,
+                                             String username,
+                                             String type,
+                                             int durationDays,
+                                             double finePerDay) {
+
+        LocalDate today = LocalDate.now();
+        LocalDate due   = today.plusDays(durationDays);
+
         try (FileWriter writer = new FileWriter(BORROWED_PATH, true)) {
-            String line = isbn + "," + name + "," + LocalDate.now() + "," + user + "\n";
-            writer.write(line);
+            // لو BOOK: 4 أعمدة (توافق للخلف)
+            // لو CD:   5 أعمدة (مع نوع)
+            String line = id + "," + title + "," + today + "," + username;
+            if (!"BOOK".equalsIgnoreCase(type)) {
+                line += "," + type;
+            }
+            writer.write(line + System.lineSeparator());
         } catch (IOException e) {
             System.out.println("Error writing to Borrowed_Books.txt: " + e.getMessage());
         }
 
-        // 2) عدّل Books.txt وخلي الفلاغ = true (مستعار) لأول نسخة من هذا الـ ISBN
-        updateBookBorrowFlag(isbn, true);
+        // book/CD flag في Books.txt (لسه يعتبره borrowed)
+        updateBookBorrowFlag(id, true);
+
+        // history في Loan.txt
+        appendLoanRecord(username, id, title, today, due);
+    }
+
+    // 📚 للكتب (28 يوم, غرامة 10)
+    public static void addBorrowedBook(String isbn, String name, String user) {
+        addBorrowedMediaCore(isbn, name, user, "BOOK", 28, 10.0);
+    }
+
+    // 💿 للـ CD (7 أيام, غرامة 20)
+    public static void addBorrowedCD(String code, String title, String user) {
+        addBorrowedMediaCore(code, title, user, "CD", 7, 20.0);
     }
 
 
@@ -546,7 +573,6 @@ public class FileControler {
     }
 
     // ===================== SYNC LOADERS (داخل الـ Thread) =====================
-
     private static void fillBooksDataSync() {
         BooksList.clear();
         Path path = Paths.get(BOOKS_PATH).toAbsolutePath();
@@ -558,22 +584,34 @@ public class FileControler {
                 if (line.trim().isEmpty()) continue;
 
                 String[] parts = line.split(",");
-                if (parts.length == 4) {
-                    String name     = parts[0].trim();
-                    String author   = parts[1].trim();
-                    String isbn     = parts[2].trim();
-                    boolean borrowed = Boolean.parseBoolean(parts[3].trim());
 
-                    BooksList.add(new Book(name, author, isbn, borrowed));
-                } else {
-                    System.out.println("Invalid book line: " + line);
+                String name     = parts[0].trim();
+                String author   = parts[1].trim();
+                String isbn     = parts[2].trim();
+                boolean borrowed = Boolean.parseBoolean(parts[3].trim());
+
+                String mediaType = "BOOK";
+                String category  = "Other";
+
+                if (parts.length >= 5) {
+                    mediaType = parts[4].trim().toUpperCase();  // BOOK / CD
                 }
+                if (parts.length >= 6) {
+                    category = parts[5].trim();
+                }
+
+                Book b = new Book(name, author, isbn, borrowed);
+                b.setMediaType(mediaType);
+                b.setCategory(category);
+
+                BooksList.add(b);
             }
             System.out.println("Loaded " + BooksList.size() + " books from " + path);
         } catch (IOException e) {
             System.out.println("Error reading books file: " + e.getMessage());
         }
     }
+
 
     private static void fillUsersDataSync() {
         UserList.clear();
@@ -626,16 +664,25 @@ public class FileControler {
         Path path = Paths.get(BOOKS_PATH).toAbsolutePath();
 
         try {
-            // لو الفولدر مش موجود أنشئه
             if (!Files.exists(path.getParent())) {
                 Files.createDirectories(path.getParent());
             }
 
-            // name,author,ISBN,borrowed
+            String mediaType = (book.getMediaType() == null || book.getMediaType().isEmpty())
+                    ? "BOOK"
+                    : book.getMediaType().toUpperCase();
+
+            String category = (book.getCategory() == null || book.getCategory().isEmpty())
+                    ? "Other"
+                    : book.getCategory();
+
+            // name,author,ISBN,borrowed,mediaType,category
             String record = book.getName() + "," +
                     book.getAuthor() + "," +
                     book.getISBN() + "," +
-                    book.isBorrowed();
+                    book.isBorrowed() + "," +
+                    mediaType + "," +
+                    category;
 
             Files.writeString(
                     path,
@@ -1099,5 +1146,217 @@ public class FileControler {
         }
         return result;
     }
+    // ================== LOANS (raw records) ==================
 
+    // قراءة كل السجلات من Loan.txt
+    public static List<LoanRecord> loadLoansFromFile() {
+        List<LoanRecord> list = new ArrayList<>();
+        Path path = Paths.get(LOANS_PATH);
+        if (!Files.exists(path)) return list;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            for (String line : lines) {
+                LoanRecord r = LoanRecord.fromLine(line);
+                if (r != null) list.add(r);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // كتابة كل السجلات إلى Loan.txt (rewrite)
+    public static void saveLoansToFile(List<LoanRecord> records) {
+        Path path = Paths.get(LOANS_PATH);
+        List<String> out = new ArrayList<>();
+        for (LoanRecord r : records) {
+            out.add(r.toLine());
+        }
+        try {
+            Files.write(path, out,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // إضافة قرض جديد (يُستدعى من addBorrowedBook)
+    public static void appendLoanRecord(String username,
+                                        String isbn,
+                                        String title,
+                                        LocalDate start,
+                                        LocalDate due) {
+        LoanRecord r = new LoanRecord(username, isbn, title, start, due, "BORROWED", 0.0);
+        Path path = Paths.get(LOANS_PATH);
+        String line = r.toLine() + System.lineSeparator();
+        try {
+            Files.write(path, line.getBytes(StandardCharsets.UTF_8),
+                    Files.exists(path)
+                            ? StandardOpenOption.APPEND
+                            : StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // تحديث حالة قرض معيّن
+    public static boolean updateLoanStatus(String username,
+                                           String isbn,
+                                           LocalDate startDate,
+                                           String newStatus,
+                                           double fee) {
+        List<LoanRecord> all = loadLoansFromFile();
+        boolean updated = false;
+
+        for (LoanRecord r : all) {
+            if (!r.username.equals(username)) continue;
+            if (!r.isbn.equals(isbn)) continue;
+            if (!r.startDate.equals(startDate)) continue;
+
+            r.status = newStatus;
+            r.fee    = fee;
+            updated = true;
+            break;
+        }
+
+        if (updated) {
+            saveLoansToFile(all);
+        }
+
+        return updated;
+    }
+
+    // يُستخدم من Admin → OnMarkReturned (لو حاب ترجع مباشر بالـ Strings)
+    public static boolean markLoanReturnedInFile(String username,
+                                                 String isbnOrTitle,
+                                                 String startStr,
+                                                 String dueStr) {
+        LocalDate start;
+        try {
+            start = LocalDate.parse(startStr);
+        } catch (Exception e) {
+            return false;
+        }
+
+        List<LoanRecord> all = loadLoansFromFile();
+        boolean updated = false;
+
+        for (LoanRecord r : all) {
+            if (!r.username.equals(username)) continue;
+            // نطابق على ISBN أو Title
+            if (!r.isbn.equals(isbnOrTitle) && !r.title.equalsIgnoreCase(isbnOrTitle))
+                continue;
+            if (!r.startDate.equals(start)) continue;
+
+            r.status = "RETURNED";
+            // لو حابب تلغي أي غرامة:
+            // r.fee = 0.0;
+            updated = true;
+            break;
+        }
+
+        if (updated) {
+            saveLoansToFile(all);
+        }
+
+        return updated;
+    }
+
+    // لو حابب مارك كـ OVERDUE من الـ Admin
+    public static boolean markLoanOverdueInFile(String username,
+                                                String isbnOrTitle,
+                                                String startStr,
+                                                double fee) {
+        LocalDate start;
+        try {
+            start = LocalDate.parse(startStr);
+        } catch (Exception e) {
+            return false;
+        }
+
+        List<LoanRecord> all = loadLoansFromFile();
+        boolean updated = false;
+
+        for (LoanRecord r : all) {
+            if (!r.username.equals(username)) continue;
+            if (!r.isbn.equals(isbnOrTitle) && !r.title.equalsIgnoreCase(isbnOrTitle))
+                continue;
+            if (!r.startDate.equals(start)) continue;
+
+            r.status = "OVERDUE";
+            r.fee    = fee;
+            updated = true;
+            break;
+        }
+
+        if (updated) {
+            saveLoansToFile(all);
+        }
+
+        return updated;
+    }
+    public static class LoanRecord {
+        public String username;
+        public String isbn;
+        public String title;
+        public LocalDate startDate;
+        public LocalDate dueDate;
+        public String status;   // BORROWED / OVERDUE / RETURNED
+        public double fee;      // 0, 10, ...
+
+        public LoanRecord(String username,
+                          String isbn,
+                          String title,
+                          LocalDate startDate,
+                          LocalDate dueDate,
+                          String status,
+                          double fee) {
+            this.username  = username;
+            this.isbn      = isbn;
+            this.title     = title;
+            this.startDate = startDate;
+            this.dueDate   = dueDate;
+            this.status    = status;
+            this.fee       = fee;
+        }
+
+        // يحوّل الريكورد لسطر CSV في Loan.txt
+        public String toLine() {
+            return String.join(",",
+                    username,
+                    isbn,
+                    title,
+                    startDate.toString(),
+                    dueDate.toString(),
+                    status,
+                    String.valueOf(fee)
+            );
+        }
+
+        // يبني LoanRecord من سطر CSV في Loan.txt
+        public static LoanRecord fromLine(String line) {
+            if (line == null || line.trim().isEmpty()) return null;
+
+            String[] p = line.split(",");
+            if (p.length < 7) return null;
+
+            try {
+                String username = p[0].trim();
+                String isbn     = p[1].trim();
+                String title    = p[2].trim();
+                LocalDate start = LocalDate.parse(p[3].trim());
+                LocalDate due   = LocalDate.parse(p[4].trim());
+                String status   = p[5].trim();
+                double fee      = Double.parseDouble(p[6].trim());
+
+                return new LoanRecord(username, isbn, title, start, due, status, fee);
+            } catch (Exception e) {
+                System.out.println("Invalid loan line: " + line);
+                return null;
+            }
+        }
+    }
 }

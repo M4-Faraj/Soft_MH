@@ -37,6 +37,8 @@ public class GAdminControl {
 
     // ========= TABS ROOT =========
     @FXML private TabPane tabPaneAdmin;
+    @FXML private ComboBox<String> cmbBookCategory;
+    @FXML private ComboBox<String> cmbMediaType;   // جديد
 
     // ========= DASHBOARD TAB =========
     @FXML private Label lblTotalBooks;
@@ -53,7 +55,6 @@ public class GAdminControl {
     @FXML private TextField txtBookId;
     @FXML private TextField txtBookTitle;
     @FXML private TextField txtBookAuthor;
-    @FXML private ComboBox<String> cmbBookCategory;
     @FXML private TextField txtISBN;
     @FXML private TextField txtBookQuantity;
     @FXML private TextArea txtBookDescription;
@@ -273,6 +274,14 @@ public class GAdminControl {
     }
 
     private void setupCombos() {
+        if (cmbMediaType != null) {
+            cmbMediaType.setItems(FXCollections.observableArrayList(
+                    "BOOK",
+                    "CD"
+            ));
+            cmbMediaType.getSelectionModel().selectFirst(); // default BOOK
+        }
+
         if (cmbBookCategory != null) {
             cmbBookCategory.setItems(FXCollections.observableArrayList(
                     "Programming", "Networking", "Electronics", "Math", "Other"
@@ -301,41 +310,6 @@ public class GAdminControl {
     }
 
     // ========= LOAD LOANS FROM Loan.txt =========
-    private void loadAdminLoansFromFile() {
-        adminLoans.clear();
-
-        try {
-            Path path = Paths.get(LOAN_FILE);
-            if (!Files.exists(path)) {
-                // لو الملف مش موجود، عادي نخليه فاضي
-                return;
-            }
-
-            List<String> lines = Files.readAllLines(path);
-            int counter = 1;
-
-            for (String line : lines) {
-                if (line.trim().isEmpty()) continue;
-
-                String[] p = line.split(",");
-                // format: username,bookTitle,startDate,dueDate,status
-                if (p.length < 5) continue;
-
-                String user   = p[0].trim();
-                String book   = p[1].trim();
-                String start  = p[2].trim();
-                String due    = p[3].trim();
-                String status = p[4].trim();
-
-                String id = String.valueOf(counter++);
-                adminLoans.add(new LoanRow(id, user, book, start, due, status));
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Error", "Failed to load loans from Loan.txt");
-        }
-    }
 
     // ========= EVENTS =========
 
@@ -368,7 +342,6 @@ public class GAdminControl {
             cmbBookCategory.getSelectionModel().clearSelection();
         }
     }
-
     @FXML
     private void onAddBook(ActionEvent event) {
         String id = txtBookId.getText().trim();
@@ -380,7 +353,20 @@ public class GAdminControl {
             return;
         }
 
+        String mediaType = "BOOK";
+        if (cmbMediaType != null && cmbMediaType.getValue() != null) {
+            mediaType = cmbMediaType.getValue().toUpperCase();
+        }
+
+        String category = "Other";
+        if (cmbBookCategory != null && cmbBookCategory.getValue() != null) {
+            category = cmbBookCategory.getValue();
+        }
+
         Book b = new Book(title, author, id, false);
+        b.setMediaType(mediaType);
+        b.setCategory(category);
+
         FileControler.BooksList.add(b);
         FileControler.addBookAsync(b);
 
@@ -389,6 +375,7 @@ public class GAdminControl {
 
         onClearBookForm(null);
     }
+
 
     @FXML
     private void onSearchBook() {
@@ -473,8 +460,8 @@ public class GAdminControl {
             if (isBorrowedNow) {
                 showAlert(
                         "Cannot delete",
-                        "This book is currently borrowed. It cannot be deleted.",
-                        Alert.AlertType.WARNING
+                        "This book is currently borrowed. It cannot be deleted."
+                        //Alert.AlertType.WARNING
                 );
                 return;
             }
@@ -497,8 +484,8 @@ public class GAdminControl {
             if (hasActiveLoans) {
                 showAlert(
                         "Cannot delete",
-                        "This book has active/overdue loans. It cannot be deleted.",
-                        Alert.AlertType.WARNING
+                        "This book has active/overdue loans. It cannot be deleted."
+                        //Alert.AlertType.WARNING
                 );
                 return;
             }
@@ -533,18 +520,26 @@ public class GAdminControl {
             showAlert("Error", "Unexpected error while deleting book.");
         }
     }
-
     private void rewriteBooksFile() {
         try {
             java.util.List<String> outLines = new java.util.ArrayList<>();
 
             for (Book b : FileControler.BooksList) {
-                // عدّل هذا السطر لو فورمات Books.txt عندك مختلف
+                String mediaType = (b.getMediaType() == null || b.getMediaType().isEmpty())
+                        ? "BOOK"
+                        : b.getMediaType().toUpperCase();
+
+                String category = (b.getCategory() == null || b.getCategory().isEmpty())
+                        ? "Other"
+                        : b.getCategory();
+
                 String line = String.join(",",
                         b.getName(),
                         b.getAuthor(),
                         b.getISBN(),
-                        String.valueOf(b.isBorrowed())
+                        String.valueOf(b.isBorrowed()),
+                        mediaType,
+                        category
                 );
                 outLines.add(line);
             }
@@ -917,7 +912,7 @@ public class GAdminControl {
 
     @FXML
     private void onGenerateReport(ActionEvent event) {
-        showAlert("Info", "Report generation not implemented yet.");
+
     }
 
     @FXML

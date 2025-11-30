@@ -7,6 +7,7 @@ public class Book extends Media {
     private String author;
     private String ISBN;
     private LocalDate overDue;
+    private String category; // "Book" أو "CD"
 
     public Book(String name, String author, String ISBN, boolean borrowed) {
         super(name, borrowed);  // inherited borrowed flag
@@ -14,6 +15,19 @@ public class Book extends Media {
         this.author = author;
         this.ISBN = ISBN;
     }
+    public Book(String name, String author, String ISBN, boolean borrowed, String category) {
+        super(name,borrowed);
+        this.author = author;
+        this.ISBN = ISBN;
+        this.category = (category == null || category.isBlank()) ? "Book" : category;
+    }
+    private String mediaType;  // "BOOK" or "CD"
+
+    public String getMediaType() { return mediaType; }
+    public void setMediaType(String mediaType) { this.mediaType = mediaType; }
+
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 
     // ---------------------- Update Methods ----------------------
 

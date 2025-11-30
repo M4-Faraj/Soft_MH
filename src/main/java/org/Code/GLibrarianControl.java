@@ -67,16 +67,22 @@ public class GLibrarianControl extends Application {
         public long overdueDays;
         public double fine;
 
-        public OverdueEntry(String isbn, String title, String username, LocalDate borrowDate) {
+        public OverdueEntry(String isbn,
+                            String title,
+                            String username,
+                            LocalDate borrowDate,
+                            int loanDurationDays,
+                            double finePerDay) {
+
             this.isbn = isbn;
             this.title = title;
             this.username = username;
             this.borrowDate = borrowDate;
-            this.dueDate = borrowDate.plusDays(28);
+            this.dueDate = borrowDate.plusDays(loanDurationDays);
 
             long totalDays = ChronoUnit.DAYS.between(borrowDate, LocalDate.now());
-            overdueDays = Math.max(0, totalDays - 28);
-            fine = overdueDays > 0 ? 10.0 : 0.0;
+            overdueDays = Math.max(0, totalDays - loanDurationDays);
+            fine = overdueDays > 0 ? finePerDay : 0.0;
         }
     }
 
@@ -164,14 +170,28 @@ public class GLibrarianControl extends Application {
                 String[] p = line.split(",");
                 if (p.length < 4) continue;
 
-                String isbn = p[0].trim();
-                String title = p[1].trim();
+                String isbn   = p[0].trim();
+                String title  = p[1].trim();
                 LocalDate borrow = LocalDate.parse(p[2].trim());
-                String user = p[3].trim();
+                String user  = p[3].trim();
 
-                OverdueEntry entry = new OverdueEntry(isbn, title, user, borrow);
+                // لو في عمود خامس اعتبره نوع
+                String type = (p.length >= 5) ? p[4].trim().toUpperCase() : "BOOK";
 
-                if (entry.overdueDays > 0) {  // Only overdue
+                int loanDays;
+                double finePerDay;
+
+                if ("CD".equals(type)) {
+                    loanDays   = 7;
+                    finePerDay = 20.0;
+                } else {
+                    loanDays   = 28;
+                    finePerDay = 10.0;
+                }
+
+                OverdueEntry entry = new OverdueEntry(isbn, title, user, borrow, loanDays, finePerDay);
+
+                if (entry.overdueDays > 0) {
                     overdueList.add(entry);
                 }
             }
