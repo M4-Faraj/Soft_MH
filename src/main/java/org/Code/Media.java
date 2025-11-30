@@ -18,6 +18,7 @@ public abstract class Media {
     public abstract int getBorrowDurationDays();
     public abstract int getLoanDuration();
     public abstract int getOverdueFine();
+    public abstract double getFinePerDay();
 
 }
 

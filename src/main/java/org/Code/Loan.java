@@ -23,6 +23,12 @@ public class Loan {
     public Media getItem() {
         return item;
     }
+    public Book getBook() {
+        if (item instanceof Book) {
+            return (Book) item;
+        }
+        return null;   // or throw exception if you prefer
+    }
     public User getUser() { return user; }
 
     public LocalDate getStartDate() {   // عشان الكود القديم
@@ -71,4 +77,6 @@ public class Loan {
         long daysOverdue = ChronoUnit.DAYS.between(dueDate, currentDate);
         return Math.max(daysOverdue, 0); // If not overdue, return 0
     }
+
+
 }

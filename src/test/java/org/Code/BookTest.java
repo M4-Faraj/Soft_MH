@@ -1,112 +1,143 @@
 package org.Code;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class BookTest {
+class BookTest {
 
-    private Book book;
-
-    @BeforeEach
-    void setup() {
-        book = new Book("Harry Potter", "J.K. Rowling", "123", false);
-    }
-
-    // === Test getters ===
-    @Test
-    void testGetName() {
-        assertEquals("Harry Potter", book.getName());
-    }
+    // ---------------------------------------------------------
+    // Constructor & basic getters
+    // ---------------------------------------------------------
 
     @Test
-    void testGetAuthor() {
-        assertEquals("J.K. Rowling", book.getAuthor());
-    }
+    void testConstructor_SetsAllFieldsCorrectly() {
+        Book book = new Book("Clean Code", "Robert C. Martin", "111-222", true);
 
-    @Test
-    void testGetISBN() {
-        assertEquals("123", book.getISBN());
+        // Book-specific fields
+        assertEquals("Clean Code", book.getName());
+        assertEquals("Robert C. Martin", book.getAuthor());
+        assertEquals("111-222", book.getISBN());
+
+        // Media fields
+        assertEquals("Clean Code", book.getTitle());
+        assertTrue(book.isBorrowed());
+        assertTrue(book.isborrowed());  // legacy method
     }
 
     @Test
-    void testIsBorrowed() {
-        // Initially the book is not borrowed
-        Book book = new Book("Harry Potter", "J.K. Rowling", "123", false);
-        assertFalse(book.isBorrowed(), "Book should not be borrowed initially");
+    void testConstructor_AllowsEmptyStrings() {
+        Book book = new Book("", "", "", false);
 
-        // Mark the book as borrowed
-        book.updateBorrowed(true);
-        assertTrue(book.isBorrowed(), "Book should be borrowed after updating");
-
-        // Mark it as returned
-        book.updateBorrowed(false);
-        assertFalse(book.isBorrowed(), "Book should not be borrowed after returning");
+        assertEquals("", book.getName());
+        assertEquals("", book.getAuthor());
+        assertEquals("", book.getISBN());
+        assertEquals("", book.getTitle());
+        assertFalse(book.isBorrowed());
+        assertFalse(book.isborrowed());
     }
 
-
-    // === Test setters / update methods ===
-    @Test
-    void testUpdateName() {
-        book.updateName("The Hobbit");
-        assertEquals("The Hobbit", book.getName());
-    }
+    // ---------------------------------------------------------
+    // Update methods (name, author, ISBN)
+    // ---------------------------------------------------------
 
     @Test
-    void testUpdateAuthor() {
-        book.updateAuthor("Tolkien");
-        assertEquals("Tolkien", book.getAuthor());
-    }
+    void testUpdateName_ChangesNameOnly() {
+        Book book = new Book("Old Title", "Author", "123", false);
 
-    @Test
-    void testUpdateISBN() {
-        book.updateISBN("456");
-        assertEquals("456", book.getISBN());
+        book.updateName("New Title");
+
+        assertEquals("New Title", book.getName());
+        // NOTE: current implementation does NOT update Media.title
+        assertEquals("Old Title", book.getTitle());
     }
 
     @Test
-    void testUpdateBorrowed() {
-        book.updateBorrowed(true);
-        assertTrue(book.isborrowed());
-    }
+    void testUpdateAuthor_ChangesAuthor() {
+        Book book = new Book("Title", "Old Author", "123", false);
 
-    @Test
-    void testSetName() {
-        book.setName("New Name");
-        assertEquals("New Name", book.getName());
-    }
+        book.updateAuthor("New Author");
 
-    @Test
-    void testSetAuthor() {
-        book.setAuthor("New Author");
         assertEquals("New Author", book.getAuthor());
     }
 
     @Test
-    void testSetISBN() {
-        book.setISBN("999");
-        assertEquals("999", book.getISBN());
+    void testUpdateISBN_ChangesISBN() {
+        Book book = new Book("Title", "Author", "123", false);
+
+        book.updateISBN("999-888");
+
+        assertEquals("999-888", book.getISBN());
     }
 
+    // ---------------------------------------------------------
+    // Setters
+    // ---------------------------------------------------------
+
     @Test
-    void testSetBorrowed() {
-        book.setborrowed(true);
-        assertTrue(book.isborrowed());
+    void testSetters_WorkAsExpected() {
+        Book book = new Book("T1", "A1", "111", false);
+
+        book.setName("T2");
+        book.setAuthor("A2");
+        book.setISBN("222");
+
+        assertEquals("T2", book.getName());
+        assertEquals("A2", book.getAuthor());
+        assertEquals("222", book.getISBN());
     }
 
-    // === Test combined usage ===
+    // ---------------------------------------------------------
+    // Borrowed / availability state
+    // ---------------------------------------------------------
+
     @Test
-    void testBookLifecycle() {
-        book.updateName("Updated Book");
-        book.updateAuthor("Updated Author");
-        book.updateISBN("321");
+    void testUpdateBorrowed_ChangesBorrowedFlag() {
+        Book book = new Book("Title", "Author", "123", false);
+
+        assertFalse(book.isBorrowed());
+        assertFalse(book.isborrowed());
+
         book.updateBorrowed(true);
 
-        assertEquals("Updated Book", book.getName());
-        assertEquals("Updated Author", book.getAuthor());
-        assertEquals("321", book.getISBN());
+        assertTrue(book.isBorrowed());
         assertTrue(book.isborrowed());
+
+        book.updateBorrowed(false);
+
+        assertFalse(book.isBorrowed());
+        assertFalse(book.isborrowed());
     }
 
+    @Test
+    void testBorrowedFlagFromConstructor() {
+        Book available = new Book("Title1", "Author1", "111", false);
+        Book borrowed  = new Book("Title2", "Author2", "222", true);
+
+        assertFalse(available.isBorrowed());
+        assertFalse(available.isborrowed());
+
+        assertTrue(borrowed.isBorrowed());
+        assertTrue(borrowed.isborrowed());
+    }
+
+    // ---------------------------------------------------------
+    // Loan / fine rules (business rules)
+    // ---------------------------------------------------------
+
+    @Test
+    void testBorrowDuration_Is28Days() {
+        Book book = new Book("Title", "Author", "123", false);
+
+        assertEquals(28, book.getBorrowDurationDays());
+        assertEquals(28, book.getLoanDuration());
+    }
+
+    @Test
+    void testFineRules_Are10NISPerDay() {
+        Book book = new Book("Title", "Author", "123", false);
+
+        assertEquals(10, book.getOverdueFine());
+        assertEquals(10.0, book.getFinePerDay(), 0.0001);
+    }
 }

@@ -22,4 +22,6 @@ public class CD extends Media {
     public int getOverdueFine() {
         return 20; // 20 NIS per overdue CD
     }
+    @Override
+    public double getFinePerDay() { return 20; }
 }

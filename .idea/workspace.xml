@@ -5,14 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/CD.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/Media.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/MediaCollection.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/CDTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/EmailServiceTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/GAdminControlTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/LoanTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/UserTest.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test/java/org/Code/UsersTest.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/InfoBase/Users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/InfoBase/Users.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Librarian.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/BookControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/BookControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/CD.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/CD.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Loan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Loan.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Media.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Media.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/AdminControlTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/AdminControlTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/AdminTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/AdminTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/BookControlTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/BookControlTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/BookTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/BookTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/BooksTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/BooksTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/FileControlerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/FileControlerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/LoginControlTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/LoginControlTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/UserControlTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/UserControlTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,37 +66,55 @@
         &quot;associatedIndex&quot;: 3
         }</component>
   <component name="ProjectId" id="366nyOdG5Xcqj9sGjVdoqax2KG1" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Application.FileControler.executor&quot;: &quot;Run&quot;,
-    &quot;Application.LoginControlGUI.executor&quot;: &quot;Run&quot;,
-    &quot;Application.Unnamed.executor&quot;: &quot;Run&quot;,
-    &quot;Application.org.Code.LoginControlGUI.executor&quot;: &quot;Run&quot;,
-    &quot;JUnit.org.Code in Soft_MH.executor&quot;: &quot;Run&quot;,
-    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Application.FileControler.executor": "Run",
+    "Application.LoginControlGUI.executor": "Run",
+    "Application.Unnamed.executor": "Run",
+    "Application.org.Code.LoginControlGUI.executor": "Run",
+    "JUnit.AdminControlTest.executor": "Coverage",
+    "JUnit.AdminTest.executor": "Coverage",
+    "JUnit.BookControlTest.executor": "Coverage",
+    "JUnit.BookTest.executor": "Coverage",
+    "JUnit.BooksTest.executor": "Coverage",
+    "JUnit.CDTest.executor": "Coverage",
+    "JUnit.Code in SoftWare.executor": "Coverage",
+    "JUnit.EmailServiceTest.executor": "Coverage",
+    "JUnit.FileControlerTest.executor": "Coverage",
+    "JUnit.GAdminControlTest.executor": "Coverage",
+    "JUnit.LoanTest.executor": "Coverage",
+    "JUnit.LoginControlTest.executor": "Coverage",
+    "JUnit.UserControlTest.executor": "Coverage",
+    "JUnit.UserTest.executor": "Coverage",
+    "JUnit.org.Code in Soft_MH.executor": "Run",
+    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/openjfx-24.0.2_windows-x64_bin-sdk/javafx-sdk-24.0.2/lib/jfx.incubator.richtext.jar",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "Libraries",
+    "project.structure.proportion": "0.15",
+    "project.structure.side.proportion": "0.2",
+    "settings.editor.selected.configurable": "preferences.JavaFX",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Java_101\Soft_MH\src\main\resources" />
@@ -89,18 +123,18 @@
       <recent name="org.Code" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.LoginControlGUI">
+  <component name="RunManager" selected="JUnit.Code in SoftWare">
     <configuration name="LoginControlGUI" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="ALTERNATIVE_JRE_PATH" value="23" />
       <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="org.Code.LoginControlGUI" />
-      <module name="Soft_MH" />
-      <option name="VM_PARAMETERS" value="--module-path &quot;E:\BS\javafx-sdk-24.0.1\lib&quot; --add-modules javafx.controls,javafx.fxml " />
+      <module name="SoftWare" />
+      <option name="VM_PARAMETERS" value="--module-path &quot;E:\openjfx-24.0.2_windows-x64_bin-sdk\javafx-sdk-24.0.2\lib&quot; --add-modules javafx.controls,javafx.fxml " />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="AdminTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="AdminControlTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SoftWare" />
       <extension name="coverage">
         <pattern>
@@ -109,38 +143,55 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.Code" />
-      <option name="MAIN_CLASS_NAME" value="org.Code.AdminTest" />
+      <option name="MAIN_CLASS_NAME" value="org.Code.AdminControlTest" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="BookControlTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="Code in SoftWare" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="SoftWare" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.Code.*" />
+          <option name="PATTERN" value="org.Code.GAdminControl" />
           <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
         </pattern>
-      </extension>
-      <option name="PACKAGE_NAME" value="org.Code" />
-      <option name="MAIN_CLASS_NAME" value="org.Code.BookControlTest" />
-      <option name="TEST_OBJECT" value="class" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration name="BooksTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SoftWare" />
-      <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="org.Code.*" />
+          <option name="PATTERN" value="org.Code.GLibrarianControl" />
           <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.tests.GUserControl" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GLoginController" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GSignUpControler" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.tests.GUserControl" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GUserControl" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="org.Code" />
-      <option name="MAIN_CLASS_NAME" value="org.Code.BooksTest" />
-      <option name="TEST_OBJECT" value="class" />
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="directory" />
+      <dir value="$PROJECT_DIR$/src/test/java/org/Code" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -160,8 +211,8 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="org.Code in Soft_MH" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="Soft_MH" />
+    <configuration name="GAdminControlTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SoftWare" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="org.Code.*" />
@@ -169,28 +220,42 @@
         </pattern>
       </extension>
       <option name="PACKAGE_NAME" value="org.Code" />
-      <option name="MAIN_CLASS_NAME" value="" />
-      <option name="METHOD_NAME" value="" />
-      <option name="TEST_OBJECT" value="package" />
+      <option name="MAIN_CLASS_NAME" value="org.Code.GAdminControlTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="LoanTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="SoftWare" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.Code.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="org.Code" />
+      <option name="MAIN_CLASS_NAME" value="org.Code.LoanTest" />
+      <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <list>
       <item itemvalue="Application.LoginControlGUI" />
-      <item itemvalue="JUnit.AdminTest" />
-      <item itemvalue="JUnit.BookControlTest" />
-      <item itemvalue="JUnit.BooksTest" />
+      <item itemvalue="JUnit.AdminControlTest" />
+      <item itemvalue="JUnit.Code in SoftWare" />
+      <item itemvalue="JUnit.GAdminControlTest" />
+      <item itemvalue="JUnit.LoanTest" />
       <item itemvalue="JUnit.FileControlerTest" />
-      <item itemvalue="JUnit.org.Code in Soft_MH" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.org.Code in Soft_MH" />
+        <item itemvalue="JUnit.Code in SoftWare" />
         <item itemvalue="JUnit.FileControlerTest" />
-        <item itemvalue="JUnit.AdminTest" />
-        <item itemvalue="JUnit.BooksTest" />
-        <item itemvalue="JUnit.BookControlTest" />
+        <item itemvalue="JUnit.GAdminControlTest" />
+        <item itemvalue="JUnit.AdminControlTest" />
+        <item itemvalue="JUnit.LoanTest" />
       </list>
     </recent_temporary>
   </component>
@@ -217,19 +282,54 @@
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Soft$BookControlTest.ic" NAME="BookControlTest Coverage Results" MODIFIED="1764430672831" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+    <SUITE FILE_PATH="coverage/Soft$BooksTest.ic" NAME="BooksTest Coverage Results" MODIFIED="1764518731400" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/Soft$BooksTest.ic" NAME="BooksTest Coverage Results" MODIFIED="1764430691649" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+    <SUITE FILE_PATH="coverage/Soft$CDTest.ic" NAME="CDTest Coverage Results" MODIFIED="1764519414866" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$GAdminControlTest.ic" NAME="GAdminControlTest Coverage Results" MODIFIED="1764522350570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$UserTest.ic" NAME="UserTest Coverage Results" MODIFIED="1764519091708" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/Soft$org_Code_in_SoftWare.ic" NAME="org.Code in SoftWare Coverage Results" MODIFIED="1764442271605" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/Soft$AdminTest.ic" NAME="AdminTest Coverage Results" MODIFIED="1764441320052" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+    <SUITE FILE_PATH="coverage/Soft$BookTest.ic" NAME="BookTest Coverage Results" MODIFIED="1764518653366" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/Soft$FileControlerTest.ic" NAME="FileControlerTest Coverage Results" MODIFIED="1764441639495" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+    <SUITE FILE_PATH="coverage/Soft$AdminTest.ic" NAME="AdminTest Coverage Results" MODIFIED="1764519272322" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$EmailServiceTest.ic" NAME="EmailServiceTest Coverage Results" MODIFIED="1764519597216" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$BookControlTest.ic" NAME="BookControlTest Coverage Results" MODIFIED="1764518552277" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$LoginControlTest.ic" NAME="LoginControlTest Coverage Results" MODIFIED="1764518931999" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$UserControlTest.ic" NAME="UserControlTest Coverage Results" MODIFIED="1764519238759" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$Code_in_SoftWare.ic" NAME="Code in SoftWare Coverage Results" MODIFIED="1764523062024" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <EXCLUDED_FILTER>org.Code.GAdminControl</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GLibrarianControl</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.tests.GUserControl</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GLoginController</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GSignUpControler</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.tests.GUserControl</EXCLUDED_FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$AdminControlTest.ic" NAME="AdminControlTest Coverage Results" MODIFIED="1764520613132" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$LoanTest.ic" NAME="LoanTest Coverage Results" MODIFIED="1764520401450" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft$FileControlerTest.ic" NAME="FileControlerTest Coverage Results" MODIFIED="1764522626688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
   </component>

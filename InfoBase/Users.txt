@@ -1,9 +1,0 @@
-mof,mof,molo,,11,null|null,0.0,false
-mof,mof,moll,,11,null|null,0.0,false
-mof,lol,moo,,11,null|null,0.0,false
-mof,mof,mof,,11,null|null,0.0,false
-mof,mof,mof,,1234,null|null,0.0,false
-Alice,Blue,alice123,alice@gmail.com,pass1,,0.0,false
-Bob,Green,bob123,bob@gmail.com,pass2,,0.0,false
-Mark,Smith,mark123,mark.new@gmail.com,pass123,,0.0,false
-John,Doe,john123,john@gmail.com,pass123,,0.0,false

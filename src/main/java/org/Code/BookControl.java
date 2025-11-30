@@ -19,6 +19,10 @@ public class BookControl {
         this.books = books;
         this.mediaCollection = mediaCollection;
     }
+    public BookControl(Books books) {
+        this.books = books;
+        this.mediaCollection = new MediaCollection(); // fallback
+    }
 
     public int numberOfBorrowedBooks() {
         String filePath = "src/main/InfoBase/Borrowed_Books.txt";
@@ -114,5 +118,25 @@ public class BookControl {
     }
     public void setUsers(Users users) {
         this.users = users;
+    }
+
+    public double calculateOverdueFine(User user, LocalDate today) {
+        double totalFine = 0;
+        for (Loan loan : loans) {
+            if (loan.getUser().equals(user) && loan.daysOverdue(today) > 0) {
+                totalFine += loan.daysOverdue(today) * loan.getItem().getFinePerDay();
+            }
+        }
+        return totalFine;
+    }
+
+    public List<Loan> getAllOverdueMedia(User user, LocalDate today) {
+        List<Loan> overdue = new ArrayList<>();
+        for (Loan loan : loans) {
+            if (loan.getUser().equals(user) && loan.daysOverdue(today) > 0) {
+                overdue.add(loan);
+            }
+        }
+        return overdue;
     }
 }
