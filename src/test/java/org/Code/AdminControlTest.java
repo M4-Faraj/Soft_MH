@@ -9,14 +9,32 @@ import java.nio.file.Paths;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class AdminControlTest {
+class AdminControlTest {
 
     private AdminControl admin;
+    private Path booksPath;
 
     @BeforeEach
-    void setup() {
+    void setUp() throws Exception {
         admin = new AdminControl();
-        FileControler.BooksList.clear(); // important
+
+        // نظف الـ in-memory list
+        FileControler.BooksList.clear();
+
+        // جهّز ملف Books.txt المستخدم في FileControler
+        booksPath = Paths.get(FileControler.BOOKS_PATH).toAbsolutePath();
+
+        if (!Files.exists(booksPath.getParent())) {
+            Files.createDirectories(booksPath.getParent());
+        }
+
+        Files.writeString(
+                booksPath,
+                "",
+                java.nio.charset.StandardCharsets.UTF_8,
+                java.nio.file.StandardOpenOption.CREATE,
+                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+        );
     }
 
     // ---------------------------------------------------------
@@ -31,7 +49,7 @@ public class AdminControlTest {
         Book result = admin.searchBook("Harry");
 
         assertNotNull(result);
-        assertEquals(b1, result);
+        assertEquals(b1, result);   // نفس الريفرنس
     }
 
     @Test
@@ -57,12 +75,60 @@ public class AdminControlTest {
     }
 
     @Test
-    void testSearchBook_NotFound() {
+    void testSearchBook_NoMatch_ReturnsNull() {
         FileControler.BooksList.add(new Book("Book A", "Author A", "111", false));
 
         Book result = admin.searchBook("XYZ");
 
         assertNull(result);
+    }
+
+    @Test
+    void testSearchBook_EmptyBooksList_ReturnsNull() {
+        Book result = admin.searchBook("Anything");
+        assertNull(result);
+    }
+
+    @Test
+    void testSearchBook_PartialMatch_ReturnsFirstMatchingBook() {
+        Book b1 = new Book("Java Programming", "Someone", "111", false);
+        Book b2 = new Book("Advanced Java", "Another Author", "222", false);
+
+        FileControler.BooksList.add(b1);
+        FileControler.BooksList.add(b2);
+
+        Book result = admin.searchBook("Java");
+
+        assertNotNull(result);
+        assertEquals(b1, result);   // أول واحد في الليست
+    }
+
+    @Test
+    void testSearchBook_CaseSensitiveBehavior() {
+        Book b1 = new Book("harry potter", "j.k. rowling", "123", false);
+        FileControler.BooksList.add(b1);
+
+        // contains بدون toLowerCase → حساس لحالة الأحرف
+        Book byName   = admin.searchBook("Harry");
+        Book byAuthor = admin.searchBook("Rowling");
+
+        assertNull(byName);
+        assertNull(byAuthor);
+    }
+
+    @Test
+    void testSearchBook_EmptySearchString_ReturnsFirstBook() {
+        Book b1 = new Book("Book A", "Author A", "111", false);
+        Book b2 = new Book("Book B", "Author B", "222", false);
+
+        FileControler.BooksList.add(b1);
+        FileControler.BooksList.add(b2);
+
+        // "".contains("") = true → أول كتاب هيتطابق
+        Book result = admin.searchBook("");
+
+        assertNotNull(result);
+        assertEquals(b1, result);
     }
 
     // ---------------------------------------------------------
@@ -71,25 +137,21 @@ public class AdminControlTest {
 
     @Test
     void testAddBook_WritesCorrectlyToFile() throws Exception {
-        // Clean Books.txt before test
-        Path booksPath = Paths.get(FileControler.BOOKS_PATH);
-        Files.createDirectories(booksPath.getParent());
-        Files.writeString(booksPath, "");
+        // تأكد إن الملف فاضي
+        Files.writeString(
+                booksPath,
+                "",
+                java.nio.charset.StandardCharsets.UTF_8,
+                java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
+        );
 
-        // Create AdminControl
-        AdminControl admin = new AdminControl();
-
-        // Add book asynchronously
+        // استدعاء addBook (تستخدم addBookAsync داخليًا)
         admin.addBook("Harry Potter", "J.K. Rowling", "123", false);
 
-        // Wait for async write to finish
-        Thread.sleep(150);
+        // استنى شوية عشان الـ thread يخلص
+        Thread.sleep(200);
 
-        // Read file content
         String content = Files.readString(booksPath).trim();
-
         assertEquals("Harry Potter,J.K. Rowling,123,false", content);
     }
-
 }
-

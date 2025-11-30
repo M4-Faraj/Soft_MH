@@ -4,15 +4,15 @@ import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
 public class Loan {
-    private Book book;
+    private Media item;
     private User user;
     private LocalDate borrowDate;
     private LocalDate dueDate;
     private boolean returned;
     private int loanPeriodDays;
 
-    public Loan(Book book, User user, LocalDate borrowDate, int loanPeriodDays) {
-        this.book = book;
+    public Loan(Media item, User user, LocalDate borrowDate, int loanPeriodDays) {
+        this.item = item;
         this.user = user;
         this.borrowDate = borrowDate;
         this.loanPeriodDays = loanPeriodDays;
@@ -20,7 +20,15 @@ public class Loan {
         this.returned = false;
     }
 
-    public Book getBook() { return book; }
+    public Media getItem() {
+        return item;
+    }
+    public Book getBook() {
+        if (item instanceof Book) {
+            return (Book) item;
+        }
+        return null;   // or throw exception if you prefer
+    }
     public User getUser() { return user; }
 
     public LocalDate getStartDate() {   // عشان الكود القديم
@@ -64,4 +72,11 @@ public class Loan {
         this.borrowDate = LocalDate.now();
         this.dueDate = borrowDate.plusDays(loanPeriodDays);
     }
+
+    public long daysOverdue(LocalDate currentDate) {
+        long daysOverdue = ChronoUnit.DAYS.between(dueDate, currentDate);
+        return Math.max(daysOverdue, 0); // If not overdue, return 0
+    }
+
+
 }
