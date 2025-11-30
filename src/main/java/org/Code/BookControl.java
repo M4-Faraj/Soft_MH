@@ -10,12 +10,14 @@ import java.util.List;
 
 public class BookControl {
     private Books books;
+    private MediaCollection mediaCollection;
     private List<Loan> loans = new ArrayList<>();
     private Users users;
 
 
-    public BookControl(Books books){
+    public BookControl(Books books, MediaCollection mediaCollection) {
         this.books = books;
+        this.mediaCollection = mediaCollection;
     }
 
     public int numberOfBorrowedBooks() {
@@ -34,39 +36,39 @@ public class BookControl {
         }
     }
 
-    public void borrowBook (User user , String searchedWord){
+    public void borrowMedia(User user, String searchedWord){
         if (user.hasOutstandingFine()) {
             System.out.println("Cannot borrow until fine is fully paid. Outstanding balance: "
                     + user.getFine());
             return;
         }
 
-
-
         List<Loan> overdueLoans = getOverDueBooks(LocalDate.now());
         for (Loan l : overdueLoans) {
             if (l.getUser().equals(user)) {
-                System.out.println("Cannot borrow because you have overdue books. Please return them first.");
+                System.out.println("Cannot borrow because you have overdue items. Please return them first.");
                 return;
             }
         }
 
-        Book book = books.searchBook(searchedWord);
-        if(book == null){
-            System.out.println("Book not found!");
+        Media item = mediaCollection.searchItem(searchedWord); // Book or CD
+        if(item == null){
+            System.out.println("Item not found!");
             return;
         }
-        if(book.isborrowed()){
-            System.out.println("Book is already borrowed");
+        if(item.isBorrowed()){
+            System.out.println("Item is already borrowed");
             return;
         }
 
-        Loan loan = new Loan(book, user, LocalDate.now(), 28);
+        int loanDays = item.getLoanDuration(); // Book: 28, CD: 7
+        Loan loan = new Loan(item, user, LocalDate.now(), loanDays);
         loans.add(loan);
-        book.updateBorrowed(true);
+        item.updateBorrowed(true);
 
         System.out.println("Borrow successful! Due date: " + loan.getDueDate());
     }
+
 
     public List<Loan> getOverDueBooks(LocalDate currentDate){
         List<Loan> overdueBooks = new ArrayList<>();

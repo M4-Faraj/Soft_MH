@@ -1,5 +1,7 @@
 package org.Code;
 
+import java.time.LocalDate;
+
 public class User {
     private String firstName;
     private String lastName;
@@ -111,6 +113,14 @@ public class User {
         if (fine < 0) fine = 0;
 
         System.out.println("Fine paid. Remaining balance: " + fine);
+    }
+    public void applyFineForLoan(Loan loan, LocalDate currentDate) {
+        if (loan.isOverdue()) {
+            Media item = loan.getItem(); // Media can be Book, CD, etc.
+            int finePerDay = item.getOverdueFine(); // Book = 10, CD = 20
+            long daysOverdue = loan.daysOverdue(currentDate);
+            addFine(finePerDay * daysOverdue);
+        }
     }
 
 

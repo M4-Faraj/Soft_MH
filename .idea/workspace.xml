@@ -5,7 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/CD.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/Media.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/org/Code/MediaCollection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/BookControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/BookControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Loan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Loan.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/User.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

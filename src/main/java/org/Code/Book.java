@@ -2,7 +2,7 @@ package org.Code;
 
 import java.time.LocalDate;
 
-public class Book {
+public class Book extends Media {
      private String name;
      private String author;
     private String ISBN;
@@ -10,10 +10,9 @@ public class Book {
     private LocalDate overDue;
 
     public Book(String Name, String author, String ISBN, boolean borrowed) {
-        this.name = Name;
+        super(Name , borrowed);
         this.author = author;
         this.ISBN = ISBN;
-        this.borrowed = borrowed;
     }
     public void updateName(String Name){
         this.name=Name;
@@ -59,4 +58,17 @@ public class Book {
         return borrowed;
     }
 
+    @Override
+    public int getBorrowDurationDays() {
+        return 28;
+    }
+
+    @Override
+    public int getLoanDuration() {
+        return 28; // Books are borrowed for 28 days
+    }
+    @Override
+    public int getOverdueFine() {
+        return 10; // 10 NIS per overdue book
+    }
 }
