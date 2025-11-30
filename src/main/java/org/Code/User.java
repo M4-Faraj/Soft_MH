@@ -69,6 +69,9 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+    public boolean hasOutstandingFine() {
+        return FileControler.hasOverdueBooks(this.username);
+    }
 
     // Password
     public String getPassword() {
@@ -110,9 +113,6 @@ public class User {
         System.out.println("Fine paid. Remaining balance: " + fine);
     }
 
-    public boolean hasOutstandingFine() {
-        return fine > 0;
-    }
 
     public boolean isAdmin() {
         return isAdmin;

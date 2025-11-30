@@ -14,9 +14,19 @@ import javafx.stage.Stage;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class GAdminControl {
+
+    // ========= CONSTANTS =========
+    private static final String LOAN_FILE = "src/main/InfoBase/Loan.txt";
 
     // ========= TOP BAR =========
     @FXML private Label lblAdminName;
@@ -98,17 +108,22 @@ public class GAdminControl {
     @FXML private TableColumn<LoanRow, String> colLoanStatusAdmin;
     @FXML private Button btnMarkReturned;
     @FXML private Button btnMarkOverdue;
+    @FXML private Button btnSendReminder;   // نستعمله لإرسال الإيميل
 
     // ========= REPORTS TAB =========
     @FXML private DatePicker dpReportFrom;
     @FXML private DatePicker dpReportTo;
     @FXML private ComboBox<String> cmbReportType;
+    private final ObservableList<LoanRow> loansData = FXCollections.observableArrayList();
     @FXML private Button btnGenerateReport;
     @FXML private Button btnExportReport;
     @FXML private TableView<ReportRow> tblReportPreview;
     @FXML private TableColumn<ReportRow, String> colReportCol1;
     @FXML private TableColumn<ReportRow, String> colReportCol2;
     @FXML private TableColumn<ReportRow, String> colReportCol3;
+
+    // ========= DATA HOLDERS =========
+    private final ObservableList<LoanRow> adminLoans = FXCollections.observableArrayList();
 
     // ========= INITIALIZE =========
     @FXML
@@ -127,9 +142,60 @@ public class GAdminControl {
         setupUsersTable();
         setupDashboard();
         setupCombos();
+
+        // 🔹 إعداد جدول القروض + تحميل كل القروض
+        setupLoansTable();
+        try {
+            loadLoans(null);   // null أو "" = حمّل الكل
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load loans list.");
+        }
+
+        // زر البحث عن القروض
+        if (btnSearchLoans != null) {
+            btnSearchLoans.setOnAction(this::onSearchLoans);
+        }
     }
 
+
     // ========= SETUP METHODS =========
+    private void setupLoansTable() {
+        if (colLoanIdAdmin != null) {
+            colLoanIdAdmin.setCellValueFactory(
+                    data -> new SimpleStringProperty(data.getValue().getId())
+            );
+        }
+        if (colLoanUserAdmin != null) {
+            colLoanUserAdmin.setCellValueFactory(
+                    data -> new SimpleStringProperty(data.getValue().getUser())
+            );
+        }
+        if (colLoanBookAdmin != null) {
+            colLoanBookAdmin.setCellValueFactory(
+                    data -> new SimpleStringProperty(data.getValue().getBook())
+            );
+        }
+        if (colLoanStartAdmin != null) {
+            colLoanStartAdmin.setCellValueFactory(
+                    data -> new SimpleStringProperty(data.getValue().getStart())
+            );
+        }
+        if (colLoanDueAdmin != null) {
+            colLoanDueAdmin.setCellValueFactory(
+                    data -> new SimpleStringProperty(data.getValue().getDue())
+            );
+        }
+        if (colLoanStatusAdmin != null) {
+            colLoanStatusAdmin.setCellValueFactory(
+                    data -> new SimpleStringProperty(data.getValue().getStatus())
+            );
+        }
+
+        if (tblAdminLoans != null) {
+            tblAdminLoans.setItems(loansData);
+        }
+    }
 
     private void setupBooksTable() {
         colAdminBookId.setCellValueFactory(
@@ -202,7 +268,7 @@ public class GAdminControl {
 
         lblBorrowedCount.setText(String.valueOf(borrowedCount));
 
-        // لسه ما عندنا overdue logic -> نخليها 0
+        // لسه ما عندنا overdue logic في الـ Admin -> نخليها 0 مؤقتاً
         lblOverdueCountAdmin.setText("0");
     }
 
@@ -231,6 +297,43 @@ public class GAdminControl {
                     "Most Active Users",
                     "Fines Report"
             ));
+        }
+    }
+
+    // ========= LOAD LOANS FROM Loan.txt =========
+    private void loadAdminLoansFromFile() {
+        adminLoans.clear();
+
+        try {
+            Path path = Paths.get(LOAN_FILE);
+            if (!Files.exists(path)) {
+                // لو الملف مش موجود، عادي نخليه فاضي
+                return;
+            }
+
+            List<String> lines = Files.readAllLines(path);
+            int counter = 1;
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                String[] p = line.split(",");
+                // format: username,bookTitle,startDate,dueDate,status
+                if (p.length < 5) continue;
+
+                String user   = p[0].trim();
+                String book   = p[1].trim();
+                String start  = p[2].trim();
+                String due    = p[3].trim();
+                String status = p[4].trim();
+
+                String id = String.valueOf(counter++);
+                adminLoans.add(new LoanRow(id, user, book, start, due, status));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to load loans from Loan.txt");
         }
     }
 
@@ -427,6 +530,13 @@ public class GAdminControl {
             return;
         }
 
+        // منطقك السابق: ما بنحذف لو عنده قروض/غرامات -> مفترض تعمل check هنا
+        if (FileControler.userHasActiveLoansOrFines(selected)) {
+            showAlert("Cannot delete",
+                    "User still has active loans or unpaid fines.");
+            return;
+        }
+
         FileControler.UserList.remove(selected);
         tblAdminUsers.getItems().remove(selected);
         lblTotalUsers.setText(String.valueOf(FileControler.UserList.size()));
@@ -434,23 +544,272 @@ public class GAdminControl {
         showAlert("Info", "User removed from list. (File rewrite not implemented yet)");
     }
 
-    // ----- Loans (stubs حالياً) -----
+    // ----- Loans -----
+    private void loadLoans(String filter) throws Exception {
+        loansData.clear();
+
+        Path path = Paths.get(FileControler.BORROWED_PATH);
+
+        if (!Files.exists(path)) {
+            // ما في Borrowed_Books.txt → ما في قروض
+            return;
+        }
+
+        List<String> lines = Files.readAllLines(path);
+        LocalDate today = LocalDate.now();
+        int counter = 1;
+
+        String f = (filter == null) ? "" : filter.trim().toLowerCase();
+
+        for (String line : lines) {
+            if (line.trim().isEmpty()) continue;
+
+            // format: ISBN,Title,BorrowDate,User
+            String[] p = line.split(",");
+            if (p.length < 4) continue;
+
+            String isbn       = p[0].trim();
+            String title      = p[1].trim();
+            String borrowDate = p[2].trim();
+            String username   = p[3].trim();
+
+            LocalDate startDate;
+            try {
+                startDate = LocalDate.parse(borrowDate);
+            } catch (Exception ex) {
+                // لو التاريخ معطوب، اعتبره اليوم فقط عشان ما يكسر البرنامج
+                startDate = today;
+            }
+
+            LocalDate dueDate = startDate.plusDays(28);
+            long days = ChronoUnit.DAYS.between(startDate, today);
+            String status = (days > 28) ? "Overdue" : "Borrowed";
+
+            // فلترة لو في filter
+            boolean matches = true;
+            if (!f.isEmpty()) {
+                String full = (isbn + " " + title + " " + username).toLowerCase();
+                matches = full.contains(f);
+            }
+
+            if (!matches) continue;
+
+            LoanRow row = new LoanRow(
+                    String.valueOf(counter++),        // id بسيط تسلسلي
+                    username,
+                    title + " (" + isbn + ")",
+                    startDate.toString(),
+                    dueDate.toString(),
+                    status
+            );
+
+            loansData.add(row);
+        }
+    }
 
     @FXML
     private void onSearchLoans(ActionEvent event) {
-        String key = txtSearchLoans.getText();
-        System.out.println("Search loans for: " + key);
-        showAlert("Info", "Search loans not implemented yet.");
-    }
+        String key = (txtSearchLoans != null) ? txtSearchLoans.getText() : "";
 
+        try {
+            if (key == null || key.trim().isEmpty()) {
+                // لو فاضي → رجّع كل القروض
+                loadLoans(null);
+            } else {
+                loadLoans(key);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to search loans. Please try again.");
+        }
+    }
     @FXML
     private void onMarkReturned(ActionEvent event) {
-        showAlert("Info", "Mark as returned not implemented yet.");
+        try {
+            LoanRow selected = tblAdminLoans.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                showAlert("Warning", "Select a loan row first.");
+                return;
+            }
+
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirm return");
+            confirm.setHeaderText(null);
+            confirm.setContentText(
+                    "Mark this loan as returned?\n\n" +
+                            "User: " + selected.getUser() + "\n" +
+                            "Book: " + selected.getBook()
+            );
+            Optional<ButtonType> res = confirm.showAndWait();
+            if (res.isEmpty() || res.get() != ButtonType.OK)
+                return;
+
+            // --- Update file ---
+            boolean ok = markLoanReturnedInFile(
+                    selected.getUser(),
+                    selected.getBook(),
+                    selected.getStart(),
+                    selected.getDue()
+            );
+
+            if (!ok) {
+                showAlert("Error", "Failed to mark loan as returned in file.");
+                return;
+            }
+
+            // --- Update table row ---
+            selected.setStatus("Returned");
+            tblAdminLoans.refresh();
+
+            // --- Sync ALL book statuses from Borrowed_Books.txt ---
+            FileControler.syncBorrowedStatusOnce();
+
+            showAlert("Info", "Loan marked as returned and system synced.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Unexpected error while marking returned.");
+        }
     }
 
+    private String extractIsbnFromBookDisplay(String bookDisplay) {
+        // متوقّع "Title (ISBN)"
+        int open = bookDisplay.lastIndexOf('(');
+        int close = bookDisplay.lastIndexOf(')');
+        if (open >= 0 && close > open) {
+            return bookDisplay.substring(open + 1, close).trim();
+        }
+        // fallback لو ما كان بالشكل هذا
+        return bookDisplay.trim();
+    }
+
+    // تعديل Loan.txt داخلياً
+    private boolean markLoanReturnedInFile(String username,
+                                           String bookDisplay,
+                                           String startDateStr,
+                                           String dueDateStr) {
+        try {
+            // نشتغل على Borrowed_Books.txt
+            java.nio.file.Path path = java.nio.file.Paths.get(FileControler.BORROWED_PATH);
+
+            if (!java.nio.file.Files.exists(path)) {
+                return false;
+            }
+
+            java.util.List<String> lines =
+                    java.nio.file.Files.readAllLines(path);
+
+            java.util.List<String> updated = new java.util.ArrayList<>();
+            boolean removed = false;
+
+            // bookDisplay عندنا بالشكل: "Title (ISBN)"
+            String isbn = extractIsbnFromBookDisplay(bookDisplay);
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                // format: ISBN,Title,BorrowDate,User
+                String[] p = line.split(",");
+                if (p.length < 4) {
+                    updated.add(line);
+                    continue;
+                }
+
+                String fileIsbn   = p[0].trim();
+                String fileTitle  = p[1].trim();
+                String fileBorrow = p[2].trim();
+                String fileUser   = p[3].trim();
+
+                // نطابق على user + isbn + تاريخ الاستعارة
+                if (fileUser.equals(username)
+                        && fileIsbn.equals(isbn)
+                        && fileBorrow.equals(startDateStr)) {
+                    // يعني رجّعنا هذا الـ loan → ما نضيفه للـ updated
+                    removed = true;
+                    continue;
+                }
+
+                updated.add(line);
+            }
+
+            if (removed) {
+                java.nio.file.Files.write(
+                        path,
+                        updated,
+                        java.nio.file.StandardOpenOption.TRUNCATE_EXISTING,
+                        java.nio.file.StandardOpenOption.CREATE
+                );
+            }
+
+            return removed;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // ----- Send Reminder (global for many users) -----
+
     @FXML
-    private void onMarkOverdue(ActionEvent event) {
-        showAlert("Info", "Mark as overdue not implemented yet.");
+    public void onSendReminder(ActionEvent actionEvent) {
+        try {
+            EmailService emailService = EmailService.fromEnv();
+
+            int sentCount = 0;
+            java.time.LocalDate today = java.time.LocalDate.now();
+
+            for (User u : FileControler.UserList) {
+                String to = u.getEmail();
+                if (to == null || to.trim().isEmpty()) continue;
+
+                List<Loan> loans = FileControler.loadLoansForUser(u);
+                if (loans == null || loans.isEmpty()) continue;
+
+                boolean shouldNotify = false;
+                StringBuilder body = new StringBuilder();
+
+                for (Loan loan : loans) {
+                    if (loan.isReturned()) continue;
+
+                    java.time.LocalDate due = loan.getDueDate();
+                    long diff = java.time.temporal.ChronoUnit.DAYS.between(today, due); // due - today
+
+                    // متأخر أو ضايل <= 3 أيام
+                    if (diff < 0 || diff <= 3) {
+                        shouldNotify = true;
+                        body.append("- Book: ")
+                                .append(loan.getBook().getName())
+                                .append(" (ISBN: ").append(loan.getBook().getISBN()).append(")")
+                                .append(" | Due: ").append(due)
+                                .append("\n");
+                    }
+                }
+
+                if (!shouldNotify) continue;
+
+                String subject = "MH Library - Loan Reminder";
+                String textBody =
+                        "Dear " + u.getFirstName() + ",\n\n" +
+                                "This is a reminder about your current library loans:\n\n" +
+                                body +
+                                "\nPlease visit the library or the system to renew/return.\n" +
+                                "Best regards,\nMH Library System";
+
+                try {
+                    emailService.sendEmail(to, subject, textBody);
+                    sentCount++;
+                } catch (RuntimeException ex) {
+                    System.out.println("Failed to send email to " + to);
+                    ex.printStackTrace();
+                }
+            }
+
+            showAlert("Info", "Reminder emails attempted for " + sentCount + " users.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to send reminder emails. Check .env and internet.");
+        }
     }
 
     // ----- Reports (stubs) -----
@@ -465,29 +824,11 @@ public class GAdminControl {
         showAlert("Info", "Report export not implemented yet.");
     }
 
+    // ======== EXTRA (placeholders from قبل) ========
 
-
-
-
-
-
-
-
-
-
-public void onSearchUser(ActionEvent actionEvent) {
+    public void onSearchUser(ActionEvent actionEvent) {
+        // ممكن نربطه لاحقاً مع txtSearchLoans أو search خاص بالمستخدمين
     }
-
-
-
-
-
-
-
-
-
-
-
 
     // ========= HELPER CLASSES =========
 
@@ -508,12 +849,12 @@ public void onSearchUser(ActionEvent actionEvent) {
     }
 
     public static class LoanRow {
-        private final String id;
-        private final String user;
-        private final String book;
-        private final String start;
-        private final String due;
-        private final String status;
+        private String id;
+        private String user;
+        private String book;
+        private String start;
+        private String due;
+        private String status;
 
         public LoanRow(String id, String user, String book, String start, String due, String status) {
             this.id = id;
@@ -530,6 +871,11 @@ public void onSearchUser(ActionEvent actionEvent) {
         public String getStart() { return start; }
         public String getDue() { return due; }
         public String getStatus() { return status; }
+
+        // 👈 هذا اللي كان عامل لك error
+        public void setStatus(String status) {
+            this.status = status;
+        }
     }
 
     public static class ReportRow {
@@ -556,7 +902,5 @@ public void onSearchUser(ActionEvent actionEvent) {
         a.setHeaderText(null);
         a.setContentText(msg);
         a.showAndWait();
+    }
 }
-
-}
-

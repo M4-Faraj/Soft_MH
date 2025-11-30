@@ -16,136 +16,140 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #0B1320;" xmlns="http://javafx.com/javafx/24.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.Code.GLibrarianControl">
+<AnchorPane prefHeight="600.0" prefWidth="900.0" style="-fx-background-color: #0B1320;"
+            xmlns="http://javafx.com/javafx/24.0.1"
+            xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="org.Code.GLibrarianControl">
 
-    <!-- الجذر الداخلي -->
-    <VBox spacing="10.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+    <VBox spacing="10.0"
+          AnchorPane.topAnchor="10.0"
+          AnchorPane.bottomAnchor="10.0"
+          AnchorPane.leftAnchor="10.0"
+          AnchorPane.rightAnchor="10.0">
 
-        <!-- شريط علوي -->
+        <!-- Header -->
         <HBox spacing="10.0">
             <Label text="Librarian - Overdue Books" textFill="WHITE">
-                <font>
-                    <Font size="22.0" />
-                </font>
+                <font><Font size="22.0"/></font>
             </Label>
-            <Pane HBox.hgrow="ALWAYS" />
-            <Label fx:id="lblLibrarianName" text="Welcome, Librarian" textFill="#cfd8ff" />
-            <Button fx:id="btnLogout" text="Logout" />
+
+            <Pane HBox.hgrow="ALWAYS"/>
+
+            <Label fx:id="lblLibrarianName" text="Welcome, Librarian" textFill="#cfd8ff"/>
+            <Button fx:id="btnLogout" text="Logout"/>
         </HBox>
 
-        <!-- خط فاصل -->
-        <Separator />
+        <Separator/>
 
-        <!-- معلومات عن الفلترة -->
+        <!-- Filters -->
         <HBox spacing="10.0">
-            <Label text="Overdue Detection (&gt; 28 days):" textFill="#cfd8ff">
-                <font>
-                    <Font size="14.0" />
-                </font>
+            <Label text="Overdue Detection (> 28 days):" textFill="#cfd8ff">
+                <font><Font size="14.0"/></font>
             </Label>
 
-            <Label fx:id="lblCurrentDate" text="Today: 2025-11-29" textFill="#9fa8ff" />
+            <Label fx:id="lblCurrentDate" text="Today" textFill="#9fa8ff"/>
 
-            <Pane HBox.hgrow="ALWAYS" />
+            <Pane HBox.hgrow="ALWAYS"/>
 
-            <Label text="Filter by user:" textFill="#cfd8ff" />
-            <TextField fx:id="txtFilterUser" prefWidth="150.0" promptText="username..." />
+            <Label text="Filter by user:" textFill="#cfd8ff"/>
+            <TextField fx:id="txtFilterUser" prefWidth="150.0" promptText="username..."/>
 
-            <Label text="ISBN:" textFill="#cfd8ff" />
-            <TextField fx:id="txtFilterIsbn" prefWidth="130.0" promptText="ISBN..." />
+            <Label text="ISBN:" textFill="#cfd8ff"/>
+            <TextField fx:id="txtFilterIsbn" prefWidth="130.0" promptText="ISBN..."/>
 
-            <Button fx:id="btnFilterOverdue" text="Filter" />
-            <Button fx:id="btnClearFilter" text="Clear" />
+            <Button fx:id="btnFilterOverdue" text="Filter"/>
+            <Button fx:id="btnClearFilter" text="Clear"/>
         </HBox>
 
-        <!-- البودي الرئيسي -->
+        <!-- Main Body -->
         <HBox spacing="10.0" VBox.vgrow="ALWAYS">
 
-            <!-- جدول الكتب المتأخرة -->
+            <!-- Table Area -->
             <VBox spacing="5.0" VBox.vgrow="ALWAYS">
-                <Label text="Overdue Loans (&gt; 28 days)" textFill="#cfd8ff">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
+                <Label text="Overdue Loans (> 28 days)" textFill="#cfd8ff">
+                    <font><Font size="16.0"/></font>
                 </Label>
 
                 <TableView fx:id="tblOverdue" style="-fx-background-color: #121826;" VBox.vgrow="ALWAYS">
                     <columns>
-                        <TableColumn fx:id="colIsbn" prefWidth="110.0" text="ISBN" />
-                        <TableColumn fx:id="colTitle" prefWidth="160.0" text="Title" />
-                        <TableColumn fx:id="colUser" prefWidth="120.0" text="Username" />
-                        <TableColumn fx:id="colBorrowDate" prefWidth="110.0" text="Borrow Date" />
-                        <TableColumn fx:id="colDueDate" prefWidth="110.0" text="Due Date" />
-                        <TableColumn fx:id="colDaysOverdue" prefWidth="110.0" text="Days Overdue" />
-                        <TableColumn fx:id="colFine" prefWidth="90.0" text="Fine (NIS)" />
+                        <TableColumn fx:id="colIsbn" prefWidth="110.0" text="ISBN"/>
+                        <TableColumn fx:id="colTitle" prefWidth="160.0" text="Title"/>
+                        <TableColumn fx:id="colUser" prefWidth="120.0" text="Username"/>
+                        <TableColumn fx:id="colBorrowDate" prefWidth="110.0" text="Borrow Date"/>
+                        <TableColumn fx:id="colDueDate" prefWidth="110.0" text="Due Date"/>
+                        <TableColumn fx:id="colDaysOverdue" prefWidth="110.0" text="Days Overdue"/>
+                        <TableColumn fx:id="colFine" prefWidth="90.0" text="Fine (NIS)"/>
                     </columns>
                 </TableView>
 
                 <HBox spacing="10.0">
-                    <Button fx:id="btnRefreshOverdue" text="Refresh Overdue List" />
-                    <Pane HBox.hgrow="ALWAYS" />
-                    <Label text="Total overdue: " textFill="#cfd8ff" />
-                    <Label fx:id="lblOverdueCount" text="0" textFill="#ffb74d" />
+                    <Button fx:id="btnRefreshOverdue" text="Refresh Overdue List"/>
+                    <Pane HBox.hgrow="ALWAYS"/>
+                    <Label text="Total overdue:" textFill="#cfd8ff"/>
+                    <Label fx:id="lblOverdueCount" text="0" textFill="#ffb74d"/>
                 </HBox>
             </VBox>
 
-            <!-- مربع تفاصيل -->
-            <VBox prefWidth="260.0" spacing="10.0" style="-fx-background-color: #101522; -fx-background-radius: 8;">
+            <!-- Details Panel -->
+            <VBox prefWidth="260.0" spacing="10.0"
+                  style="-fx-background-color: #101522; -fx-background-radius: 8;">
                 <Label text="Selected Loan Details" textFill="#cfd8ff">
-                    <font>
-                        <Font size="16.0" />
-                    </font>
+                    <font><Font size="16.0"/></font>
                 </Label>
 
                 <GridPane hgap="5.0" vgap="6.0">
                     <columnConstraints>
-                        <ColumnConstraints halignment="LEFT" minWidth="80.0" />
-                        <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
+                        <ColumnConstraints minWidth="80.0"/>
+                        <ColumnConstraints hgrow="ALWAYS"/>
                     </columnConstraints>
 
                     <rowConstraints>
-                        <RowConstraints minHeight="20.0" />
-                        <RowConstraints minHeight="20.0" />
-                        <RowConstraints minHeight="20.0" />
-                        <RowConstraints minHeight="20.0" />
-                        <RowConstraints minHeight="20.0" />
-                        <RowConstraints minHeight="20.0" />
+                        <RowConstraints minHeight="20.0"/>
+                        <RowConstraints minHeight="20.0"/>
+                        <RowConstraints minHeight="20.0"/>
+                        <RowConstraints minHeight="20.0"/>
+                        <RowConstraints minHeight="20.0"/>
+                        <RowConstraints minHeight="20.0"/>
                     </rowConstraints>
 
-                    <Label text="ISBN:" textFill="#cfd8ff" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                    <Label fx:id="lblSelIsbn" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                    <Label text="ISBN:" textFill="#cfd8ff" GridPane.rowIndex="0"/>
+                    <Label fx:id="lblSelIsbn" text="-" textFill="WHITE" GridPane.columnIndex="1"/>
 
-                    <Label text="Title:" textFill="#cfd8ff" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                    <Label fx:id="lblSelTitle" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                    <Label text="Title:" textFill="#cfd8ff" GridPane.rowIndex="1"/>
+                    <Label fx:id="lblSelTitle" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
 
-                    <Label text="User:" textFill="#cfd8ff" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                    <Label fx:id="lblSelUser" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                    <Label text="User:" textFill="#cfd8ff" GridPane.rowIndex="2"/>
+                    <Label fx:id="lblSelUser" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
 
-                    <Label text="Borrow Date:" textFill="#cfd8ff" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                    <Label fx:id="lblSelBorrowDate" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                    <Label text="Borrow Date:" textFill="#cfd8ff" GridPane.rowIndex="3"/>
+                    <Label fx:id="lblSelBorrowDate" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
 
-                    <Label text="Due Date:" textFill="#cfd8ff" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                    <Label fx:id="lblSelDueDate" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                    <Label text="Due Date:" textFill="#cfd8ff" GridPane.rowIndex="4"/>
+                    <Label fx:id="lblSelDueDate" text="-" textFill="WHITE" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
 
-                    <Label text="Days Overdue:" textFill="#cfd8ff" GridPane.columnIndex="0" GridPane.rowIndex="5" />
-                    <Label fx:id="lblSelDaysOverdue" text="0" textFill="#ffb74d" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                    <Label text="Days Overdue:" textFill="#cfd8ff" GridPane.rowIndex="5"/>
+                    <Label fx:id="lblSelDaysOverdue" text="0" textFill="#ffb74d" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
                 </GridPane>
 
-                <Separator />
+                <Separator/>
 
                 <HBox spacing="10.0">
-                    <Label text="Fine (NIS):" textFill="#cfd8ff" />
-                    <Label fx:id="lblSelFine" text="0" textFill="#ffb74d" />
+                    <Label text="Fine (NIS):" textFill="#cfd8ff"/>
+                    <Label fx:id="lblSelFine" text="0" textFill="#ffb74d"/>
                 </HBox>
 
-                <CheckBox fx:id="chkMarkAsPaid" text="Mark fine as paid" textFill="#cfd8ff" />
+                <CheckBox fx:id="chkMarkAsPaid" text="Mark fine as paid" textFill="#cfd8ff"/>
 
                 <HBox spacing="10.0">
-                    <Button fx:id="btnIssueFine" text="Issue Fine" />
-                    <Button fx:id="btnWaiveFine" text="Waive Fine" />
+                    <Button fx:id="btnSendMailSelected" text="Send Selected Mail" />
+                    <Button fx:id="btnSendMailThread" text="Auto Thread Reminder" />
                 </HBox>
 
-                <Pane VBox.vgrow="ALWAYS" />
+                <HBox spacing="10.0">
+                    <Button fx:id="btnWaiveFine" text="Waive Fine"/>
+                </HBox>
+
+                <Pane VBox.vgrow="ALWAYS"/>
             </VBox>
 
         </HBox>

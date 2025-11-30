@@ -79,7 +79,7 @@ public class GSignUpControler {
 
             // إنشاء الـ User object
             User newUser;
-            newUser = new User(first, username, last, email, password, new String[0]);
+            newUser = new User(first, last, username, email, password, new String[0]);
 
             // كتابة المستخدم للملف
             FileControler.addUserAsync(newUser);

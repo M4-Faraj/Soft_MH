@@ -1,9 +1,12 @@
 package org.Code;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -19,12 +22,6 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 public class GLibrarianControl extends Application {
-
-    // ========= FIELDS FOR LIBRARIAN ===========
-    private User currentLibrarian;
-
-    @FXML
-    private Label lblLibrarianName;   // لازم يكون موجود في librarian.fxml بنفس fx:id
 
     // ========= FXML BINDINGS ===========
     @FXML private TableView<OverdueEntry> tblOverdue;
@@ -45,6 +42,8 @@ public class GLibrarianControl extends Application {
     @FXML private Label lblSelFine;
 
     @FXML private Label lblOverdueCount;
+    @FXML private Label lblLibrarianName;
+    @FXML private Label lblCurrentDate;
 
     @FXML private TextField txtFilterUser;
     @FXML private TextField txtFilterIsbn;
@@ -52,10 +51,16 @@ public class GLibrarianControl extends Application {
     @FXML private Button btnRefreshOverdue;
     @FXML private Button btnFilterOverdue;
     @FXML private Button btnClearFilter;
+    @FXML private Button btnLogout;
 
-    private ObservableList<OverdueEntry> overdueList = FXCollections.observableArrayList();
+    @FXML private Button btnSendMailSelected;
+    @FXML private Button btnSendMailThread;
 
-    // ========= Struct-like class ===========
+    private final ObservableList<OverdueEntry> overdueList = FXCollections.observableArrayList();
+    private User currentLibrarian;
+
+
+    // ========== STRUCT ==========
     public static class OverdueEntry {
         public String isbn, title, username;
         public LocalDate borrowDate, dueDate;
@@ -71,12 +76,12 @@ public class GLibrarianControl extends Application {
 
             long totalDays = ChronoUnit.DAYS.between(borrowDate, LocalDate.now());
             overdueDays = Math.max(0, totalDays - 28);
-
-            fine = overdueDays > 0 ? 10 : 0;
+            fine = overdueDays > 0 ? 10.0 : 0.0;
         }
     }
 
-    // ========= Load FXML ===========
+
+    // ========== LOAD FXML ==========
     @Override
     public void start(Stage stage) {
         try {
@@ -91,7 +96,8 @@ public class GLibrarianControl extends Application {
         }
     }
 
-    // ========= Called from GLoginController after login ===========
+
+    // ========= SET LIBRARIAN INFO =========
     public void setLibrarian(User librarian) {
         this.currentLibrarian = librarian;
         if (lblLibrarianName != null && librarian != null) {
@@ -99,56 +105,53 @@ public class GLibrarianControl extends Application {
         }
     }
 
-    // ========= Initialize ===========
+
+    // ========== INITIALIZE ==========
     @FXML
     private void initialize() {
         setupTable();
+        lblCurrentDate.setText("Today: " + LocalDate.now());
         loadOverdueData();
 
-        if (tblOverdue != null) {
-            tblOverdue.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
-                if (newSel != null) showDetails(newSel);
-            });
-        }
+        tblOverdue.getSelectionModel().selectedItemProperty().addListener((obs, oldSel, newSel) -> {
+            if (newSel != null) showDetails(newSel);
+        });
 
-        if (btnRefreshOverdue != null)
-            btnRefreshOverdue.setOnAction(e -> loadOverdueData());
+        btnRefreshOverdue.setOnAction(e -> loadOverdueData());
+        btnFilterOverdue.setOnAction(e -> applyFilter());
 
-        if (btnFilterOverdue != null)
-            btnFilterOverdue.setOnAction(e -> filter());
-
-        if (btnClearFilter != null)
-            btnClearFilter.setOnAction(e -> {
-                if (txtFilterUser != null) txtFilterUser.clear();
-                if (txtFilterIsbn != null) txtFilterIsbn.clear();
-                loadOverdueData();
-            });
-    }
-
-    // ========= Create table bindings ===========
-    private void setupTable() {
-        if (colIsbn != null)
-            colIsbn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().isbn));
-        if (colTitle != null)
-            colTitle.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().title));
-        if (colUser != null)
-            colUser.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().username));
-        if (colBorrowDate != null)
-            colBorrowDate.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().borrowDate.toString()));
-        if (colDueDate != null)
-            colDueDate.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().dueDate.toString()));
-        if (colDaysOverdue != null)
-            colDaysOverdue.setCellValueFactory(d ->
-                    new SimpleStringProperty(String.valueOf(d.getValue().overdueDays)));
-        if (colFine != null)
-            colFine.setCellValueFactory(d ->
-                    new SimpleStringProperty(String.valueOf(d.getValue().fine)));
-
-        if (tblOverdue != null)
+        btnClearFilter.setOnAction(e -> {
+            txtFilterUser.clear();
+            txtFilterIsbn.clear();
             tblOverdue.setItems(overdueList);
+            lblOverdueCount.setText(String.valueOf(overdueList.size()));
+        });
+
+        btnLogout.setOnAction(e -> {
+            try { handleLogout(); }
+            catch (IOException ex) { throw new RuntimeException(ex); }
+        });
+
+        btnSendMailSelected.setOnAction(this::onSendMailSelected);
+        btnSendMailThread.setOnAction(this::onSendReminderThread);
     }
 
-    // ========= Load overdue data ===========
+
+    // ========== TABLE SETUP ==========
+    private void setupTable() {
+        colIsbn.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().isbn));
+        colTitle.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().title));
+        colUser.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().username));
+        colBorrowDate.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().borrowDate.toString()));
+        colDueDate.setCellValueFactory(d -> new SimpleStringProperty(d.getValue().dueDate.toString()));
+        colDaysOverdue.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().overdueDays)));
+        colFine.setCellValueFactory(d -> new SimpleStringProperty(String.valueOf(d.getValue().fine)));
+
+        tblOverdue.setItems(overdueList);
+    }
+
+
+    // ========== LOAD BORROWED FILE ==========
     private void loadOverdueData() {
         overdueList.clear();
 
@@ -166,38 +169,39 @@ public class GLibrarianControl extends Application {
                 LocalDate borrow = LocalDate.parse(p[2].trim());
                 String user = p[3].trim();
 
-                OverdueEntry e = new OverdueEntry(isbn, title, user, borrow);
+                OverdueEntry entry = new OverdueEntry(isbn, title, user, borrow);
 
-                if (e.overdueDays > 0) {
-                    overdueList.add(e);
+                if (entry.overdueDays > 0) {  // Only overdue
+                    overdueList.add(entry);
                 }
             }
 
-            if (lblOverdueCount != null)
-                lblOverdueCount.setText(String.valueOf(overdueList.size()));
+            tblOverdue.setItems(overdueList);
+            lblOverdueCount.setText(String.valueOf(overdueList.size()));
 
         } catch (Exception ex) {
             ex.printStackTrace();
+            showError("Error", "Failed to load overdue data.");
         }
     }
 
-    // ========= show details panel ===========
+
+    // ========== DETAILS PANEL ==========
     private void showDetails(OverdueEntry e) {
-        if (lblSelIsbn != null)        lblSelIsbn.setText(e.isbn);
-        if (lblSelTitle != null)       lblSelTitle.setText(e.title);
-        if (lblSelUser != null)        lblSelUser.setText(e.username);
-        if (lblSelBorrowDate != null)  lblSelBorrowDate.setText(e.borrowDate.toString());
-        if (lblSelDueDate != null)     lblSelDueDate.setText(e.dueDate.toString());
-        if (lblSelDaysOverdue != null) lblSelDaysOverdue.setText(String.valueOf(e.overdueDays));
-        if (lblSelFine != null)        lblSelFine.setText(String.valueOf(e.fine));
+        lblSelIsbn.setText(e.isbn);
+        lblSelTitle.setText(e.title);
+        lblSelUser.setText(e.username);
+        lblSelBorrowDate.setText(e.borrowDate.toString());
+        lblSelDueDate.setText(e.dueDate.toString());
+        lblSelDaysOverdue.setText(String.valueOf(e.overdueDays));
+        lblSelFine.setText(String.valueOf(e.fine));
     }
 
-    // ========= Filter logic ===========
-    private void filter() {
-        if (tblOverdue == null) return;
 
-        String u = (txtFilterUser != null ? txtFilterUser.getText().trim().toLowerCase() : "");
-        String i = (txtFilterIsbn != null ? txtFilterIsbn.getText().trim().toLowerCase() : "");
+    // ========== FILTER ==========
+    private void applyFilter() {
+        String u = txtFilterUser.getText().trim().toLowerCase();
+        String i = txtFilterIsbn.getText().trim().toLowerCase();
 
         ObservableList<OverdueEntry> filtered = overdueList.filtered(e ->
                 (u.isEmpty() || e.username.toLowerCase().contains(u)) &&
@@ -205,8 +209,163 @@ public class GLibrarianControl extends Application {
         );
 
         tblOverdue.setItems(filtered);
+        lblOverdueCount.setText(String.valueOf(filtered.size()));
+    }
 
-        if (lblOverdueCount != null)
-            lblOverdueCount.setText(String.valueOf(filtered.size()));
+
+    // ========== LOGOUT ==========
+    private void handleLogout() throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/loginGui.fxml"));
+        Parent root = loader.load();
+
+        Stage stage = (Stage) tblOverdue.getScene().getWindow();
+        stage.setScene(new Scene(root));
+        stage.setTitle("MH Library - Login");
+        stage.centerOnScreen();
+    }
+
+
+    // =====================================================================
+    // 🔥 SEND MAIL TO SELECTED USER
+    // =====================================================================
+    @FXML
+    private void onSendMailSelected(ActionEvent event) {
+
+        OverdueEntry selected = tblOverdue.getSelectionModel().getSelectedItem();
+
+        if (selected == null) {
+            showError("No Selection", "Choose a user from the table first.");
+            return;
+        }
+
+        String email = FileControler.getEmailForUser(selected.username);
+        if (email == null) {
+            showError("Missing Email", "This user has no email registered.");
+            return;
+        }
+
+        try {
+            Dotenv dotenv = Dotenv.load();
+            String mailUser = dotenv.get("EMAIL_USERNAME");
+            String mailPass = dotenv.get("EMAIL_PASSWORD");
+
+            EmailService mailService = new EmailService(mailUser, mailPass);
+
+            String subject = "Library Reminder";
+            String body =
+                    "Dear " + selected.username + ",\n\n" +
+                            "This is a reminder regarding your borrowed book:\n" +
+                            "\"" + selected.title + "\" (ISBN: " + selected.isbn + ").\n\n" +
+                            "Best regards,\nMH Library";
+
+            mailService.sendEmail(email, subject, body);
+
+            showInfo("Email Sent", "Reminder sent to: " + email);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            showError("Email Error", "Failed to send reminder.");
+        }
+    }
+
+
+    // =====================================================================
+    // 🔥 THREAD: SEND REMINDER WHEN 3 DAYS LEFT
+    // =====================================================================
+    @FXML
+    private void onSendReminderThread(ActionEvent event) {
+
+        Thread t = new Thread(() -> {
+            int sentCount = 0;
+
+            try {
+                // 1) حمّل كل الـ loans من ملف الاستعارة
+                List<String> lines = Files.readAllLines(Paths.get(FileControler.BORROWED_PATH));
+
+                // 2) جهّز إعدادات الإيميل مرّة وحدة
+                Dotenv dotenv = Dotenv.load();
+                String mailUser = dotenv.get("EMAIL_USERNAME");
+                String mailPass = dotenv.get("EMAIL_PASSWORD");
+                EmailService mailService = new EmailService(mailUser, mailPass);
+
+                LocalDate today = LocalDate.now();
+
+                for (String line : lines) {
+                    if (line.trim().isEmpty()) continue;
+
+                    // format: ISBN,Name,Date,User
+                    String[] p = line.split(",");
+                    if (p.length < 4) continue;
+
+                    String isbn   = p[0].trim();
+                    String title  = p[1].trim();
+                    LocalDate borrowDate;
+                    try {
+                        borrowDate = LocalDate.parse(p[2].trim());
+                    } catch (Exception ex) {
+                        continue; // تاريخ خربان
+                    }
+                    String username = p[3].trim();
+
+                    // due بعد 28 يوم
+                    LocalDate dueDate = borrowDate.plusDays(28);
+                    long daysLeft = ChronoUnit.DAYS.between(today, dueDate);
+
+                    // 👈 هون الشرط تبعك: قبل الـ overdue بثلاث أيام
+                    if (daysLeft != 3) continue;
+
+                    // جيب الإيميل من Users.txt
+                    String email = FileControler.getEmailForUser(username);
+                    if (email == null) {
+                        System.err.println("No email for user " + username);
+                        continue;
+                    }
+
+                    String subject = "Library Reminder: 3 Days Left";
+                    String body =
+                            "Dear " + username + ",\n\n" +
+                                    "Your borrowed book \"" + title + "\" (ISBN: " + isbn + ") " +
+                                    "will be due in 3 days (" + dueDate + ").\n" +
+                                    "Please return or renew it on time.\n\n" +
+                                    "Best regards,\nMH Library";
+
+                    try {
+                        mailService.sendEmail(email, subject, body);
+                        sentCount++;
+                        Thread.sleep(800); // عشان ما نفقع السبام للسيرفر
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                }
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            int finalCount = sentCount;
+            Platform.runLater(() ->
+                    showInfo("Thread Complete", "Reminders sent: " + finalCount)
+            );
+        });
+
+        t.setDaemon(true);
+        t.start();
+    }
+
+    // ========== ALERT HELPERS ==========
+    private void showError(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
+    }
+
+    private void showInfo(String title, String msg) {
+        Alert a = new Alert(Alert.AlertType.INFORMATION);
+        a.setTitle(title);
+        a.setHeaderText(null);
+        a.setContentText(msg);
+        a.showAndWait();
     }
 }

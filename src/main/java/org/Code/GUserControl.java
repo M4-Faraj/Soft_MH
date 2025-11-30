@@ -91,6 +91,7 @@ public class GUserControl extends Application {
     @FXML private TextField txtAddress;
     @FXML private Button btnChangePassword;
     @FXML private Button btnSaveProfile;
+    private ObservableList<Loan> loansObservable = FXCollections.observableArrayList();
 
     // ================== BACKING DATA ==================
     private ObservableList<Book> booksObservable = FXCollections.observableArrayList();
@@ -131,6 +132,15 @@ public class GUserControl extends Application {
     @FXML
     private void initialize() {
         // فلتر افتراضي
+        if (tblLoans != null) {
+            tblLoans.setItems(loansObservable);
+        }
+
+        if (btnRenew != null) {
+            btnRenew.setOnAction(e -> onRenew());
+        }
+
+// (زر return بنشتغل عليه بعدين لو حابب)
 
         if (btnBorrow != null)  btnBorrow.setOnAction(this::onBorrow);
         if (btnReserve != null) btnReserve.setOnAction(this::onReserve); // 👈 بدال handleReserve
@@ -228,6 +238,17 @@ public class GUserControl extends Application {
     // ================== BORROW LOGIC ==================
     @FXML
     private void onBorrow(ActionEvent event) {
+        // 0) Check if user has overdue books
+        if (FileControler.hasOverdueBooks(currentUser.getUsername())) {
+            showAlert(
+                    "Borrowing blocked",
+                    "You cannot borrow a new book because you have overdue books.\n" +
+                            "Please return them first.",
+                    Alert.AlertType.WARNING
+            );
+            return;
+        }
+
         // 1) خذ الكتاب المختار من الجدول
         Book selected = tblBooks.getSelectionModel().getSelectedItem();
 
@@ -279,12 +300,6 @@ public class GUserControl extends Application {
     }
 
 
-    private void refreshLoansTable() {
-        if (bookControl == null || currentUser == null || tblLoans == null) return;
-
-        if (lblLoansCount != null) {
-        }
-    }
 
     // ================== SEARCH ==================
     private void handleSearch() {
@@ -405,5 +420,65 @@ public class GUserControl extends Application {
                 Alert.AlertType.INFORMATION
         );
     }
+    @FXML
+    private void onRenew() {
+        Loan selectedLoan = tblLoans.getSelectionModel().getSelectedItem();
+
+        if (selectedLoan == null) {
+            showAlert("No loan selected", "Please select a loan to renew.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        if (currentUser == null) {
+            showAlert("System error", "Current user is not initialized.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // تأكد إنه مش متأخر أصلاً (إلا إذا بدك تسمح بتجديد متأخر، بس حسب كلامك لا)
+        if (selectedLoan.getLoanFee() > 0) {
+            showAlert(
+                    "Cannot renew",
+                    "This loan is already overdue (fee = 10 NIS). Please pay at librarian.",
+                    Alert.AlertType.WARNING
+            );
+            return;
+        }
+
+        // 1) عدّل في الملف
+        boolean ok = FileControler.renewLoan(
+                selectedLoan.getBook().getISBN(),
+                currentUser.getUsername()
+        );
+
+        if (!ok) {
+            showAlert("Renew failed", "Could not renew this loan in file.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // 2) عدّل في الذاكرة (Loan object)
+        selectedLoan.renew();
+
+        // 3) ريـفرش الجدول
+        tblLoans.refresh();
+
+        showAlert(
+                "Renewed",
+                "Loan renewed successfully.\nNew due date: " + selectedLoan.getDueDate(),
+                Alert.AlertType.INFORMATION
+        );
+    }
+
+    private void refreshLoansTable() {
+        if (currentUser == null || tblLoans == null) return;
+
+        List<Loan> userLoans = FileControler.loadLoansForUser(currentUser);
+        loansObservable.setAll(userLoans);
+
+        if (lblLoansCount != null) {
+            lblLoansCount.setText(String.valueOf(userLoans.size()));
+        }
+    }
 
 }
+
+

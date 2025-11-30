@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -174,6 +175,164 @@ public class FileControler {
         Thread t = new Thread(FileControler::fillLibrariansDataSync);
         t.setDaemon(true);
         t.start();
+    }
+
+
+
+    public static boolean renewLoan(String isbn, String username) {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(BORROWED_PATH));
+            List<String> updated = new ArrayList<>();
+
+            boolean renewedOne = false;
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) {
+                    updated.add(line);
+                    continue;
+                }
+
+                String[] p = line.split(",");
+                if (p.length < 4) {
+                    updated.add(line);
+                    continue;
+                }
+
+                String lineIsbn = p[0].trim();
+                String lineUser = p[3].trim();
+
+                if (!renewedOne && lineIsbn.equals(isbn) && lineUser.equals(username)) {
+                    // نعدّل تاريخ الاستعارة لليوم
+                    p[2] = LocalDate.now().toString();
+                    String rebuilt = String.join(",", p);
+                    updated.add(rebuilt);
+                    renewedOne = true;
+                } else {
+                    updated.add(line);
+                }
+            }
+
+            if (!renewedOne) {
+                return false; // ما لقينا سطر مطابق
+            }
+
+            Files.write(Paths.get(BORROWED_PATH), updated);
+            System.out.println("✅ renewLoan: updated borrow date for " + isbn + " / " + username);
+            return true;
+
+        } catch (IOException e) {
+            System.out.println("Error in renewLoan: " + e.getMessage());
+            return false;
+        }
+    }
+    public static String getEmailForUser(String username) {
+        Path path = Paths.get(USERS_PATH);
+
+        try (BufferedReader br = Files.newBufferedReader(path)) {
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.trim().isEmpty()) continue;
+
+                String[] p = line.split(",");
+                if (p.length < 4) continue;
+
+                String fileUser = p[2].trim();
+                String email    = p[3].trim();
+
+                if (fileUser.equals(username))
+                    return email;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return null; // not found
+    }
+    public static boolean hasOverdueBooks(String username) {
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(BORROWED_PATH));
+            LocalDate today = LocalDate.now();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                String[] p = line.split(",");
+                if (p.length < 4) continue;
+
+                String isbn = p[0].trim();
+                String title = p[1].trim();
+                LocalDate borrowDate = LocalDate.parse(p[2].trim());
+                String user = p[3].trim();
+
+                if (!user.equals(username)) continue;
+
+                long days = java.time.temporal.ChronoUnit.DAYS.between(borrowDate, today);
+
+                if (days > 28) {
+                    return true;  // عنده متأخر
+                }
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false; // لا يوجد متأخر
+    }
+
+    public static List<Loan> loadLoansForUser(User user) {
+        List<Loan> result = new ArrayList<>();
+
+        try {
+            List<String> lines = Files.readAllLines(Paths.get(BORROWED_PATH));
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                // تنسيق: ISBN,Name,Date,User
+                String[] p = line.split(",");
+                if (p.length < 4) continue;
+
+                String isbn   = p[0].trim();
+                String title  = p[1].trim();
+                String dateStr= p[2].trim();
+                String uName  = p[3].trim();
+
+                if (!uName.equals(user.getUsername())) {
+                    continue; // هادا مش تبع هذا اليوزر
+                }
+
+                LocalDate borrowDate;
+                try {
+                    borrowDate = LocalDate.parse(dateStr);
+                } catch (Exception e) {
+                    // لو التاريخ خربان، طنّشه
+                    continue;
+                }
+
+                // حاول تجيب الـ Book من BooksList عن طريق الـ ISBN
+                Book book = null;
+                for (Book b : BooksList) {
+                    if (b.getISBN().equals(isbn)) {
+                        book = b;
+                        break;
+                    }
+                }
+
+                if (book == null) {
+                    // لو مش موجود، نعمل Book بسيط من البيانات
+                    book = new Book(title, "", isbn, true);
+                }
+
+                Loan loan = new Loan(book, user, borrowDate, 28);
+                result.add(loan);
+            }
+
+        } catch (IOException e) {
+            System.out.println("Error loading loans: " + e.getMessage());
+        }
+
+        return result;
     }
 
     private static void fillLibrariansDataSync() {
@@ -626,6 +785,172 @@ public class FileControler {
 
         return result;
     }
+// imports المطلوبة في أعلى الملف:
+// import java.nio.file.*;
+// import java.nio.charset.StandardCharsets;
 
+    public static void rewriteUsersFile() throws IOException {
+        Path path = Paths.get(USERS_PATH);
+
+        List<String> lines = new ArrayList<>();
+
+        for (User u : UserList) {
+            StringBuilder sb = new StringBuilder();
+            sb.append(u.getFirstName()).append(',')
+                    .append(u.getLastName()).append(',')
+                    .append(u.getUsername()).append(',')
+                    .append(u.getEmail()).append(',')
+                    .append(u.getPassword());
+
+            // الكتب (لو عندك مصفوفة أو list في User)
+            String[] books = u.getBooks();   // ⚠️ غيّر الاسم حسب دالةك الحقيقية
+            if (books != null && books.length > 0) {
+                sb.append(',');
+                sb.append(String.join(";", books));
+            } else {
+                sb.append(','); // فاضي للـ books
+            }
+
+            // isAdmin في آخر العمود
+            sb.append(',').append(u.isAdmin());
+
+            lines.add(sb.toString());
+        }
+
+        Files.write(
+                path,
+                lines,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+        );
+    }
+    public static boolean markLoanReturned(String username, String bookTitleOrIsbn) {
+        try {
+            java.nio.file.Path path = java.nio.file.Paths.get(BORROWED_PATH);
+            if (!java.nio.file.Files.exists(path)) return false;
+
+            java.util.List<String> lines = java.nio.file.Files.readAllLines(path);
+            java.util.List<String> newLines = new java.util.ArrayList<>();
+
+            boolean removed = false;
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                String[] p = line.split(",");
+                if (p.length < 4) {
+                    newLines.add(line);
+                    continue;
+                }
+
+                String isbn  = p[0].trim();
+                String title = p[1].trim();
+                String date  = p[2].trim();
+                String user  = p[3].trim();
+
+                boolean matchUser = user.equals(username);
+                boolean matchBook = isbn.equals(bookTitleOrIsbn) || title.equalsIgnoreCase(bookTitleOrIsbn);
+
+                if (matchUser && matchBook && !removed) {
+                    // ما نضيف السطر → هيك بنعتبره رجع الكتاب
+                    removed = true;
+
+                    // حدّث BooksList بالحالة
+                    Book b = findBookByIsbn(isbn);
+                    if (b != null) {
+                        b.updateBorrowed(false);
+                    }
+                } else {
+                    newLines.add(line);
+                }
+            }
+
+            if (!removed) return false;
+
+            java.nio.file.Files.write(
+                    path,
+                    newLines,
+                    java.nio.file.StandardOpenOption.TRUNCATE_EXISTING,
+                    java.nio.file.StandardOpenOption.CREATE
+            );
+
+            // بعد التعديل، ممكن تعيد مزامنة
+            syncBorrowedStatusOnce();
+
+            return true;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    // helper بسيط في نفس FileControler
+    public static Book findBookByIsbn(String isbn) {
+        for (Book b : BooksList) {
+            if (b.getISBN().equals(isbn)) return b;
+        }
+        return null;
+    }
+
+    public static boolean userHasActiveLoansOrFines(User user) {
+        if (user == null) return false;
+
+        String username = user.getUsername();
+        Path path = Paths.get(BORROWED_PATH);
+
+        if (!Files.exists(path)) {
+            return false; // ما في ملف → ما في قروض
+        }
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+
+            LocalDate today = LocalDate.now();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                // Format: ISBN,Title,BorrowDate,User
+                String[] p = line.split(",");
+                if (p.length < 4) continue;
+
+                String fileUser = p[3].trim();
+
+                // هذا السطر تبع نفس اليوزر؟
+                if (!fileUser.equals(username)) continue;
+
+                // ---- ACTIVE LOAN CHECK ----
+                // وجود السطر يعني الكتاب غير مُعاد → ACTIVE
+                // ما دام السطر موجود → المستخدم لم يرجع الكتاب
+                String dateStr = p[2].trim();
+                LocalDate borrowDate;
+
+                try {
+                    borrowDate = LocalDate.parse(dateStr);
+                } catch (Exception e) {
+                    // تاريخ خربان = اعتبره خطر → ارجع true
+                    return true;
+                }
+
+                long days = ChronoUnit.DAYS.between(borrowDate, today);
+
+                // ---- OVERDUE CHECK ----
+                if (days > 28) {
+                    return true; // متأخر → عليه غرامة → لا تمسحه
+                }
+
+                // إذا واصل لهون → عنده قرض غير مسدد
+                return true;
+            }
+
+        } catch (Exception e) {
+            System.out.println("Error checking user loans: " + e.getMessage());
+            return true; // safety: نرجع true لتجنب حذف شخص فيه مشكلة
+        }
+
+        return false; // ما عنده ولا قرض ولا غرامة
+    }
 
 }
