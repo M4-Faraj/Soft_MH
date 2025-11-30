@@ -331,6 +331,7 @@ public class GLibrarianControl extends Application {
 
                     try {
                         mailService.sendEmail(email, subject, body);
+                        FileControler.logMail(username, email, subject);
                         sentCount++;
                         Thread.sleep(800); // عشان ما نفقع السبام للسيرفر
                     } catch (Exception ex) {

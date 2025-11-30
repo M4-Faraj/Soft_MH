@@ -1,4 +1,5 @@
-Harry Potter,J.K. Rowling,123,false
+Harry Potter,J.K. Rowling,123,true
 mof,J.K. Rowling,124,false
 lof,J.K. Rowling,125,false
 bof,J.K. Rowling,126,false
+shiiii,deed,1233,false

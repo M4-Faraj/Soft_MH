@@ -443,17 +443,118 @@ public class GAdminControl {
 
     @FXML
     private void onDeleteBook(ActionEvent event) {
-        Book selected = tblAdminBooks.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Warning", "Select a book to delete.");
-            return;
+        try {
+            Book selected = tblAdminBooks.getSelectionModel().getSelectedItem();
+            if (selected == null) {
+                showAlert("Warning", "Select a book to delete.");
+                return;
+            }
+
+            String isbn = selected.getISBN();
+
+            // 1) ممنوع حذف كتاب مستعار حالياً (Borrowed_Books.txt)
+            boolean isBorrowedNow = false;
+            java.nio.file.Path bPath = java.nio.file.Paths.get(FileControler.BORROWED_PATH);
+            if (java.nio.file.Files.exists(bPath)) {
+                java.util.List<String> lines = java.nio.file.Files.readAllLines(bPath);
+                for (String line : lines) {
+                    if (line.trim().isEmpty()) continue;
+                    String[] p = line.split(",");
+                    if (p.length < 1) continue;
+
+                    String fileIsbn = p[0].trim();
+                    if (fileIsbn.equals(isbn)) {
+                        isBorrowedNow = true;
+                        break;
+                    }
+                }
+            }
+
+            if (isBorrowedNow) {
+                showAlert(
+                        "Cannot delete",
+                        "This book is currently borrowed. It cannot be deleted.",
+                        Alert.AlertType.WARNING
+                );
+                return;
+            }
+
+            // 2) ممنوع حذف كتاب له قروض نشيطة / متأخرة في Loan.txt
+            boolean hasActiveLoans = false;
+            java.util.List<FileControler.LoanRecord> loanRecords =
+                    FileControler.loadLoansFromFile();
+
+            for (FileControler.LoanRecord r : loanRecords) {
+                if (r.isbn.equals(isbn)) {
+                    // اعتبرنا أن RETURNED هو الوحيد الآمن
+                    if (!"RETURNED".equalsIgnoreCase(r.status)) {
+                        hasActiveLoans = true;
+                        break;
+                    }
+                }
+            }
+
+            if (hasActiveLoans) {
+                showAlert(
+                        "Cannot delete",
+                        "This book has active/overdue loans. It cannot be deleted.",
+                        Alert.AlertType.WARNING
+                );
+                return;
+            }
+
+            // 3) تأكيد من الأدمن
+            Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+            confirm.setTitle("Confirm delete");
+            confirm.setHeaderText(null);
+            confirm.setContentText(
+                    "Are you sure you want to delete this book?\n\n" +
+                            "Title: " + selected.getName() + "\n" +
+                            "Author: " + selected.getAuthor() + "\n" +
+                            "ISBN: " + selected.getISBN()
+            );
+            java.util.Optional<ButtonType> res = confirm.showAndWait();
+            if (res.isEmpty() || res.get() != ButtonType.OK) {
+                return;
+            }
+
+            // 4) احذف من الذاكرة
+            FileControler.BooksList.remove(selected);
+            tblAdminBooks.getItems().remove(selected);
+            lblTotalBooks.setText(String.valueOf(FileControler.BooksList.size()));
+
+            // 5) اكتب Books.txt من جديد بناءً على BooksList
+            rewriteBooksFile();
+
+            showAlert("Info", "Book deleted successfully.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            showAlert("Error", "Unexpected error while deleting book.");
         }
+    }
 
-        FileControler.BooksList.remove(selected);
-        tblAdminBooks.getItems().remove(selected);
-        lblTotalBooks.setText(String.valueOf(FileControler.BooksList.size()));
+    private void rewriteBooksFile() {
+        try {
+            java.util.List<String> outLines = new java.util.ArrayList<>();
 
-        showAlert("Info", "Book removed from list. (File rewrite not implemented yet)");
+            for (Book b : FileControler.BooksList) {
+                // عدّل هذا السطر لو فورمات Books.txt عندك مختلف
+                String line = String.join(",",
+                        b.getName(),
+                        b.getAuthor(),
+                        b.getISBN(),
+                        String.valueOf(b.isBorrowed())
+                );
+                outLines.add(line);
+            }
+
+            java.nio.file.Path path = java.nio.file.Paths.get(FileControler.BOOKS_PATH);
+            java.nio.file.Files.write(path, outLines);
+        } catch (java.io.IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "Failed to rewrite Books.txt file.");
+        }
     }
 
     // ----- Users -----

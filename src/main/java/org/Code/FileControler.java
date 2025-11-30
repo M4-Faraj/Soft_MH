@@ -19,6 +19,10 @@ public class FileControler {
     public static final String USERS_PATH = "src/main/InfoBase/Users.txt";
     public static final String BORROWED_PATH = "src/main/InfoBase/Borrowed_Books.txt";
     public static final String LIBRARIANS_PATH = "src/main/InfoBase/Librarian.txt";
+    public static final String PRICES_PATH = "src/main/InfoBase/Prices.txt";
+    public static final String MAILS_PATH = "src/main/InfoBase/Mails.txt";
+    public static final String LOANS_PATH = "src/main/InfoBase/Mails.txt";
+
 
     public static final ArrayList<User> LibrarianList = new ArrayList<>();
     public static final ArrayList<Book> BooksList = new ArrayList<>();
@@ -951,6 +955,149 @@ public class FileControler {
         }
 
         return false; // ما عنده ولا قرض ولا غرامة
+    }
+// ================== PRICES / FINES ==================
+
+    public static boolean hasOutstandingFine(String username) {
+        return getTotalFineForUser(username) > 0.0;
+    }
+
+    public static double getTotalFineForUser(String username) {
+        Path path = Paths.get(PRICES_PATH);
+        if (!Files.exists(path)) return 0.0;
+
+        double total = 0.0;
+        try {
+            List<String> lines = Files.readAllLines(path);
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+                String[] p = line.split(",");
+                if (p.length < 3) continue;
+
+                String u = p[0].trim();
+                if (!u.equalsIgnoreCase(username)) continue;
+
+                double amount = 0.0;
+                try { amount = Double.parseDouble(p[2].trim()); }
+                catch (NumberFormatException ignore) {}
+
+                total += amount;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    // إضافة غرامة جديدة
+    public static void addFine(String username, String isbn, double amount) {
+        Path path = Paths.get(PRICES_PATH);
+        String line = username + "," + isbn + "," + amount + System.lineSeparator();
+        try {
+            Files.write(path, line.getBytes(),
+                    Files.exists(path)
+                            ? java.nio.file.StandardOpenOption.APPEND
+                            : java.nio.file.StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // مسح غرامة على كتاب معيّن (بعد الدفع / إعفاء)
+    public static void clearFineForUserAndBook(String username, String isbn) {
+        Path path = Paths.get(PRICES_PATH);
+        if (!Files.exists(path)) return;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            List<String> keep = new java.util.ArrayList<>();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+                String[] p = line.split(",");
+                if (p.length < 3) continue;
+
+                String u = p[0].trim();
+                String b = p[1].trim();
+
+                // نحذف فقط الغرامة المطابقة
+                if (u.equalsIgnoreCase(username) && b.equalsIgnoreCase(isbn)) {
+                    continue;
+                }
+                keep.add(line);
+            }
+
+            Files.write(path, keep);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+// ================== MAILS LOG ==================
+
+    public static void logMail(String username, String email, String subject) {
+        Path path = Paths.get(MAILS_PATH);
+        String now = java.time.LocalDateTime.now().toString();
+        String line = username + "," + email + "," + subject + "," + now + System.lineSeparator();
+        try {
+            Files.write(path, line.getBytes(),
+                    Files.exists(path)
+                            ? java.nio.file.StandardOpenOption.APPEND
+                            : java.nio.file.StandardOpenOption.CREATE);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+// ================== LOANS (Admin view) ==================
+
+    public static java.util.List<GAdminControl.LoanRow> loadAllLoansRows() {
+        java.util.List<GAdminControl.LoanRow> rows = new java.util.ArrayList<>();
+
+        Path path = Paths.get(LOANS_PATH);
+        if (!Files.exists(path)) return rows;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            int idCounter = 1;
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+                String[] p = line.split(",");
+                if (p.length < 7) continue;
+
+                String username = p[0].trim();
+                String isbn     = p[1].trim();
+                String title    = p[2].trim();
+                String start    = p[3].trim();
+                String due      = p[4].trim();
+                String status   = p[5].trim();
+                String fee      = p[6].trim(); // ممكن تستخدمه لاحقاً
+
+                String id = String.valueOf(idCounter++);
+
+                GAdminControl.LoanRow row =
+                        new GAdminControl.LoanRow(id, username, title, start, due, status);
+
+                rows.add(row);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return rows;
+    }
+
+    public static java.util.List<GAdminControl.LoanRow> searchLoansRows(String keyword) {
+        keyword = keyword.toLowerCase();
+        java.util.List<GAdminControl.LoanRow> all = loadAllLoansRows();
+        java.util.List<GAdminControl.LoanRow> result = new java.util.ArrayList<>();
+
+        for (GAdminControl.LoanRow row : all) {
+            if (row.getUser().toLowerCase().contains(keyword)
+                    || row.getBook().toLowerCase().contains(keyword)
+                    || row.getStatus().toLowerCase().contains(keyword)) {
+                result.add(row);
+            }
+        }
+        return result;
     }
 
 }
