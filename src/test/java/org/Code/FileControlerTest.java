@@ -63,22 +63,36 @@ class FileControlerTest {
 
         List<String> lines = Files.readAllLines(booksPath);
         assertEquals(1, lines.size());
-        assertEquals("Clean Code,Robert Martin,111,false", lines.get(0));
+
+        // الشكل الجديد للـ record
+        assertEquals(
+                "Clean Code,Robert Martin,111,false,BOOK,Other",
+                lines.get(0)
+        );
     }
+
 
     @Test
     void addBookAsync_WritesRecord_Asynchronously() throws Exception {
+        // arrange
         Book book = new Book("Refactoring", "Martin Fowler", "222", true);
 
+        // act
         FileControler.addBookAsync(book);
 
-        // ندي الـ thread وقت صغير يشتغل
+        // نخلي الـ thread يخلص كتابة الملف
         Thread.sleep(200);
 
+        // assert
         assertTrue(Files.exists(booksPath));
         List<String> lines = Files.readAllLines(booksPath);
         assertEquals(1, lines.size());
-        assertEquals("Refactoring,Martin Fowler,222,true", lines.get(0));
+
+        // الشكل الجديد: name,author,ISBN,borrowed,mediaType,category
+        assertEquals(
+                "Refactoring,Martin Fowler,222,true,BOOK,Other",
+                lines.get(0)
+        );
     }
 
     // ---------------------------------------------------------
@@ -289,34 +303,49 @@ class FileControlerTest {
 
     @Test
     void loadLoansForUser_LoadsLoansAndUsesBooksListIfAvailable() throws Exception {
-        // BooksList فيه كتاب
+        // BooksList فيه كتاب بنفس الـ ISBN
         Book b = new Book("Clean Code", "Robert", "111", true);
         FileControler.BooksList.add(b);
 
         LocalDate d1 = LocalDate.now().minusDays(3);
         LocalDate d2 = LocalDate.now().minusDays(10);
 
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.createDirectories(loansPath.getParent());
+
+        // format: username,isbn,title,startDate,dueDate,status,fee
         String content =
-                "111,Clean Code," + d1 + ",user1\n" +
-                        "333,Missing Book," + d2 + ",user1\n" +
-                        "111,Clean Code," + d1 + ",otherUser\n";
-        Files.writeString(borrowedPath, content);
+                "user1,111,Clean Code," + d1 + "," + d1.plusDays(28) + ",BORROWED,0.0\n" +
+                        "user1,333,Missing Book," + d2 + "," + d2.plusDays(28) + ",BORROWED,0.0\n" +
+                        "otherUser,111,Clean Code," + d1 + "," + d1.plusDays(28) + ",BORROWED,0.0\n";
+
+        Files.writeString(
+                loansPath,
+                content,
+                StandardCharsets.UTF_8,
+                StandardOpenOption.CREATE,
+                StandardOpenOption.TRUNCATE_EXISTING
+        );
 
         User user = new User("F", "L", "user1", "u@mail.com", "p");
+
+        // act
         List<Loan> loans = FileControler.loadLoansForUser(user);
 
+        // عندنا فقط سطرين لـ user1
         assertEquals(2, loans.size());
 
-        // الأول يستخدم Book من BooksList
+        // الأول: من BooksList (نكتفي بالتأكد من العنوان والتاريخ)
         Loan l1 = loans.get(0);
         assertEquals("Clean Code", l1.getItem().getTitle());
         assertEquals(d1, l1.getBorrowDate());
 
-        // الثاني كتاب جديد من الملف
+        // الثاني: كتاب مش موجود في BooksList، ينشأ من الملف
         Loan l2 = loans.get(1);
         assertEquals("Missing Book", l2.getItem().getTitle());
         assertEquals(d2, l2.getBorrowDate());
     }
+
 
     // ---------------------------------------------------------
     // Librarian: getLibrarian + fillLibrariansDataAsync
@@ -583,4 +612,372 @@ class FileControlerTest {
                 "111,B1," + LocalDate.now() + ",otherUser\n");
         assertFalse(FileControler.userHasActiveLoansOrFines(u));
     }
+
+    @Test
+    void addFine_And_getTotalFineForUser_WorksCorrectly() throws Exception {
+        Path pricesPath = Paths.get(FileControler.PRICES_PATH);
+        Files.deleteIfExists(pricesPath);
+
+        // نضيف غرامتين لنفس اليوزر وواحدة ليوزر آخر
+        FileControler.addFine("user1", "111", 10.0);
+        FileControler.addFine("user1", "222", 5.5);
+        FileControler.addFine("other", "333", 7.0);
+
+        double totalUser1 = FileControler.getTotalFineForUser("user1");
+        double totalOther = FileControler.getTotalFineForUser("other");
+        double totalNone  = FileControler.getTotalFineForUser("nope");
+
+        assertEquals(15.5, totalUser1, 0.0001);
+        assertEquals(7.0,  totalOther, 0.0001);
+        assertEquals(0.0,  totalNone,  0.0001);
+
+        assertTrue(FileControler.hasOutstandingFine("user1"));
+        assertFalse(FileControler.hasOutstandingFine("nope"));
+    }
+
+    @Test
+    void clearFineForUserAndBook_RemovesOnlyMatchingFine() throws Exception {
+        Path pricesPath = Paths.get(FileControler.PRICES_PATH);
+        Files.deleteIfExists(pricesPath);
+
+        String content =
+                "user1,111,10.0\n" +
+                        "user1,222,5.0\n" +
+                        "user2,111,7.0\n";
+        Files.writeString(pricesPath, content);
+
+        FileControler.clearFineForUserAndBook("user1", "111");
+
+        List<String> lines = Files.readAllLines(pricesPath);
+        assertEquals(2, lines.size());
+        assertTrue(lines.contains("user1,222,5.0"));
+        assertTrue(lines.contains("user2,111,7.0"));
+    }
+
+    @Test
+    void logMail_AppendsMailRecordToFile() throws Exception {
+        Path mailsPath = Paths.get(FileControler.MAILS_PATH);
+        Files.deleteIfExists(mailsPath);
+
+        FileControler.logMail("user1", "u1@mail.com", "Test Subject");
+
+        assertTrue(Files.exists(mailsPath));
+        List<String> lines = Files.readAllLines(mailsPath);
+        assertEquals(1, lines.size());
+
+        String[] p = lines.get(0).split(",");
+        assertEquals("user1",      p[0].trim());
+        assertEquals("u1@mail.com",p[1].trim());
+        assertEquals("Test Subject", p[2].trim());
+        // p[3] = timestamp → بس نتأكد إنه موجود
+        assertTrue(p[3].trim().length() > 0);
+    }
+
+    @Test
+    void appendLoanRecord_And_loadLoansFromFile_CreateAndReadLoanRecords() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now();
+        LocalDate due   = start.plusDays(28);
+
+        FileControler.appendLoanRecord("user1", "111", "Clean Code", start, due);
+
+        List<FileControler.LoanRecord> records = FileControler.loadLoansFromFile();
+        assertEquals(1, records.size());
+
+        FileControler.LoanRecord r = records.get(0);
+        assertEquals("user1",      r.username);
+        assertEquals("111",        r.isbn);
+        assertEquals("Clean Code", r.title);
+        assertEquals(start,        r.startDate);
+        assertEquals(due,          r.dueDate);
+        assertEquals("BORROWED",   r.status);
+        assertEquals(0.0,          r.fee, 0.0001);
+    }
+
+    @Test
+    void updateLoanStatus_ChangesStatusAndFee_WhenLoanMatches() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now().minusDays(5);
+        LocalDate due   = start.plusDays(28);
+
+        // نضيف ريكورد واحد
+        FileControler.LoanRecord rec =
+                new FileControler.LoanRecord("user1", "111", "Clean Code", start, due, "BORROWED", 0.0);
+        List<FileControler.LoanRecord> list = new ArrayList<>();
+        list.add(rec);
+        FileControler.saveLoansToFile(list);
+
+        boolean updated = FileControler.updateLoanStatus("user1", "111", start, "OVERDUE", 15.0);
+        assertTrue(updated);
+
+        List<FileControler.LoanRecord> after = FileControler.loadLoansFromFile();
+        assertEquals(1, after.size());
+        FileControler.LoanRecord r = after.get(0);
+        assertEquals("OVERDUE", r.status);
+        assertEquals(15.0,      r.fee, 0.0001);
+    }
+
+    @Test
+    void updateLoanStatus_ReturnsFalse_WhenNoMatchingLoan() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now().minusDays(5);
+        LocalDate due   = start.plusDays(28);
+
+        FileControler.LoanRecord rec =
+                new FileControler.LoanRecord("user1", "111", "Clean Code", start, due, "BORROWED", 0.0);
+        FileControler.saveLoansToFile(List.of(rec));
+
+        boolean updated = FileControler.updateLoanStatus("user1", "222", start, "RETURNED", 0.0);
+        assertFalse(updated);
+    }
+
+    @Test
+    void markLoanReturnedInFile_UpdatesStatusToReturned() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now().minusDays(2);
+        LocalDate due   = start.plusDays(28);
+
+        FileControler.LoanRecord rec =
+                new FileControler.LoanRecord("user1", "111", "Clean Code", start, due, "BORROWED", 0.0);
+        FileControler.saveLoansToFile(List.of(rec));
+
+        boolean ok = FileControler.markLoanReturnedInFile("user1", "111", start.toString(), due.toString());
+        assertTrue(ok);
+
+        List<FileControler.LoanRecord> list = FileControler.loadLoansFromFile();
+        assertEquals(1, list.size());
+        assertEquals("RETURNED", list.get(0).status);
+    }
+
+    @Test
+    void markLoanOverdueInFile_UpdatesStatusToOverdueAndFee() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now().minusDays(40);
+        LocalDate due   = start.plusDays(28);
+
+        FileControler.LoanRecord rec =
+                new FileControler.LoanRecord("user1", "111", "Clean Code", start, due, "BORROWED", 0.0);
+        FileControler.saveLoansToFile(List.of(rec));
+
+        boolean ok = FileControler.markLoanOverdueInFile("user1", "Clean Code", start.toString(), 20.0);
+        assertTrue(ok);
+
+        List<FileControler.LoanRecord> list = FileControler.loadLoansFromFile();
+        assertEquals(1, list.size());
+        FileControler.LoanRecord r = list.get(0);
+        assertEquals("OVERDUE", r.status);
+        assertEquals(20.0,      r.fee, 0.0001);
+    }
+
+    @Test
+    void loadAllLoansRows_ReadsRowsFromLoanFile() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        String content =
+                "user1,111,Clean Code,2025-01-01,2025-01-29,BORROWED,0.0\n" +
+                        "user2,222,Refactoring,2025-01-02,2025-01-30,OVERDUE,10.0\n";
+        Files.writeString(loansPath, content, StandardCharsets.UTF_8);
+
+        List<GAdminControl.LoanRow> rows = FileControler.loadAllLoansRows();
+        assertEquals(2, rows.size());
+
+        assertEquals("user1", rows.get(0).getUser());
+        assertEquals("Clean Code", rows.get(0).getBook());
+        assertEquals("borrowed", rows.get(0).getStatus().toLowerCase());
+    }
+
+    @Test
+    void searchLoansRows_FiltersByUserBookOrStatus() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        String content =
+                "user1,111,Clean Code,2025-01-01,2025-01-29,BORROWED,0.0\n" +
+                        "user2,222,Refactoring,2025-01-02,2025-01-30,OVERDUE,10.0\n";
+        Files.writeString(loansPath, content, StandardCharsets.UTF_8);
+
+        List<GAdminControl.LoanRow> byUser = FileControler.searchLoansRows("user2");
+        assertEquals(1, byUser.size());
+        assertEquals("user2", byUser.get(0).getUser());
+
+        List<GAdminControl.LoanRow> byBook = FileControler.searchLoansRows("clean");
+        assertEquals(1, byBook.size());
+        assertEquals("Clean Code", byBook.get(0).getBook());
+
+        List<GAdminControl.LoanRow> byStatus = FileControler.searchLoansRows("overdue");
+        assertEquals(1, byStatus.size());
+        assertEquals("Refactoring", byStatus.get(0).getBook());
+    }
+
+    @Test
+    void autoUpdateOverdueLoans_SetsStatusOverdueOrBorrowedCorrectly() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate today = LocalDate.now();
+
+        FileControler.LoanRecord r1 =
+                new FileControler.LoanRecord(
+                        "user1","111","Old Book",
+                        today.minusDays(40),
+                        today.minusDays(5),   // due قبل 5 أيام → متأخر
+                        "BORROWED",0.0);
+
+        FileControler.LoanRecord r2 =
+                new FileControler.LoanRecord(
+                        "user2","222","New Book",
+                        today.minusDays(3),
+                        today.plusDays(10),   // لسه بدري → BORROWED
+                        "BORROWED",0.0);
+
+        FileControler.saveLoansToFile(List.of(r1, r2));
+
+        FileControler.autoUpdateOverdueLoans();
+
+        List<FileControler.LoanRecord> after = FileControler.loadLoansFromFile();
+        assertEquals(2, after.size());
+
+        FileControler.LoanRecord a1 = after.get(0);
+        FileControler.LoanRecord a2 = after.get(1);
+
+        assertEquals("OVERDUE", a1.status);
+        assertTrue(a1.fee > 0.0);
+
+        assertEquals("BORROWED", a2.status);
+    }
+
+    @Test
+    void hasOverdueCDs_ReturnsTrue_WhenUserHasOverdueCDLoan() throws Exception {
+        // نحضّر Loan.txt مباشرة
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now().minusDays(10);
+        LocalDate due   = start.plusDays(7); // انتهى قبل 3 أيام
+
+        String line = String.join(",",
+                "user1",
+                "CD-001",
+                "Some CD",
+                start.toString(),
+                due.toString(),
+                "BORROWED",
+                "0.0"
+        );
+        Files.writeString(loansPath, line + System.lineSeparator(), StandardCharsets.UTF_8);
+
+        // BooksList فيها Book يمثل CD
+        Book cd = new Book("Some CD", "Artist", "CD-001", true);
+        cd.setMediaType("CD");
+        FileControler.BooksList.add(cd);
+
+        User u = new User("F","L","user1","e","p");
+
+        assertTrue(FileControler.hasOverdueCDs(u));
+    }
+
+    @Test
+    void hasOverdueCDs_ReturnsFalse_WhenNoCDOrNotOverdue() throws Exception {
+        Path loansPath = Paths.get(FileControler.LOANS_PATH);
+        Files.deleteIfExists(loansPath);
+
+        LocalDate start = LocalDate.now().minusDays(2);
+        LocalDate due   = start.plusDays(7); // لسه مش متأخر
+
+        String line = String.join(",",
+                "user1",
+                "111",
+                "Clean Code",
+                start.toString(),
+                due.toString(),
+                "BORROWED",
+                "0.0"
+        );
+        Files.writeString(loansPath, line + System.lineSeparator(), StandardCharsets.UTF_8);
+
+        // Book مش CD
+        Book b = new Book("Clean Code", "Robert", "111", true);
+        b.setMediaType("BOOK");
+        FileControler.BooksList.add(b);
+
+        User u = new User("F","L","user1","e","p");
+
+        assertFalse(FileControler.hasOverdueCDs(u));
+    }
+
+    @Test
+    void addRenewRequest_Then_HasAndClearRenewRequest_Works() throws Exception {
+        Path renewPath = Paths.get(FileControler.RENEW_REQUESTS_PATH);
+        Files.deleteIfExists(renewPath);
+
+        User u = new User("F","L","user1","e","p");
+        Book b = new Book("Clean Code","Robert","111", true);
+        LocalDate borrowDate = LocalDate.now().minusDays(10);
+
+        // نفترض إن Loan عندك فيه constructor (Media, User, LocalDate, int periodDays)
+        Loan loan = new Loan(b, u, borrowDate, 28);
+
+        FileControler.addRenewRequest(u, loan);
+
+        assertTrue(Files.exists(renewPath));
+        assertTrue(FileControler.hasRenewRequest("user1","111", borrowDate));
+
+        FileControler.clearRenewRequest("user1","111", borrowDate);
+
+        assertFalse(FileControler.hasRenewRequest("user1","111", borrowDate));
+    }
+
+    @Test
+    void updateUserInFile_UpdatesMatchingUserLine() throws Exception {
+        Path usersPathLocal = Paths.get(FileControler.USERS_PATH);
+        Files.deleteIfExists(usersPathLocal);
+
+        String content =
+                "F1,L1,u1,u1@mail.com,p1,B1;B2,false\n" +
+                        "F2,L2,u2,u2@mail.com,p2,,true\n";
+        Files.writeString(usersPathLocal, content, StandardCharsets.UTF_8);
+
+        User updated = new User("NewF","NewL","u1","new@mail.com","newPass", new String[]{"X"});
+        updated.setAdmin(true);
+
+        boolean ok = FileControler.updateUserInFile(updated);
+        assertTrue(ok);
+
+        List<String> lines = Files.readAllLines(usersPathLocal);
+        assertEquals(2, lines.size());
+        assertEquals("NewF,NewL,u1,new@mail.com,newPass,X,true", lines.get(0));
+    }
+
+    @Test
+    void updateLibrarianInFile_UpdatesMatchingLibrarianLine() throws Exception {
+        Path libsPath = Paths.get(FileControler.LIBRARIANS_PATH);
+        Files.deleteIfExists(libsPath);
+
+        String content =
+                "F1,L1,lib1,l1@mail.com,p1\n" +
+                        "F2,L2,lib2,l2@mail.com,p2\n";
+        Files.writeString(libsPath, content, StandardCharsets.UTF_8);
+
+        User upd = new User("NF","NL","lib2","new@mail.com","newPass", new String[0]);
+
+        boolean ok = FileControler.updateLibrarianInFile(upd);
+        assertTrue(ok);
+
+        List<String> lines = Files.readAllLines(libsPath);
+        assertEquals(2, lines.size());
+        assertEquals("NF,NL,lib2,new@mail.com,newPass", lines.get(1));
+    }
+
+
 }

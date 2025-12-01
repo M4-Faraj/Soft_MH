@@ -26,17 +26,13 @@ import java.util.Optional;
 public class GAdminControl {
 
     // ========= CONSTANTS =========
-    private static final String LOAN_FILE = "src/main/InfoBase/Loan.txt";
 
     // ========= TOP BAR =========
     @FXML private Label lblAdminName;
-    @FXML private Button btnLogoutAdmin;
 
     // ========= RIGHT SIDE =========
-    @FXML private ImageView imgSideAdmin;
 
     // ========= TABS ROOT =========
-    @FXML private TabPane tabPaneAdmin;
     @FXML private ComboBox<String> cmbBookCategory;
     @FXML private ComboBox<String> cmbMediaType;   // جديد
 
@@ -46,10 +42,6 @@ public class GAdminControl {
     @FXML private Label lblBorrowedCount;
     @FXML private Label lblOverdueCountAdmin;
 
-    @FXML private TableView<ActivityRow> tblRecentActivity;
-    @FXML private TableColumn<ActivityRow, String> colActTime;
-    @FXML private TableColumn<ActivityRow, String> colActUser;
-    @FXML private TableColumn<ActivityRow, String> colActAction;
 
     // ========= MANAGE BOOKS TAB =========
     @FXML private TextField txtBookId;
@@ -59,11 +51,7 @@ public class GAdminControl {
     @FXML private TextField txtBookQuantity;
     @FXML private TextArea txtBookDescription;
 
-    @FXML private Button btnClearBookForm;
-    @FXML private Button btnAddBook;
-    @FXML private Button btnUpdateBook;
-    @FXML private Button btnSearchBook;
-    @FXML private Button btnDeleteBook;
+
 
     @FXML private TableView<Book> tblAdminBooks;
     @FXML private TableColumn<Book, String> colAdminBookId;
@@ -83,10 +71,6 @@ public class GAdminControl {
     @FXML private TextField txtUserPhone;
     @FXML private ComboBox<String> cmbUserStatus;
 
-    @FXML private Button btnClearUserForm;
-    @FXML private Button btnAddUser;
-    @FXML private Button btnUpdateUser;
-    @FXML private Button btnDeleteUser;
 
     @FXML private TableView<User> tblAdminUsers;
     @FXML private TableColumn<User, String> colAdminUserId;
@@ -107,21 +91,11 @@ public class GAdminControl {
     @FXML private TableColumn<LoanRow, String> colLoanStartAdmin;
     @FXML private TableColumn<LoanRow, String> colLoanDueAdmin;
     @FXML private TableColumn<LoanRow, String> colLoanStatusAdmin;
-    @FXML private Button btnMarkReturned;
-    @FXML private Button btnMarkOverdue;
-    @FXML private Button btnSendReminder;   // نستعمله لإرسال الإيميل
 
     // ========= REPORTS TAB =========
-    @FXML private DatePicker dpReportFrom;
-    @FXML private DatePicker dpReportTo;
+
     @FXML private ComboBox<String> cmbReportType;
     private final ObservableList<LoanRow> loansData = FXCollections.observableArrayList();
-    @FXML private Button btnGenerateReport;
-    @FXML private Button btnExportReport;
-    @FXML private TableView<ReportRow> tblReportPreview;
-    @FXML private TableColumn<ReportRow, String> colReportCol1;
-    @FXML private TableColumn<ReportRow, String> colReportCol2;
-    @FXML private TableColumn<ReportRow, String> colReportCol3;
 
     // ========= DATA HOLDERS =========
     private final ObservableList<LoanRow> adminLoans = FXCollections.observableArrayList();
@@ -819,69 +793,7 @@ public class GAdminControl {
     }
 
     // تعديل Loan.txt داخلياً
-    private boolean markLoanReturnedInFile(String username,
-                                           String bookDisplay,
-                                           String startDateStr,
-                                           String dueDateStr) {
-        try {
-            // نشتغل على Borrowed_Books.txt
-            java.nio.file.Path path = java.nio.file.Paths.get(FileControler.BORROWED_PATH);
 
-            if (!java.nio.file.Files.exists(path)) {
-                return false;
-            }
-
-            java.util.List<String> lines =
-                    java.nio.file.Files.readAllLines(path);
-
-            java.util.List<String> updated = new java.util.ArrayList<>();
-            boolean removed = false;
-
-            // bookDisplay عندنا بالشكل: "Title (ISBN)"
-            String isbn = extractIsbnFromBookDisplay(bookDisplay);
-
-            for (String line : lines) {
-                if (line.trim().isEmpty()) continue;
-
-                // format: ISBN,Title,BorrowDate,User
-                String[] p = line.split(",");
-                if (p.length < 4) {
-                    updated.add(line);
-                    continue;
-                }
-
-                String fileIsbn   = p[0].trim();
-                String fileTitle  = p[1].trim();
-                String fileBorrow = p[2].trim();
-                String fileUser   = p[3].trim();
-
-                // نطابق على user + isbn + تاريخ الاستعارة
-                if (fileUser.equals(username)
-                        && fileIsbn.equals(isbn)
-                        && fileBorrow.equals(startDateStr)) {
-                    // يعني رجّعنا هذا الـ loan → ما نضيفه للـ updated
-                    removed = true;
-                    continue;
-                }
-
-                updated.add(line);
-            }
-
-            if (removed) {
-                java.nio.file.Files.write(
-                        path,
-                        updated,
-                        java.nio.file.StandardOpenOption.TRUNCATE_EXISTING,
-                        java.nio.file.StandardOpenOption.CREATE
-                );
-            }
-
-            return removed;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
     // تعديل Borrowed_Books.txt داخلياً (ملف القروض الجارية)
     private boolean markReturnedInBorrowedFile(String username,
                                                String bookDisplay,
@@ -1053,21 +965,6 @@ public class GAdminControl {
 
     // ========= HELPER CLASSES =========
 
-    public static class ActivityRow {
-        private final String time;
-        private final String user;
-        private final String action;
-
-        public ActivityRow(String time, String user, String action) {
-            this.time = time;
-            this.user = user;
-            this.action = action;
-        }
-
-        public String getTime() { return time; }
-        public String getUser() { return user; }
-        public String getAction() { return action; }
-    }
 
     public static class LoanRow {
         private String id;
@@ -1099,21 +996,6 @@ public class GAdminControl {
         }
     }
 
-    public static class ReportRow {
-        private final String col1;
-        private final String col2;
-        private final String col3;
-
-        public ReportRow(String c1, String c2, String c3) {
-            this.col1 = c1;
-            this.col2 = c2;
-            this.col3 = c3;
-        }
-
-        public String getCol1() { return col1; }
-        public String getCol2() { return col2; }
-        public String getCol3() { return col3; }
-    }
 
     // ========= UTILS =========
 

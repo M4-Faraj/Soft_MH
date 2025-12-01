@@ -540,13 +540,6 @@ public class FileControler {
         return books;
     }
 
-
-    public static void fillLoanedAsync(ArrayList<Book> books,String Name){
-
-    }
-    public static void fillLoanedAsync(ArrayList<Book> books){
-
-    }
     public static void fillBooksDataAsync() {
         Thread t = new Thread(FileControler::fillBooksDataSync);
         t.setDaemon(true);

@@ -137,11 +137,12 @@ class AdminControlTest {
 
     @Test
     void testAddBook_WritesCorrectlyToFile() throws Exception {
-        // تأكد إن الملف فاضي
+        // تأكد إن الملف موجود وفاضي
         Files.writeString(
                 booksPath,
                 "",
                 java.nio.charset.StandardCharsets.UTF_8,
+                java.nio.file.StandardOpenOption.CREATE,
                 java.nio.file.StandardOpenOption.TRUNCATE_EXISTING
         );
 
@@ -152,6 +153,7 @@ class AdminControlTest {
         Thread.sleep(200);
 
         String content = Files.readString(booksPath).trim();
-        assertEquals("Harry Potter,J.K. Rowling,123,false", content);
+        assertEquals("Harry Potter,J.K. Rowling,123,false,BOOK,Other", content);
     }
+
 }
