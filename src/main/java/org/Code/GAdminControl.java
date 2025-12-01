@@ -678,7 +678,18 @@ public class GAdminControl {
 
             LocalDate dueDate = startDate.plusDays(28);
             long days = ChronoUnit.DAYS.between(startDate, today);
-            String status = (days > 28) ? "Overdue" : "Borrowed";
+
+// 👇 أولاً: نسأل FileControler إذا في طلب تجديد لهالقرض
+            boolean hasRenewReq = FileControler.hasRenewRequest(username, isbn, startDate);
+
+            String status;
+            if (hasRenewReq) {
+                status = "Waiting";              // طلب تجديد قيد المراجعة
+            } else if (days > 28) {
+                status = "Overdue";
+            } else {
+                status = "Borrowed";
+            }
 
             // فلترة لو في filter
             boolean matches = true;
@@ -739,24 +750,52 @@ public class GAdminControl {
             if (res.isEmpty() || res.get() != ButtonType.OK)
                 return;
 
-            // --- Update file ---
-            boolean ok = markLoanReturnedInFile(
+            // ---------- 1) حزف من Borrowed_Books.txt ----------
+            boolean okBorrowed = markReturnedInBorrowedFile(
                     selected.getUser(),
                     selected.getBook(),
-                    selected.getStart(),
-                    selected.getDue()
+                    selected.getStart()
             );
 
-            if (!ok) {
-                showAlert("Error", "Failed to mark loan as returned in file.");
+            if (!okBorrowed) {
+                showAlert("Error",
+                        "Failed to remove this loan from Borrowed_Books.txt.");
                 return;
             }
 
-            // --- Update table row ---
+            // ---------- 2) تحديث Loan.txt (التاريخ / الهستوري) ----------
+            // نستخرج الـ ISBN النظيف من نص مثل: "Title (1234)"
+            String isbn = extractIsbnFromBookDisplay(selected.getBook());
+
+            boolean okLoan = FileControler.markLoanReturnedInFile(
+                    selected.getUser(),
+                    isbn,                     // نمرّر الـ ISBN أو الـ Title
+                    selected.getStart(),
+                    selected.getDue()
+            );
+// 🔥 امسح أي طلب تجديد مرتبط بنفس القرض
+            try {
+                LocalDate startDate = LocalDate.parse(selected.getStart());
+                FileControler.clearRenewRequest(
+                        selected.getUser(),
+                        isbn,
+                        startDate
+                );
+            } catch (Exception ex) {
+                System.out.println("Failed to clear renew request: " + ex.getMessage());
+            }
+
+            if (!okLoan) {
+                // مش لازم نرجّع؛ بس نبلغ الأدمن إنه الهستوري ما انعكس
+                showAlert("Warning",
+                        "Current loan removed, but Loan.txt (history) was not fully updated.");
+            }
+
+            // ---------- 3) تحديث الجدول في الواجهة ----------
             selected.setStatus("Returned");
             tblAdminLoans.refresh();
 
-            // --- Sync ALL book statuses from Borrowed_Books.txt ---
+            // ---------- 4) مزامنة حالات الكتب في Books.txt ----------
             FileControler.syncBorrowedStatusOnce();
 
             showAlert("Info", "Loan marked as returned and system synced.");
@@ -766,6 +805,7 @@ public class GAdminControl {
             showAlert("Error", "Unexpected error while marking returned.");
         }
     }
+
 
     private String extractIsbnFromBookDisplay(String bookDisplay) {
         // متوقّع "Title (ISBN)"
@@ -817,6 +857,70 @@ public class GAdminControl {
 
                 // نطابق على user + isbn + تاريخ الاستعارة
                 if (fileUser.equals(username)
+                        && fileIsbn.equals(isbn)
+                        && fileBorrow.equals(startDateStr)) {
+                    // يعني رجّعنا هذا الـ loan → ما نضيفه للـ updated
+                    removed = true;
+                    continue;
+                }
+
+                updated.add(line);
+            }
+
+            if (removed) {
+                java.nio.file.Files.write(
+                        path,
+                        updated,
+                        java.nio.file.StandardOpenOption.TRUNCATE_EXISTING,
+                        java.nio.file.StandardOpenOption.CREATE
+                );
+            }
+
+            return removed;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    // تعديل Borrowed_Books.txt داخلياً (ملف القروض الجارية)
+    private boolean markReturnedInBorrowedFile(String username,
+                                               String bookDisplay,
+                                               String startDateStr) {
+        try {
+            // نشتغل على Borrowed_Books.txt
+            java.nio.file.Path path = java.nio.file.Paths.get(FileControler.BORROWED_PATH);
+
+            if (!java.nio.file.Files.exists(path)) {
+                return false;
+            }
+
+            java.util.List<String> lines =
+                    java.nio.file.Files.readAllLines(path);
+
+            java.util.List<String> updated = new java.util.ArrayList<>();
+            boolean removed = false;
+
+            // bookDisplay بالشكل: "Title (ISBN)"
+            String isbn = extractIsbnFromBookDisplay(bookDisplay);
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                // format: ISBN,Title,BorrowDate,User[,Type]
+                String[] p = line.split(",");
+                if (p.length < 4) {
+                    updated.add(line);
+                    continue;
+                }
+
+                String fileIsbn   = p[0].trim();
+                String fileTitle  = p[1].trim();
+                String fileBorrow = p[2].trim();
+                String fileUser   = p[3].trim();
+
+                // نطابق على user + isbn + تاريخ الاستعارة
+                if (!removed
+                        && fileUser.equals(username)
                         && fileIsbn.equals(isbn)
                         && fileBorrow.equals(startDateStr)) {
                     // يعني رجّعنا هذا الـ loan → ما نضيفه للـ updated

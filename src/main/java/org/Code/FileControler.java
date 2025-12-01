@@ -1571,4 +1571,96 @@ public class FileControler {
         }
     }
 
+    public static boolean hasRenewRequest(String username,
+                                          String isbn,
+                                          LocalDate borrowDate) {
+        Path path = Paths.get(RENEW_REQUESTS_PATH);
+        if (!Files.exists(path)) return false;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                // format: username,isbn,title,borrowDate,dueDate
+                String[] p = line.split(",");
+                if (p.length < 5) continue;
+
+                String u    = p[0].trim();
+                String fIsbn= p[1].trim();
+                String fBorrowStr = p[3].trim();
+
+                LocalDate fBorrow;
+                try {
+                    fBorrow = LocalDate.parse(fBorrowStr);
+                } catch (Exception e) {
+                    continue;
+                }
+
+                if (u.equals(username)
+                        && fIsbn.equals(isbn)
+                        && fBorrow.equals(borrowDate)) {
+                    return true;    // في طلب تجديد لهذا القرض
+                }
+            }
+        } catch (IOException e) {
+            System.out.println("Error in hasRenewRequest: " + e.getMessage());
+        }
+
+        return false;
+    }
+
+    public static void clearRenewRequest(String username,
+                                         String isbn,
+                                         LocalDate borrowDate) {
+        Path path = Paths.get(RENEW_REQUESTS_PATH);
+        if (!Files.exists(path)) return;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            List<String> keep  = new ArrayList<>();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) continue;
+
+                String[] p = line.split(",");
+                if (p.length < 5) {
+                    keep.add(line);
+                    continue;
+                }
+
+                String u    = p[0].trim();
+                String fIsbn= p[1].trim();
+                String fBorrowStr = p[3].trim();
+
+                LocalDate fBorrow;
+                try {
+                    fBorrow = LocalDate.parse(fBorrowStr);
+                } catch (Exception e) {
+                    keep.add(line);
+                    continue;
+                }
+
+                // إذا نفس القرض → ما نضيفه (نمسحه)
+                if (u.equals(username)
+                        && fIsbn.equals(isbn)
+                        && fBorrow.equals(borrowDate)) {
+                    continue;
+                }
+
+                keep.add(line);
+            }
+
+            Files.write(path, keep,
+                    StandardCharsets.UTF_8,
+                    StandardOpenOption.CREATE,
+                    StandardOpenOption.TRUNCATE_EXISTING);
+
+        } catch (IOException e) {
+            System.out.println("Error in clearRenewRequest: " + e.getMessage());
+        }
+    }
+
+
+
 }
