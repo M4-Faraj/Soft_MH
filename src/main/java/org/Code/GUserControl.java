@@ -116,8 +116,8 @@ public class GUserControl extends Application {
     // ================== start(): LOAD FXML ==================
     @Override
     public void start(Stage primaryStage) throws Exception {
+        FileControler.startBackgroundSync();
 
-        // خليك متأكد إن المسار صح حسب الباكيج عندك
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/Code/user_view.fxml"));
         Parent root = loader.load();
 
@@ -126,6 +126,7 @@ public class GUserControl extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+
     }
 
     // ================== initialize(): CALLED AFTER FXML LOAD ==================
@@ -172,8 +173,15 @@ public class GUserControl extends Application {
         }
         // حالياً ما في category / year في Book
         if (colCategory != null) {
-            colCategory.setCellValueFactory(data -> new SimpleStringProperty(""));
+            colCategory.setCellValueFactory(data ->
+                    new SimpleStringProperty(
+                            (data.getValue().getMediaType() == null || data.getValue().getMediaType().isEmpty())
+                                    ? "BOOK"
+                                    : data.getValue().getMediaType()
+                    )
+            );
         }
+
         if (colYear != null) {
             colYear.setCellValueFactory(data -> new SimpleStringProperty(""));
         }
@@ -214,11 +222,27 @@ public class GUserControl extends Application {
                 colLoanDue.setCellValueFactory(data ->
                         new SimpleStringProperty(data.getValue().getDueDate().toString()));
             }
+
             if (colLoanStatus != null) {
-                colLoanStatus.setCellValueFactory(data ->
-                        new SimpleStringProperty(data.getValue().isReturned() ? "Returned" : "Borrowed"));
+                colLoanStatus.setCellValueFactory(data -> {
+                    Loan loan = data.getValue();
+                    String status;
+
+                    if (loan.isReturned()) {
+                        status = "Returned";
+                    } else if (loan.isRenewalRequested()) {
+                        status = "Waiting";          // 👈 طلب التجديد مبعوث للإدمن
+                    } else if (loan.isOverdue()) {
+                        status = "Overdue";
+                    } else {
+                        status = "Borrowed";
+                    }
+
+                    return new SimpleStringProperty(status);
+                });
             }
-        }
+
+            tblLoans.setItems(loansObservable);}
 
         // أزرار
         if (btnBorrow != null)  btnBorrow.setOnAction(this::onBorrow);
@@ -238,8 +262,19 @@ public class GUserControl extends Application {
     // ================== BORROW LOGIC ==================
     @FXML
     private void onBorrow(ActionEvent event) {
-        // 0) Check if user has overdue books
-        if (FileControler.hasOverdueBooks(currentUser.getUsername())) {
+        // 0) Check if user has overdue CD loans
+        if (currentUser != null && FileControler.hasOverdueCDs(currentUser)) {
+            showAlert(
+                    "Borrowing blocked",
+                    "You cannot borrow new items because you have overdue CD loans.\n" +
+                            "Please return your overdue CDs first.",
+                    Alert.AlertType.WARNING
+            );
+            return;
+        }
+
+        // لو حابب تظل محتفظ بفحص الكتب المتأخرة كمان:
+        if (currentUser != null && FileControler.hasOverdueBooks(currentUser.getUsername())) {
             showAlert(
                     "Borrowing blocked",
                     "You cannot borrow a new book because you have overdue books.\n" +
@@ -257,10 +292,10 @@ public class GUserControl extends Application {
             return;
         }
 
-        // 2) تأكد إن الكتاب مش مستعار أصلاً
+        // 2) تأكد إن الكتاب/CD مش مستعار أصلاً
         if (selected.isBorrowed()) {
             showAlert("Already borrowed",
-                    "This book is already borrowed. Please choose another copy or another book.",
+                    "This item is already borrowed. Please choose another copy or another item.",
                     Alert.AlertType.INFORMATION);
             return;
         }
@@ -274,13 +309,16 @@ public class GUserControl extends Application {
         }
 
         // 4) نادِ منطق البورّو في FileControler
-        // رح يكتب في Borrowed_Books.txt ويعدّل Books.txt
         try {
-            FileControler.addBorrowedBook(
-                    selected.getISBN(),
-                    selected.getName(),
-                    currentUser.getUsername()   // أو getFirstName()+" "+getLastName()
-            );
+            Book b = selected;
+
+            if ("CD".equalsIgnoreCase(b.getMediaType())) {
+                // 💿 استعارة CD
+                FileControler.addBorrowedCD(b.getISBN(), b.getName(), currentUser.getUsername());
+            } else {
+                // 📚 استعارة كتاب عادي
+                FileControler.addBorrowedBook(b.getISBN(), b.getName(), currentUser.getUsername());
+            }
 
             // حدّث حالة الكتاب في الذاكرة عشان الجدول ينعكس صح
             selected.updateBorrowed(true);
@@ -288,18 +326,16 @@ public class GUserControl extends Application {
         } catch (Exception ex) {
             ex.printStackTrace();
             showAlert("Borrow failed",
-                    "Could not borrow this book. Please try again.",
+                    "Could not borrow this item. Please try again.",
                     Alert.AlertType.ERROR);
             return;
         }
 
         // 5) حدّث جدول الـ loans والـ status في جدول الكتب
         FileControler.syncBorrowedStatusOnce();
-        refreshLoansTable();   // يفترض تعيد تعبئة جدول الكتب المستعارة
-        tblBooks.refresh();    // ريـفرش بصري للـ TableView
+        refreshLoansTable();
+        tblBooks.refresh();
     }
-
-
 
     // ================== SEARCH ==================
     private void handleSearch() {
@@ -434,39 +470,45 @@ public class GUserControl extends Application {
             return;
         }
 
-        // تأكد إنه مش متأخر أصلاً (إلا إذا بدك تسمح بتجديد متأخر، بس حسب كلامك لا)
-        if (selectedLoan.getLoanFee() > 0) {
-            showAlert(
-                    "Cannot renew",
-                    "This loan is already overdue (fee = 10 NIS). Please pay at librarian.",
-                    Alert.AlertType.WARNING
-            );
-            return;
+        // 1) احسب مجموع الغرامات على كل قروض هذا المستخدم
+        double totalFees = 0.0;
+        for (Loan loan : tblLoans.getItems()) {
+            totalFees += loan.getLoanFee();   // 10 NIS بعد 28 يوم حسب منطقك
         }
 
-        // 1) عدّل في الملف
-        boolean ok = FileControler.renewLoan(
-                selectedLoan.getBook().getISBN(),
-                currentUser.getUsername()
+        // 2) JOptionPane علشان الدفع + تأكيد الطلب
+        int choice = javax.swing.JOptionPane.showConfirmDialog(
+                null,
+                "Your total current fines: " + totalFees + " NIS.\n"
+                        + "Do you want to pay and send a renewal request to the admin?",
+                "Renew loans",
+                javax.swing.JOptionPane.YES_NO_OPTION
         );
 
-        if (!ok) {
-            showAlert("Renew failed", "Could not renew this loan in file.", Alert.AlertType.ERROR);
+        if (choice != javax.swing.JOptionPane.YES_OPTION) {
+            // المستخدم رفض أو سكّر الـ dialog
             return;
         }
 
-        // 2) عدّل في الذاكرة (Loan object)
-        selectedLoan.renew();
+        // 3) ما بنعمل تجديد فعلي في الملف الآن
+        //    بس نعلّم القرض إن عليه طلب تجديد → Waiting
+        selectedLoan.setRenewalRequested(true);
 
-        // 3) ريـفرش الجدول
+        // 🔥 جديد: نكتب الطلب في RenewRequests.txt
+        FileControler.addRenewRequest(currentUser, selectedLoan);
+
+        // 4) ريـفرش الجدول علشان يظهر "Waiting"
         tblLoans.refresh();
 
+        // 5) رسالة نجاح للمستخدم
         showAlert(
-                "Renewed",
-                "Loan renewed successfully.\nNew due date: " + selectedLoan.getDueDate(),
+                "Request sent",
+                "Your renewal request has been sent to the admin.\n"
+                        + "Status changed to: Waiting.",
                 Alert.AlertType.INFORMATION
         );
     }
+
 
     private void refreshLoansTable() {
         if (currentUser == null || tblLoans == null) return;
@@ -479,6 +521,10 @@ public class GUserControl extends Application {
         }
     }
 
+
+    public void Refresh(ActionEvent actionEvent) {
+
+    }
 }
 
 

@@ -90,6 +90,7 @@ public class GLibrarianControl extends Application {
     // ========== LOAD FXML ==========
     @Override
     public void start(Stage stage) {
+        FileControler.startBackgroundSync();
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/org/Code/librarian.fxml"));
             Parent root = loader.load();

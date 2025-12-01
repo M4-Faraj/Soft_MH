@@ -46,9 +46,24 @@ public class GLoginController {
         }
 
         try {
+            // ✅ مرة واحدة: شغّل الـ background sync + حمّل الملفات
+            FileControler.startBackgroundSync();
+            FileControler.fillBooksDataAsync();
+            FileControler.fillUsersDataAsync();
+
             // 1) Admin؟
             if (LoginControl.isAdmin(username, password)) {
-                switchScene("Admin.fxml", "Admin Control");
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/Admin.fxml"));
+                Parent root = loader.load();
+
+                GAdminControl adminController = loader.getController();
+                // لو حابب تعطيه اسم الأدمن مثلاً:
+                // adminController.setAdminName(username);
+
+                Stage stage = (Stage) txtUsername.getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.setTitle("Admin Control");
+                stage.centerOnScreen();
                 return;
             }
 
@@ -61,7 +76,7 @@ public class GLoginController {
                 User librarian = LoginControl.getLibrarian(username, password);
 
                 GLibrarianControl controller = loader.getController();
-                controller.setLibrarian(librarian);
+                controller.setLibrarian(librarian); // جوه initialize تبع الليبريريان الجداول تشتغل على FileControler
 
                 Stage stage = (Stage) txtUsername.getScene().getWindow();
                 stage.setScene(new Scene(root));
@@ -88,7 +103,6 @@ public class GLoginController {
                 return;
             }
 
-            // غير هيك → خطأ
             showError("Login failed", "Wrong username or password.");
 
         } catch (IOException e) {

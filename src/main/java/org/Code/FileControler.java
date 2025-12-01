@@ -309,58 +309,45 @@ public class FileControler {
         }
 
         return false; // لا يوجد متأخر
-    }
-
-    public static List<Loan> loadLoansForUser(User user) {
+    }public static List<Loan> loadLoansForUser(User user) {
         List<Loan> result = new ArrayList<>();
+        if (user == null) return result;
 
-        try {
-            List<String> lines = Files.readAllLines(Paths.get(BORROWED_PATH));
+        String username = user.getUsername();
+        if (username == null) return result;
 
-            for (String line : lines) {
-                if (line.trim().isEmpty()) continue;
+        // نقرأ من Loan.txt عن طريق LoanRecord
+        List<LoanRecord> records = loadLoansFromFile();
 
-                // تنسيق: ISBN,Name,Date,User
-                String[] p = line.split(",");
-                if (p.length < 4) continue;
+        for (LoanRecord r : records) {
+            // فلترة على هذا اليوزر فقط
+            if (!r.username.equals(username)) continue;
 
-                String isbn   = p[0].trim();
-                String title  = p[1].trim();
-                String dateStr= p[2].trim();
-                String uName  = p[3].trim();
+            // جيب الـ Book من BooksList
+            Book book = findBookByIsbn(r.isbn);
+            if (book == null) {
+                // لو مش موجود، أنشئ واحد بسيط من البيانات
+                // نعتبر borrowed = true لو status مش RETURNED
+                boolean borrowed = !"RETURNED".equalsIgnoreCase(r.status);
+                book = new Book(r.title, "", r.isbn, borrowed);
 
-                if (!uName.equals(user.getUsername())) {
-                    continue; // هادا مش تبع هذا اليوزر
-                }
-
-                LocalDate borrowDate;
-                try {
-                    borrowDate = LocalDate.parse(dateStr);
-                } catch (Exception e) {
-                    // لو التاريخ خربان، طنّشه
-                    continue;
-                }
-
-                // حاول تجيب الـ Book من BooksList عن طريق الـ ISBN
-                Book book = null;
-                for (Book b : BooksList) {
-                    if (b.getISBN().equals(isbn)) {
-                        book = b;
-                        break;
-                    }
-                }
-
-                if (book == null) {
-                    // لو مش موجود، نعمل Book بسيط من البيانات
-                    book = new Book(title, "", isbn, true);
-                }
-
-               // Loan loan = new Loan(book, user, borrowDate, 28);
-             //   result.add(loan);
+                // لو حابب تحفظه في BooksList:
+                // BooksList.add(book);
             }
 
-        } catch (IOException e) {
-            System.out.println("Error loading loans: " + e.getMessage());
+            // عدد أيام فترة الإعارة = الفرق بين startDate و dueDate
+            int periodDays = (int) ChronoUnit.DAYS.between(r.startDate, r.dueDate);
+
+            Loan loan = new Loan(book, user, r.startDate, periodDays);
+
+            // علم إذا كان راجع
+            if ("RETURNED".equalsIgnoreCase(r.status)) {
+                loan.setReturned(true);
+            }
+
+            // (isOverdue() جوه Loan بيحسب من dueDate, فمش محتاج نخزن status)
+
+            result.add(loan);
         }
 
         return result;
@@ -584,25 +571,23 @@ public class FileControler {
                 if (line.trim().isEmpty()) continue;
 
                 String[] parts = line.split(",");
+
                 if (parts.length >= 4) {
                     String name     = parts[0].trim();
                     String author   = parts[1].trim();
                     String isbn     = parts[2].trim();
                     boolean borrowed = Boolean.parseBoolean(parts[3].trim());
 
-                    String mediaType = "BOOK";
-                    String category  = "Other";
-
+                    String type = "BOOK";
                     if (parts.length >= 5) {
-                        mediaType = parts[4].trim();
-                        if (mediaType.isEmpty()) mediaType = "BOOK";
-                    }
-                    if (parts.length >= 6) {
-                        category = parts[5].trim();
-                        if (category.isEmpty()) category = "Other";
+                        type = parts[4].trim();
+                        if (type.isEmpty()) type = "BOOK";
                     }
 
-                    BooksList.add(new Book(name, author, isbn, borrowed, mediaType, category));
+                    Book b = new Book(name, author, isbn, borrowed);
+                    b.setMediaType(type);
+
+                    BooksList.add(b);
                 } else {
                     System.out.println("Invalid book line: " + line);
                 }
@@ -1446,6 +1431,144 @@ public class FileControler {
             return false;
         }
     }
+    public static boolean hasOverdueCDs(User user) {
+        if (user == null) return false;
 
+        // نستعمل نفس المنطق اللي بيجيب قروض اليوزر
+        List<Loan> loans = loadLoansForUser(user);
+        if (loans == null) return false;
+
+        for (Loan loan : loans) {
+            if (loan == null) continue;
+
+            // لو راجعه خلاص مش محسوب
+            if (loan.isReturned()) continue;
+
+            // لازم يكون متأخر
+            if (!loan.isOverdue()) continue;
+
+            // نحدد إذا هذا الـ loan هو لــ CD
+            Media item = loan.getItem();
+            if (item instanceof CD) {
+                // loan على CD ومتأخر → بلوك
+                return true;
+            }
+
+            // لو الـ Media عندك مخزّن كـ Book بس فيه mediaType = "CD"
+            if (item instanceof Book) {
+                Book b = (Book) item;
+                if ("CD".equalsIgnoreCase(b.getMediaType())) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+    public static final String RENEW_REQUESTS_PATH = "src/main/InfoBase/RenewRequests.txt";
+
+    public static void addRenewRequest(User user, Loan loan) {
+        if (user == null || loan == null || loan.getBook() == null) return;
+
+        String username = user.getUsername();
+        String isbn     = loan.getBook().getISBN();
+        String title    = loan.getBook().getName();
+
+        String line = String.join(",",
+                username,
+                isbn,
+                title,
+                loan.getBorrowDate().toString(),
+                loan.getDueDate().toString()
+        );
+
+        try {
+            java.nio.file.Files.write(
+                    java.nio.file.Paths.get(RENEW_REQUESTS_PATH),
+                    (line + System.lineSeparator()).getBytes(),
+                    java.nio.file.StandardOpenOption.CREATE,
+                    java.nio.file.StandardOpenOption.APPEND
+            );
+        } catch (IOException e) {
+            System.out.println("Failed to write renew request: " + e.getMessage());
+        }
+    }
+
+// ================== BACKGROUND SYNC ==================
+
+    private static volatile boolean backgroundSyncStarted = false;
+
+    public static void startBackgroundSync() {
+        // تأكد إنها تشتغل مرة وحدة بس
+        if (backgroundSyncStarted) return;
+        backgroundSyncStarted = true;
+
+        Thread t = new Thread(() -> {
+            System.out.println("🔁 Background sync thread started.");
+            while (true) {
+                try {
+                    // 1) مزامنة Books.txt مع Borrowed_Books.txt
+                    syncBorrowedStatusOnce();
+
+                    // 2) تحديث حالات القروض في Loan.txt (BORROWED -> OVERDUE لما يتعدى الـ dueDate)
+                    autoUpdateOverdueLoans();
+
+                    // 3) (اختياري) ممكن تضيف منطق تاني هنا لو حابب
+
+                    // كل دقيقة مثلاً
+                    Thread.sleep(60_000);  // 60,000 ms = 1 minute
+
+                } catch (InterruptedException e) {
+                    System.out.println("Background sync thread interrupted, stopping.");
+                    break;
+                } catch (Exception e) {
+                    // ما نخلي ثرود يموت بسبب Exception
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        t.setDaemon(true); // يموت مع البرنامج
+        t.start();
+    }
+    // تحديث تلقائي لحالات القروض حسب التاريخ
+    public static void autoUpdateOverdueLoans() {
+        List<LoanRecord> records = loadLoansFromFile();
+        if (records.isEmpty()) return;
+
+        LocalDate today = LocalDate.now();
+        boolean changed = false;
+
+        for (LoanRecord r : records) {
+            // لو رجع الكتاب خلاص، ما نلعب فيه
+            if ("RETURNED".equalsIgnoreCase(r.status)) continue;
+
+            // لو اليوم بعد موعد الاستحقاق → خليها OVERDUE
+            if (today.isAfter(r.dueDate)) {
+                if (!"OVERDUE".equalsIgnoreCase(r.status)) {
+                    r.status = "OVERDUE";
+                    // لو حابب تحسب غرامة ثابتة أو حسب الأيام:
+                    long daysOver = java.time.temporal.ChronoUnit.DAYS.between(r.dueDate, today);
+                    // مثال: 10 شيكل ثابت، أو 2 شيكل لليوم، حسب مزاجك
+                    r.fee = 10.0; // أو: r.fee = daysOver * 2.0;
+                    changed = true;
+                }
+            } else {
+                // لو لسه قبل أو في نفس اليوم:
+                // نخليها BORROWED لو مش مرتجعة
+                if (!"BORROWED".equalsIgnoreCase(r.status)) {
+                    r.status = "BORROWED";
+                    // ممكن تصفر الغرامة
+                    // r.fee = 0.0;
+                    changed = true;
+                }
+            }
+        }
+
+        if (changed) {
+            saveLoansToFile(records);
+            System.out.println("✅ autoUpdateOverdueLoans: Loan.txt updated.");
+        }
+    }
 
 }

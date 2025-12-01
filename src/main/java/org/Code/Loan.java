@@ -77,6 +77,15 @@ public class Loan {
         long daysOverdue = ChronoUnit.DAYS.between(dueDate, currentDate);
         return Math.max(daysOverdue, 0); // If not overdue, return 0
     }
+    private boolean renewalRequested = false;
+
+    public boolean isRenewalRequested() {
+        return renewalRequested;
+    }
+
+    public void setRenewalRequested(boolean renewalRequested) {
+        this.renewalRequested = renewalRequested;
+    }
 
 
 }

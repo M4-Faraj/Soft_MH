@@ -129,6 +129,7 @@ public class GAdminControl {
     // ========= INITIALIZE =========
     @FXML
     private void initialize() {
+        FileControler.startBackgroundSync();
         System.out.println("Admin controller initialized");
 
         // تأكد إن الملفات اتقرأت بس مرة
@@ -208,13 +209,14 @@ public class GAdminControl {
         colAdminBookAuthor.setCellValueFactory(
                 data -> new SimpleStringProperty(data.getValue().getAuthor())
         );
-        // انت ما عندك category/year/quantity بالـ Book -> نخليهم placeholders
+
+        // 👇 هون نخليها BOOK / CD
         colAdminBookCategory.setCellValueFactory(
-                data -> new SimpleStringProperty(
-                        data.getValue().getMediaType() == null
-                                ? "BOOK"
-                                : data.getValue().getMediaType()
-                )
+                data -> {
+                    String type = data.getValue().getMediaType();
+                    if (type == null || type.isEmpty()) type = "BOOK";
+                    return new SimpleStringProperty(type);
+                }
         );
 
         colAdminBookYear.setCellValueFactory(
@@ -224,7 +226,9 @@ public class GAdminControl {
                 data -> new SimpleStringProperty("1")
         );
         colAdminBookStatus.setCellValueFactory(
-                data -> new SimpleStringProperty(data.getValue().isBorrowed() ? "Borrowed" : "Available")
+                data -> new SimpleStringProperty(
+                        data.getValue().isBorrowed() ? "Borrowed" : "Available"
+                )
         );
 
         tblAdminBooks.setItems(FXCollections.observableArrayList(FileControler.BooksList));
@@ -289,7 +293,7 @@ public class GAdminControl {
 
         if (cmbBookCategory != null) {
             cmbBookCategory.setItems(FXCollections.observableArrayList(
-                    "Programming", "Networking", "Electronics", "Math", "Other"
+                    "BOOK","CD"
             ));
         }
 
@@ -349,8 +353,8 @@ public class GAdminControl {
     }
     @FXML
     private void onAddBook(ActionEvent event) {
-        String id = txtBookId.getText().trim();
-        String title = txtBookTitle.getText().trim();
+        String id     = txtBookId.getText().trim();    // نعتبره ISBN
+        String title  = txtBookTitle.getText().trim();
         String author = txtBookAuthor.getText().trim();
 
         if (id.isEmpty() || title.isEmpty() || author.isEmpty()) {
@@ -358,23 +362,22 @@ public class GAdminControl {
             return;
         }
 
+        // نوع الوسيط: BOOK أو CD (من الكومبو)
         String mediaType = "BOOK";
-        if (cmbMediaType != null && cmbMediaType.getValue() != null) {
-            mediaType = cmbMediaType.getValue().toUpperCase();
-        }
-
-        String category = "Other";
         if (cmbBookCategory != null && cmbBookCategory.getValue() != null) {
-            category = cmbBookCategory.getValue();
+            String v = cmbBookCategory.getValue().trim().toUpperCase();
+            mediaType = v.equals("CD") ? "CD" : "BOOK";
         }
 
+        // ننشئ Book عادي بس حنخزّن جواته نوعه
         Book b = new Book(title, author, id, false);
-        b.setMediaType(mediaType);
-        b.setCategory(category);
+        b.setMediaType(mediaType);   // لازم تكون موجودة في Book.java (getter/setter)
 
+        // أضِفه في الذاكرة + الملف
         FileControler.BooksList.add(b);
         FileControler.addBookAsync(b);
 
+        // أضِفه للجدول
         tblAdminBooks.getItems().add(b);
         lblTotalBooks.setText(String.valueOf(FileControler.BooksList.size()));
 
@@ -586,11 +589,12 @@ public class GAdminControl {
         String last  = parts.length > 1 ? parts[1] : "";
 
         User u = new User(first, last, username, email, "1234", new String[0]); // مبدئياً باسورد ثابت
+
         if (cmbUserRole != null && "Admin".equals(cmbUserRole.getValue())) {
             u.setAdmin(true);
         }
 
-        FileControler.UserList.add(u);
+        FileControler.addUserAsync(u);
         // تقدر تستخدم FileControler.addUser(u) لو ضبطت فورمات الملف
         tblAdminUsers.getItems().add(u);
         lblTotalUsers.setText(String.valueOf(FileControler.UserList.size()));
