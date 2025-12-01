@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/InfoBase/RenewRequests.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Borrowed_Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Borrowed_Books.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Loan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Loan.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GLibrarianControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GLibrarianControl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GLoginController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GLoginController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GUserControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GUserControl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Loan.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Loan.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/resources/User.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/User.fxml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -221,7 +211,7 @@
       <workItem from="1764415474742" duration="13807000" />
       <workItem from="1764523426704" duration="41000" />
       <workItem from="1764583890167" duration="785000" />
-      <workItem from="1764594949279" duration="12993000" />
+      <workItem from="1764594949279" duration="14237000" />
     </task>
     <servers />
   </component>

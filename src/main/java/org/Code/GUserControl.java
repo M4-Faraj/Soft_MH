@@ -140,7 +140,12 @@ public class GUserControl extends Application {
         if (btnRenew != null) {
             btnRenew.setOnAction(e -> onRenew());
         }
-
+        if (btnChangePassword != null) {
+            btnChangePassword.setOnAction(this::onChange);
+        }
+        if (btnSaveProfile != null) {
+            btnSaveProfile.setOnAction(this::onSave);
+        }
 // (زر return بنشتغل عليه بعدين لو حابب)
 
         if (btnBorrow != null)  btnBorrow.setOnAction(this::onBorrow);
@@ -525,6 +530,120 @@ public class GUserControl extends Application {
     public void Refresh(ActionEvent actionEvent) {
 
     }
+
+    @FXML
+    public void onChange(ActionEvent actionEvent) {
+        if (currentUser == null) {
+            showAlert("System error", "Current user is not initialized.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // 1) Ask for old password
+        String oldPass = javax.swing.JOptionPane.showInputDialog(
+                null,
+                "Enter your current password:",
+                "Change password",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (oldPass == null) {
+            // user pressed cancel
+            return;
+        }
+
+        if (!oldPass.equals(currentUser.getPassword())) {
+            showAlert("Wrong password", "Current password is incorrect.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // 2) Ask for new password
+        String newPass = javax.swing.JOptionPane.showInputDialog(
+                null,
+                "Enter new password:",
+                "Change password",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (newPass == null || newPass.trim().isEmpty()) {
+            showAlert("Invalid password", "New password cannot be empty.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // 3) Confirm new password
+        String confirm = javax.swing.JOptionPane.showInputDialog(
+                null,
+                "Confirm new password:",
+                "Change password",
+                javax.swing.JOptionPane.PLAIN_MESSAGE
+        );
+
+        if (confirm == null) {
+            return;
+        }
+
+        if (!newPass.equals(confirm)) {
+            showAlert("Mismatch", "New password and confirmation do not match.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // 4) Update in memory
+        currentUser.setPassword(newPass);
+
+        // 5) Save to file
+        boolean ok = FileControler.updateUserInFile(currentUser);
+        if (!ok) {
+            showAlert("Error", "Failed to update password in file.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        showAlert("Password changed", "Your password has been updated successfully.", Alert.AlertType.INFORMATION);
+    }
+    @FXML
+    public void onSave(ActionEvent actionEvent) {
+        if (currentUser == null) {
+            showAlert("System error", "Current user is not initialized.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        // Read from text fields
+        String fullName = (txtFullName.getText() == null) ? "" : txtFullName.getText().trim();
+        String email    = (txtEmail.getText() == null) ? "" : txtEmail.getText().trim();
+
+        // username: نفضّل ما نغيّره لأنه key في الملف
+        // لو بدك تخليه read-only في الـ FXML يكون أحسن
+
+        if (fullName.isEmpty() || email.isEmpty()) {
+            showAlert("Missing data", "Full name and email are required.", Alert.AlertType.WARNING);
+            return;
+        }
+
+        // split full name → first + last
+        String first = fullName;
+        String last  = "";
+        String[] parts = fullName.split("\\s+", 2);
+        if (parts.length > 0) first = parts[0];
+        if (parts.length > 1) last  = parts[1];
+
+        // Update currentUser in memory
+        currentUser.setFirstName(first);
+        currentUser.setLastName(last);
+        currentUser.setEmail(email);
+
+        // Optional: keep username text field in sync (but don't change the actual username)
+        if (txtProfileUsername != null) {
+            txtProfileUsername.setText(currentUser.getUsername());
+        }
+
+        // Save to Users.txt
+        boolean ok = FileControler.updateUserInFile(currentUser);
+        if (!ok) {
+            showAlert("Error", "Failed to save profile changes.", Alert.AlertType.ERROR);
+            return;
+        }
+
+        showAlert("Profile updated", "Your information has been saved.", Alert.AlertType.INFORMATION);
+    }
+
 }
 
 
