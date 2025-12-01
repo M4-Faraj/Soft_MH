@@ -15,6 +15,18 @@ public class Book extends Media {
         this.author = author;
         this.ISBN = ISBN;
     }
+    public Book(String name, String author, String ISBN,
+                boolean borrowed, String mediaType, String category) {
+        super(name, borrowed);
+        this.author = author;
+        this.ISBN = ISBN;
+        this.mediaType = (mediaType == null || mediaType.isBlank())
+                ? "BOOK"
+                : mediaType.toUpperCase();
+        this.category = (category == null || category.isBlank())
+                ? "Other"
+                : category;
+    }
     public Book(String name, String author, String ISBN, boolean borrowed, String category) {
         super(name,borrowed);
         this.author = author;

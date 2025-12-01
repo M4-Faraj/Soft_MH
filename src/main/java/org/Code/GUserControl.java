@@ -180,7 +180,7 @@ public class GUserControl extends Application {
         if (colStatus != null) {
             colStatus.setCellValueFactory(data ->
                     new SimpleStringProperty(
-                            data.getValue().isborrowed() ? "Borrowed" : "Available"
+                            data.getValue().isBorrowed() ? "Borrowed" : "Available"
                     ));
         }
 

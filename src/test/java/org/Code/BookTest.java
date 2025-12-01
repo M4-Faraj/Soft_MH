@@ -22,7 +22,7 @@ class BookTest {
         // Media fields
         assertEquals("Clean Code", book.getTitle());
         assertTrue(book.isBorrowed());
-        assertTrue(book.isborrowed());  // legacy method
+        assertTrue(book.isBorrowed());  // legacy method
     }
 
     @Test
@@ -34,7 +34,7 @@ class BookTest {
         assertEquals("", book.getISBN());
         assertEquals("", book.getTitle());
         assertFalse(book.isBorrowed());
-        assertFalse(book.isborrowed());
+        assertFalse(book.isBorrowed());
     }
 
     // ---------------------------------------------------------

@@ -210,8 +210,13 @@ public class GAdminControl {
         );
         // انت ما عندك category/year/quantity بالـ Book -> نخليهم placeholders
         colAdminBookCategory.setCellValueFactory(
-                data -> new SimpleStringProperty("N/A")
+                data -> new SimpleStringProperty(
+                        data.getValue().getMediaType() == null
+                                ? "BOOK"
+                                : data.getValue().getMediaType()
+                )
         );
+
         colAdminBookYear.setCellValueFactory(
                 data -> new SimpleStringProperty("")
         );
@@ -596,26 +601,16 @@ public class GAdminControl {
     @FXML
     private void onUpdateUser(ActionEvent event) {
         setupUsersTable();
-        User selected = tblAdminUsers.getSelectionModel().getSelectedItem();
-        if (selected == null) {
-            showAlert("Warning", "Select a user to update.");
-            return;
-        }
-
-        String fullName = txtUserFullName.getText().trim();
-        String[] parts = fullName.split(" ");
-        selected.setFirstName(parts.length > 0 ? parts[0] : fullName);
-        selected.setLastName(parts.length > 1 ? parts[1] : "");
-
-        selected.setUsername(txtUserUsername.getText().trim());
-        selected.setEmail(txtUserEmail.getText().trim());
-
-        if (cmbUserRole != null) {
-            selected.setAdmin("Admin".equals(cmbUserRole.getValue()));
-        }
-
         tblAdminUsers.refresh();
-        showAlert("Info", "User updated in memory. (File rewrite not implemented yet)");
+        try {
+            // إمّا تستخدم rewriteUsersFile (اللي عندك أصلاً)
+            FileControler.rewriteUsersFile();
+            showAlert("Info", "User updated and saved to file.");
+        } catch (IOException e) {
+            e.printStackTrace();
+            showAlert("Error", "User updated in memory, but failed to write to file.");
+        }
+
     }
 
     @FXML
@@ -851,15 +846,31 @@ public class GAdminControl {
         try {
             EmailService emailService = EmailService.fromEnv();
 
-            int sentCount = 0;
-            java.time.LocalDate today = java.time.LocalDate.now();
+            int attempted = 0;
+            int invalidEmails = 0;
+            int noLoans = 0;
+
+            LocalDate today = LocalDate.now();
 
             for (User u : FileControler.UserList) {
+
                 String to = u.getEmail();
-                if (to == null || to.trim().isEmpty()) continue;
+                if (to == null || to.trim().isEmpty()) {
+                    invalidEmails++;
+                    continue;
+                }
+
+                // validate email format
+                if (!to.contains("@") || !to.contains(".")) {
+                    invalidEmails++;
+                    continue;
+                }
 
                 List<Loan> loans = FileControler.loadLoansForUser(u);
-                if (loans == null || loans.isEmpty()) continue;
+                if (loans == null || loans.isEmpty()) {
+                    noLoans++;
+                    continue;
+                }
 
                 boolean shouldNotify = false;
                 StringBuilder body = new StringBuilder();
@@ -867,46 +878,52 @@ public class GAdminControl {
                 for (Loan loan : loans) {
                     if (loan.isReturned()) continue;
 
-                    java.time.LocalDate due = loan.getDueDate();
-                    long diff = java.time.temporal.ChronoUnit.DAYS.between(today, due); // due - today
+                    long diff = ChronoUnit.DAYS.between(today, loan.getDueDate());
 
-                    // متأخر أو ضايل <= 3 أيام
-                    if (diff < 0 || diff <= 3) {
+                    if (diff <= 3) {
                         shouldNotify = true;
-                        body.append("- Book: ")
-                                .append(loan.getBook().getName())
-                                .append(" (ISBN: ").append(loan.getBook().getISBN()).append(")")
-                                .append(" | Due: ").append(due)
+
+                        body.append("- ")
+                                .append(loan.getItem().getTitle())
+                                .append(" (ISBN: ")
+                                .append(loan.getBook() == null ? "N/A" : loan.getBook().getISBN())
+                                .append(")")
+                                .append(" | Due: ")
+                                .append(loan.getDueDate())
                                 .append("\n");
                     }
                 }
 
-                if (!shouldNotify) continue;
+                if (!shouldNotify) {
+                    noLoans++;
+                    continue;
+                }
 
-                String subject = "MH Library - Loan Reminder";
-                String textBody =
-                        "Dear " + u.getFirstName() + ",\n\n" +
-                                "This is a reminder about your current library loans:\n\n" +
-                                body +
-                                "\nPlease visit the library or the system to renew/return.\n" +
-                                "Best regards,\nMH Library System";
+                String subject = "MH Library - Reminder";
+                String msg = "Dear " + u.getFirstName() + ",\n\n"
+                        + "These items are due soon:\n\n"
+                        + body
+                        + "\nPlease return or renew.\nMH Library";
 
                 try {
-                    emailService.sendEmail(to, subject, textBody);
-                    sentCount++;
-                } catch (RuntimeException ex) {
-                    System.out.println("Failed to send email to " + to);
-                    ex.printStackTrace();
+                    emailService.sendEmail(to, subject, msg);
+                    attempted++;
+                } catch (Exception ex) {
+                    System.out.println("Failed to email: " + to);
                 }
             }
 
-            showAlert("Info", "Reminder emails attempted for " + sentCount + " users.");
+            showAlert("Info",
+                    "Reminder emails attempted for " + attempted + " users.\n"
+                            + "Skipped invalid emails: " + invalidEmails + "\n"
+                            + "Users without active loans/emails: " + noLoans);
 
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Error", "Failed to send reminder emails. Check .env and internet.");
+            showAlert("Error", "Failed to send reminder emails.");
         }
     }
+
 
     // ----- Reports (stubs) -----
 

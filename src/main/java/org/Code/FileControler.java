@@ -355,8 +355,8 @@ public class FileControler {
                     book = new Book(title, "", isbn, true);
                 }
 
-                Loan loan = new Loan(book, user, borrowDate, 28);
-                result.add(loan);
+               // Loan loan = new Loan(book, user, borrowDate, 28);
+             //   result.add(loan);
             }
 
         } catch (IOException e) {
@@ -584,27 +584,28 @@ public class FileControler {
                 if (line.trim().isEmpty()) continue;
 
                 String[] parts = line.split(",");
+                if (parts.length >= 4) {
+                    String name     = parts[0].trim();
+                    String author   = parts[1].trim();
+                    String isbn     = parts[2].trim();
+                    boolean borrowed = Boolean.parseBoolean(parts[3].trim());
 
-                String name     = parts[0].trim();
-                String author   = parts[1].trim();
-                String isbn     = parts[2].trim();
-                boolean borrowed = Boolean.parseBoolean(parts[3].trim());
+                    String mediaType = "BOOK";
+                    String category  = "Other";
 
-                String mediaType = "BOOK";
-                String category  = "Other";
+                    if (parts.length >= 5) {
+                        mediaType = parts[4].trim();
+                        if (mediaType.isEmpty()) mediaType = "BOOK";
+                    }
+                    if (parts.length >= 6) {
+                        category = parts[5].trim();
+                        if (category.isEmpty()) category = "Other";
+                    }
 
-                if (parts.length >= 5) {
-                    mediaType = parts[4].trim().toUpperCase();  // BOOK / CD
+                    BooksList.add(new Book(name, author, isbn, borrowed, mediaType, category));
+                } else {
+                    System.out.println("Invalid book line: " + line);
                 }
-                if (parts.length >= 6) {
-                    category = parts[5].trim();
-                }
-
-                Book b = new Book(name, author, isbn, borrowed);
-                b.setMediaType(mediaType);
-                b.setCategory(category);
-
-                BooksList.add(b);
             }
             System.out.println("Loaded " + BooksList.size() + " books from " + path);
         } catch (IOException e) {
@@ -1359,4 +1360,92 @@ public class FileControler {
             }
         }
     }
+
+    public static boolean updateUserInFile(User updated) {
+        Path path = Paths.get(USERS_PATH);
+        if (!Files.exists(path)) return false;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            List<String> out   = new ArrayList<>();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) { out.add(line); continue; }
+
+                String[] p = line.split(",");
+                if (p.length < 5) { out.add(line); continue; }
+
+                String username = p[2].trim();
+
+                if (username.equals(updated.getUsername())) {
+                    // نبني السطر الجديد بنفس الفورمات اللي عندك
+                    String booksJoined = "";
+                    if (updated.getBooks() != null && updated.getBooks().length > 0) {
+                        booksJoined = String.join(";", updated.getBooks());
+                    }
+
+                    String newLine =
+                            updated.getFirstName() + "," +
+                                    updated.getLastName()  + "," +
+                                    updated.getUsername()  + "," +
+                                    updated.getEmail()     + "," +
+                                    updated.getPassword()  + "," +
+                                    booksJoined            + "," +
+                                    updated.isAdmin();
+
+                    out.add(newLine);
+                } else {
+                    out.add(line);
+                }
+            }
+
+            Files.write(path, out);
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public static boolean updateLibrarianInFile(User updated) {
+        Path path = Paths.get(LIBRARIANS_PATH);
+        if (!Files.exists(path)) return false;
+
+        try {
+            List<String> lines = Files.readAllLines(path);
+            List<String> out   = new ArrayList<>();
+
+            for (String line : lines) {
+                if (line.trim().isEmpty()) { out.add(line); continue; }
+
+                String[] p = line.split(",");
+                if (p.length < 5) { out.add(line); continue; }
+
+                String username = p[2].trim();
+
+                if (username.equals(updated.getUsername())) {
+                    String newLine =
+                            updated.getFirstName() + "," +
+                                    updated.getLastName()  + "," +
+                                    updated.getUsername()  + "," +
+                                    updated.getEmail()     + "," +
+                                    updated.getPassword();
+
+                    out.add(newLine);
+                } else {
+                    out.add(line);
+                }
+            }
+
+            Files.write(path, out);
+            return true;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
 }

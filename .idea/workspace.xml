@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/InfoBase/Librarian.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Borrowed_Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Borrowed_Books.txt" afterDir="false" />
@@ -14,7 +13,8 @@
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GLibrarianControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GLibrarianControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GUserControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GUserControl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/BookTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/BookTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -217,6 +217,8 @@
       <workItem from="1764355061027" duration="15360000" />
       <workItem from="1764415474742" duration="13807000" />
       <workItem from="1764523426704" duration="41000" />
+      <workItem from="1764583890167" duration="785000" />
+      <workItem from="1764594949279" duration="3943000" />
     </task>
     <servers />
   </component>
