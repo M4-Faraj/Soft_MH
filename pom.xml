@@ -6,6 +6,16 @@
   <version>1.0-SNAPSHOT</version>
   <name>Archetype - Soft_MH</name>
   <url>http://maven.apache.org</url>
+
+
+    <properties>
+        <!-- SonarCloud settings -->
+        <sonar.projectKey>YOUR_PROJECT_KEY</sonar.projectKey>
+        <sonar.organization>YOUR_ORG_KEY</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+    </properties>
+
+
     <build>
         <plugins>
             <!-- Maven Compiler Plugin -->
@@ -91,12 +101,7 @@
 
     </dependencies>
 
-    <properties>
-        <!-- SonarCloud settings -->
-        <sonar.projectKey>YOUR_PROJECT_KEY</sonar.projectKey>
-        <sonar.organization>YOUR_ORG_KEY</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-    </properties>
+
 
 
 </project>

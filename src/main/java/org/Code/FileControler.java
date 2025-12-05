@@ -30,6 +30,7 @@ public class FileControler {
     public static final ArrayList<User> BorrowedList  = new ArrayList<>();
     public static final ArrayList<User> LoanedList  = new ArrayList<>();
 
+    public static String RETURNED="RETURNED";
     public FileControler() {
         // لو بدك تحميل تلقائي بالخلفية
         fillBooksDataAsync();
@@ -77,20 +78,14 @@ public class FileControler {
         addBorrowedMediaCore(code, title, user, "CD", 7, 20.0);
     }
 
-
-
-    // يحاول "إلغاء الاستعارة" (إرجاع الكتاب) فقط إذا ما في غرامة
-// يرجع true لو تم الإرجاع (انمسح من Borrowed_Books وتعدل Books)
-// ويرجع false لو في غرامة أو ما لقى سطر مناسب
     public static boolean unBorrowIfNoFine(String isbn, String username) {
         try {
-            List<String> lines = Files.readAllLines(Paths.get(BORROWED_PATH));
+            List<String> lines   = Files.readAllLines(Paths.get(BORROWED_PATH));
             List<String> updated = new ArrayList<>();
 
             boolean removedOne = false;
-            boolean hasFine = false;
-
-            LocalDate today = LocalDate.now();
+            boolean hasFine    = false;
+            LocalDate today    = LocalDate.now();
 
             for (String line : lines) {
                 if (line.trim().isEmpty()) {
@@ -98,56 +93,33 @@ public class FileControler {
                     continue;
                 }
 
-                // شكل السطر: ISBN,Name,Date,User
                 String[] parts = line.split(",");
                 if (parts.length < 4) {
                     updated.add(line);
                     continue;
                 }
 
-                String lineIsbn  = parts[0].trim();
-                String lineUser  = parts[3].trim();
-                String dateStr   = parts[2].trim();
-
-                if (!removedOne && lineIsbn.equals(isbn) && lineUser.equals(username)) {
-                    // هذا السطر تبع هذا اليوزر وهذا الكتاب
-                    LocalDate borrowDate;
-                    try {
-                        borrowDate = LocalDate.parse(dateStr);
-                    } catch (Exception e) {
-                        // تاريخ خربان → نعتبر أنه عليه مشكلة، ما نسمح برجوع بدون مراجعة
+                if (!removedOne && isTargetBorrowLine(parts, isbn, username)) {
+                    if (hasLateFine(parts[2].trim(), today)) {
                         hasFine = true;
-                        updated.add(line); // خليه زي ما هو
-                        continue;
-                    }
-
-                    long days = ChronoUnit.DAYS.between(borrowDate, today);
-
-                    // إذا أكثر من 28 يوم → عليه غرامة 10 شيكل → ما نرجع الكتاب
-                    if (days > 28) {
-                        hasFine = true;
-                        updated.add(line); // خليه
+                        updated.add(line);
                     } else {
-                        // مافي غرامة → نحذف هذا السطر (ما نضيفه للـ updated)
                         removedOne = true;
                     }
-
                     continue;
                 }
 
-                // باقي الأسطر
                 updated.add(line);
             }
 
             if (hasFine || !removedOne) {
-                // يا إما عليه غرامة، أو ما لقينا سطر مطابق
                 return false;
             }
 
-            // كتبنا الملف بدون هذا السطر
+            // نكتب الملف الجديد بدون السطر المحذوف
             Files.write(Paths.get(BORROWED_PATH), updated);
 
-            // وعدلنا Books.txt نخلي الكتاب متاح (borrowed = false)
+            // نعدّل حالة الكتاب في Books.txt
             updateBookBorrowFlag(isbn, false);
 
             return true;
@@ -157,6 +129,24 @@ public class FileControler {
             return false;
         }
     }
+
+    private static boolean isTargetBorrowLine(String[] parts, String isbn, String username) {
+        String lineIsbn = parts[0].trim();
+        String lineUser = parts[3].trim();
+        return lineIsbn.equals(isbn) && lineUser.equals(username);
+    }
+
+    private static boolean hasLateFine(String dateStr, LocalDate today) {
+        try {
+            LocalDate borrowDate = LocalDate.parse(dateStr);
+            long days = ChronoUnit.DAYS.between(borrowDate, today);
+            return days > 28;
+        } catch (Exception e) {
+            // تاريخ خربان → نعتبر أن عليه مشكلة ويحتاج مراجعة
+            return true;
+        }
+    }
+
     public static final String LIBRARIAN_PATH = "src/main/InfoBase/Librarian.txt";
 
     public static User getLibrarian(String username, String password) {
@@ -310,6 +300,7 @@ public class FileControler {
 
         return false; // لا يوجد متأخر
     }public static List<Loan> loadLoansForUser(User user) {
+
         List<Loan> result = new ArrayList<>();
         if (user == null) return result;
 
@@ -328,7 +319,7 @@ public class FileControler {
             if (book == null) {
                 // لو مش موجود، أنشئ واحد بسيط من البيانات
                 // نعتبر borrowed = true لو status مش RETURNED
-                boolean borrowed = !"RETURNED".equalsIgnoreCase(r.status);
+                boolean borrowed = !RETURNED.equalsIgnoreCase(r.status);
                 book = new Book(r.title, "", r.isbn, borrowed);
 
                 // لو حابب تحفظه في BooksList:
@@ -341,7 +332,7 @@ public class FileControler {
             Loan loan = new Loan(book, user, r.startDate, periodDays);
 
             // علم إذا كان راجع
-            if ("RETURNED".equalsIgnoreCase(r.status)) {
+            if (RETURNED.equalsIgnoreCase(r.status)) {
                 loan.setReturned(true);
             }
 
@@ -1230,7 +1221,7 @@ public class FileControler {
                 continue;
             if (!r.startDate.equals(start)) continue;
 
-            r.status = "RETURNED";
+            r.status = RETURNED;
             // لو حابب تلغي أي غرامة:
             // r.fee = 0.0;
             updated = true;
@@ -1534,7 +1525,7 @@ public class FileControler {
 
         for (LoanRecord r : records) {
             // لو رجع الكتاب خلاص، ما نلعب فيه
-            if ("RETURNED".equalsIgnoreCase(r.status)) continue;
+            if (RETURNED.equalsIgnoreCase(r.status)) continue;
 
             // لو اليوم بعد موعد الاستحقاق → خليها OVERDUE
             if (today.isAfter(r.dueDate)) {

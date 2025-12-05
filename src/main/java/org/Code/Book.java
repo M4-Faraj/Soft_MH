@@ -79,8 +79,9 @@ public class Book extends Media {
     // ---------------------- Legacy Support ----------------------
 
     // ⚠ Used by your UI → keep for compatibility
-    public boolean isborrowed() {
-        return isBorrowed(); // map old name → new logic
+    @Override
+    public boolean isBorrowed() {
+        return super.isBorrowed(); // map old name → new logic
     }
 
     // ---------------------- Borrowing Rules ----------------------
