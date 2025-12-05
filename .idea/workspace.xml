@@ -5,22 +5,14 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.github/workflows/build.yml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Books.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Librarian.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Loan.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Loan.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Mails.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Mails.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Prices.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Prices.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/GAdminControl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/tests/GUserControl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/tests/TestClass.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/tests/TestClassS2.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/tests/TestClassSP1.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/AdminControlTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/AdminControlTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/FileControlerTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/FileControlerTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/InfoBase/Users.txt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,10 +63,15 @@
     "Application.LoginControlGUI.executor": "Run",
     "Application.Unnamed.executor": "Run",
     "Application.org.Code.LoginControlGUI.executor": "Run",
+    "JUnit.AdminControlTest.executor": "Run",
     "JUnit.Code in SoftWare.executor": "Coverage",
     "JUnit.FileControlerTest.executor": "Coverage",
     "JUnit.org.Code in Soft_MH.executor": "Run",
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
+    "Maven.Soft_MH [clean].executor": "Run",
+    "Maven.Soft_MH [compile].executor": "Run",
+    "Maven.Soft_MH [install].executor": "Run",
+    "Maven.Soft_MH [site:run].executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
@@ -102,19 +99,25 @@
       <recent name="org.Code" />
     </key>
   </component>
-  <component name="RunManager" selected="Application.LoginControlGUI">
+  <component name="RunAnythingCache">
+    <option name="myCommands">
+      <command value="mvn clean" />
+      <command value="mvn install" />
+      <command value="mvn site:run" />
+      <command value="mvn compile" />
+    </option>
+  </component>
+  <component name="RunManager">
     <configuration name="LoginControlGUI" type="Application" factoryName="Application" nameIsGenerated="true">
-      <option name="ALTERNATIVE_JRE_PATH" value="23" />
-      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
       <option name="MAIN_CLASS_NAME" value="org.Code.LoginControlGUI" />
-      <module name="SoftWare" />
-      <option name="VM_PARAMETERS" value="--module-path &quot;E:\openjfx-24.0.2_windows-x64_bin-sdk\javafx-sdk-24.0.2\lib&quot; --add-modules javafx.controls,javafx.fxml " />
+      <module name="Soft_MH" />
+      <option name="VM_PARAMETERS" value="--module-path &quot;E:\BS\javafx-sdk-24.0.1\lib&quot; --add-modules javafx.controls,javafx.fxml " />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
     </configuration>
     <configuration name="AdminTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
-      <module name="SoftWare" />
+      <module name="Soft_MH" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="org.Code.*" />
@@ -123,6 +126,7 @@
       </extension>
       <option name="PACKAGE_NAME" value="org.Code" />
       <option name="MAIN_CLASS_NAME" value="org.Code.AdminTest" />
+      <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="class" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -213,9 +217,9 @@
     </configuration>
     <list>
       <item itemvalue="Application.LoginControlGUI" />
-      <item itemvalue="JUnit.Code in SoftWare" />
       <item itemvalue="JUnit.AdminTest" />
       <item itemvalue="JUnit.BooksTest" />
+      <item itemvalue="JUnit.Code in SoftWare" />
       <item itemvalue="JUnit.FileControlerTest" />
       <item itemvalue="JUnit.org.Code in Soft_MH" />
     </list>
@@ -252,6 +256,10 @@
       <workItem from="1764523426704" duration="41000" />
       <workItem from="1764583890167" duration="785000" />
       <workItem from="1764594949279" duration="15496000" />
+      <workItem from="1764876931294" duration="2000" />
+      <workItem from="1764876965682" duration="25000" />
+      <workItem from="1764876996110" duration="682000" />
+      <workItem from="1764929349285" duration="2541000" />
     </task>
     <servers />
   </component>
