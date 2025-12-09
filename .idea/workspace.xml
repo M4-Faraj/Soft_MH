@@ -7,8 +7,6 @@
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Book.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/FileControler.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -106,8 +104,8 @@
   <component name="RunManager" selected="Application.LoginControlGUI">
     <configuration name="LoginControlGUI" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.Code.LoginControlGUI" />
-      <module name="Soft_MH" />
-      <option name="VM_PARAMETERS" value="--module-path &quot;E:\BS\javafx-sdk-24.0.1\lib&quot; --add-modules javafx.controls,javafx.fxml " />
+      <module name="SoftWare" />
+      <option name="VM_PARAMETERS" value="--module-path &quot;E:\openjfx-24.0.2_windows-x64_bin-sdk\javafx-sdk-24.0.2\lib&quot; --add-modules javafx.controls,javafx.fxml " />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
