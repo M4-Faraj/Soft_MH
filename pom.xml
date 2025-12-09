@@ -29,7 +29,7 @@
                 </configuration>
             </plugin>
 
-            <!-- JaCoCo plugin تبعك يظل زي ما هو -->
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
