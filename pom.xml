@@ -13,6 +13,15 @@
         <sonar.projectKey>YOUR_PROJECT_KEY</sonar.projectKey>
         <sonar.organization>YOUR_ORG_KEY</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <!-- SonarCloud settings -->
+        <sonar.projectKey>YOUR_REAL_PROJECT_KEY</sonar.projectKey>
+        <sonar.organization>YOUR_REAL_ORG_KEY</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
+        <!-- 👇 exclude UML folder from analysis (incl. duplication) -->
+        <sonar.exclusions>src/main/uml/**</sonar.exclusions>
+        <!-- optional: just to be extra sure for duplication -->
+        <sonar.cpd.exclusions>src/main/uml/**</sonar.cpd.exclusions>
     </properties>
 
 
