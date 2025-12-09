@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/sonar-project.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -257,7 +254,7 @@
       <workItem from="1764945552303" duration="4131000" />
       <workItem from="1765140501016" duration="105000" />
       <workItem from="1765303319909" duration="143000" />
-      <workItem from="1765309822672" duration="1034000" />
+      <workItem from="1765309822672" duration="1579000" />
     </task>
     <servers />
   </component>
