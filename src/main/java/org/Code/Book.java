@@ -83,6 +83,9 @@ public class Book extends Media {
     public boolean isBorrowed() {
         return super.isBorrowed(); // map old name → new logic
     }
+    public boolean isborrowed() {
+        return isBorrowed();   // أو return borrowed;
+    }
 
     // ---------------------- Borrowing Rules ----------------------
 
