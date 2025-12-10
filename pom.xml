@@ -14,10 +14,11 @@
         <sonar.organization>YOUR_ORG_KEY</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <!-- SonarCloud settings -->
-        <sonar.projectKey>YOUR_REAL_PROJECT_KEY</sonar.projectKey>
-        <sonar.organization>YOUR_REAL_ORG_KEY</sonar.organization>
-        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
 
+        <!-- ثبّت نسخة JavaFX -->
+        <javafx.version>21.0.4</javafx.version>
         <!-- 👇 exclude UML folder from analysis (incl. duplication) -->
         <sonar.exclusions>src/main/uml/**</sonar.exclusions>
         <!-- optional: just to be extra sure for duplication -->
