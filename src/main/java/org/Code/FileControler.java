@@ -31,6 +31,7 @@ public class FileControler {
     public static final ArrayList<User> LoanedList  = new ArrayList<>();
 
     public static String RETURNED="RETURNED";
+    public static String LOADED="LOADED";
     public FileControler() {
         // لو بدك تحميل تلقائي بالخلفية
         fillBooksDataAsync();
@@ -382,7 +383,7 @@ public class FileControler {
                 }
             }
 
-            System.out.println("Loaded " + LibrarianList.size() + " librarians from " + path);
+            System.out.println(LOADED + LibrarianList.size() + " librarians from " + path);
 
         } catch (IOException e) {
             System.out.println("Error reading librarians file: " + e.getMessage());
@@ -576,7 +577,7 @@ public class FileControler {
                     System.out.println("Invalid book line: " + line);
                 }
             }
-            System.out.println("Loaded " + BooksList.size() + " books from " + path);
+            System.out.println(LOADED + BooksList.size() + " books from " + path);
         } catch (IOException e) {
             System.out.println("Error reading books file: " + e.getMessage());
         }
@@ -622,7 +623,7 @@ public class FileControler {
                     System.out.println("Invalid user line: " + line);
                 }
             }
-            System.out.println("Loaded " + UserList.size() + " users from " + path);
+            System.out.println(LOADED + UserList.size() + " users from " + path);
         } catch (IOException e) {
             System.out.println("Error reading users file: " + e.getMessage());
         }
