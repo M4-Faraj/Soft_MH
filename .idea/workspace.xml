@@ -7,6 +7,7 @@
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Users.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Users.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,7 +63,7 @@
     "JUnit.Code in SoftWare.executor": "Coverage",
     "JUnit.Code in Soft_MH.executor": "Coverage",
     "JUnit.FileControlerTest.executor": "Run",
-    "JUnit.org.Code in Soft_MH.executor": "Run",
+    "JUnit.org.Code in Soft_MH.executor": "Coverage",
     "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
     "Maven.Soft_MH [clean].executor": "Run",
     "Maven.Soft_MH [compile].executor": "Run",
@@ -101,12 +102,12 @@
     <option name="myCommands">
       <command value="mvn site:run" />
       <command value="mvn compile" />
+      <command value="mvn clean" />
       <command value="mvn install" />
       <command value="mvn test" />
-      <command value="mvn clean" />
     </option>
   </component>
-  <component name="RunManager" selected="Application.LoginControlGUI">
+  <component name="RunManager" selected="JUnit.Code in Soft_MH">
     <configuration name="LoginControlGUI" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.Code.LoginControlGUI" />
       <module name="Soft_MH" />
@@ -170,6 +171,40 @@
     </configuration>
     <configuration name="Code in Soft_MH" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
       <module name="Soft_MH" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="org.Code.GAdminControl" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GLibrarianControl" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GLoginController" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GSignUpControler" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.GUserControl" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+        <pattern>
+          <option name="PATTERN" value="org.Code.LoginControlGUI" />
+          <option name="ENABLED" value="true" />
+          <option name="INCLUDE" value="false" />
+        </pattern>
+      </extension>
+      <option name="MAIN_CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
       <option name="TEST_OBJECT" value="directory" />
       <dir value="$PROJECT_DIR$/src/test/java/org/Code" />
       <method v="2">
@@ -219,10 +254,10 @@
     <recent_temporary>
       <list>
         <item itemvalue="JUnit.Code in Soft_MH" />
+        <item itemvalue="JUnit.org.Code in Soft_MH" />
         <item itemvalue="JUnit.FileControlerTest" />
         <item itemvalue="JUnit.AdminTest" />
         <item itemvalue="JUnit.Code in SoftWare" />
-        <item itemvalue="JUnit.org.Code in Soft_MH" />
       </list>
     </recent_temporary>
   </component>
@@ -257,7 +292,7 @@
       <workItem from="1765140501016" duration="105000" />
       <workItem from="1765303319909" duration="143000" />
       <workItem from="1765309822672" duration="5680000" />
-      <workItem from="1765359995725" duration="7141000" />
+      <workItem from="1765359995725" duration="8547000" />
     </task>
     <servers />
   </component>
@@ -269,8 +304,11 @@
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Soft_MH$Code_in_Soft_MH.ic" NAME="Code in Soft_MH Coverage Results" MODIFIED="1765364137970" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+    <SUITE FILE_PATH="coverage/Soft_MH$Code_in_Soft_MH.ic" NAME="Code in Soft_MH Coverage Results" MODIFIED="1765370740410" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
     <SUITE FILE_PATH="coverage/Soft$FileControlerTest.ic" NAME="FileControlerTest Coverage Results" MODIFIED="1764622177288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <FILTER>org.Code.*</FILTER>
+    </SUITE>
+    <SUITE FILE_PATH="coverage/Soft_MH$org_Code_in_Soft_MH.ic" NAME="org.Code in Soft_MH Coverage Results" MODIFIED="1765370130996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/Soft$Code_in_SoftWare.ic" NAME="Code in SoftWare Coverage Results" MODIFIED="1764622186620" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">

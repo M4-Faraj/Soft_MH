@@ -7,6 +7,10 @@ import java.util.List;
 public class Users {
     List<User> registeredUser = new ArrayList<>();
 
+    public void fill(){
+
+    }
+
     public void addUser(User user) {
         registeredUser.add(user);
     }
