@@ -96,17 +96,16 @@ class BookTest {
         Book book = new Book("Title", "Author", "123", false);
 
         assertFalse(book.isBorrowed());
-        assertFalse(book.isborrowed());
+
 
         book.updateBorrowed(true);
 
         assertTrue(book.isBorrowed());
-        assertTrue(book.isborrowed());
 
         book.updateBorrowed(false);
 
         assertFalse(book.isBorrowed());
-        assertFalse(book.isborrowed());
+
     }
 
     @Test
@@ -115,10 +114,10 @@ class BookTest {
         Book borrowed  = new Book("Title2", "Author2", "222", true);
 
         assertFalse(available.isBorrowed());
-        assertFalse(available.isborrowed());
+
 
         assertTrue(borrowed.isBorrowed());
-        assertTrue(borrowed.isborrowed());
+
     }
 
     // ---------------------------------------------------------
