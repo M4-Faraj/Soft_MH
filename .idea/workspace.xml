@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/test/java/AppTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/archetype-resources/src/test/java/AppTest.java" afterDir="false" />
-    </list>
+    <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -256,7 +254,7 @@
       <workItem from="1765140501016" duration="105000" />
       <workItem from="1765303319909" duration="143000" />
       <workItem from="1765309822672" duration="5680000" />
-      <workItem from="1765359995725" duration="6232000" />
+      <workItem from="1765359995725" duration="6555000" />
     </task>
     <servers />
   </component>
