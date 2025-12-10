@@ -7,7 +7,6 @@
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/Code/Users.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/Code/Users.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -292,7 +291,7 @@
       <workItem from="1765140501016" duration="105000" />
       <workItem from="1765303319909" duration="143000" />
       <workItem from="1765309822672" duration="5680000" />
-      <workItem from="1765359995725" duration="8547000" />
+      <workItem from="1765359995725" duration="8994000" />
     </task>
     <servers />
   </component>
@@ -304,11 +303,18 @@
     <select />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
-    <SUITE FILE_PATH="coverage/Soft_MH$Code_in_Soft_MH.ic" NAME="Code in Soft_MH Coverage Results" MODIFIED="1765370740410" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true" />
+    <SUITE FILE_PATH="coverage/Soft_MH$Code_in_Soft_MH.ic" NAME="Code in Soft_MH Coverage Results" MODIFIED="1765370852674" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+      <EXCLUDED_FILTER>org.Code.GAdminControl</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GLibrarianControl</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GLoginController</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GSignUpControler</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.GUserControl</EXCLUDED_FILTER>
+      <EXCLUDED_FILTER>org.Code.LoginControlGUI</EXCLUDED_FILTER>
+    </SUITE>
     <SUITE FILE_PATH="coverage/Soft$FileControlerTest.ic" NAME="FileControlerTest Coverage Results" MODIFIED="1764622177288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/Soft_MH$org_Code_in_Soft_MH.ic" NAME="org.Code in Soft_MH Coverage Results" MODIFIED="1765370130996" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+    <SUITE FILE_PATH="coverage/Soft_MH$org_Code_in_Soft_MH.ic" NAME="org.Code in Soft_MH Coverage Results" MODIFIED="1765370840313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/Soft$Code_in_SoftWare.ic" NAME="Code in SoftWare Coverage Results" MODIFIED="1764622186620" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
