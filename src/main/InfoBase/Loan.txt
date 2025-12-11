@@ -1,1 +1,0 @@
-user1,111,Clean Code,2025-12-05,2026-01-02,BORROWED,0.0

@@ -96,17 +96,16 @@ class BookTest {
         Book book = new Book("Title", "Author", "123", false);
 
         assertFalse(book.isBorrowed());
-        assertFalse(book.isborrowed());
+
 
         book.updateBorrowed(true);
 
         assertTrue(book.isBorrowed());
-        assertTrue(book.isborrowed());
 
         book.updateBorrowed(false);
 
         assertFalse(book.isBorrowed());
-        assertFalse(book.isborrowed());
+
     }
 
     @Test
@@ -115,10 +114,10 @@ class BookTest {
         Book borrowed  = new Book("Title2", "Author2", "222", true);
 
         assertFalse(available.isBorrowed());
-        assertFalse(available.isborrowed());
+
 
         assertTrue(borrowed.isBorrowed());
-        assertTrue(borrowed.isborrowed());
+
     }
 
     // ---------------------------------------------------------
@@ -140,4 +139,31 @@ class BookTest {
         assertEquals(10, book.getOverdueFine());
         assertEquals(10.0, book.getFinePerDay(), 0.0001);
     }
+
+    @Test
+    void testConstructorWithCategoryOnly_DefaultsAndCustomCategory() {
+        // category = null  => "Book"
+        Book b1 = new Book("N1", "A1", "I1", false, (String) null);
+
+        assertNull(b1.getName());
+        assertEquals("N1", b1.getTitle());
+        assertEquals("A1", b1.getAuthor());
+        assertEquals("I1", b1.getISBN());
+        assertEquals("Book", b1.getCategory());
+        assertFalse(b1.isBorrowed());
+
+        // category = blank => "Book"
+        Book b2 = new Book("N2", "A2", "I2", true, "   ");
+
+        assertNull(b2.getName());
+        assertEquals("N2", b2.getTitle());
+        assertEquals("Book", b2.getCategory());
+        assertTrue(b2.isBorrowed());
+
+        // custom category stays as-is
+        Book b3 = new Book("N3", "A3", "I3", false, "Science");
+
+        assertEquals("Science", b3.getCategory());
+    }
+
 }
