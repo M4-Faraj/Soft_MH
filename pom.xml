@@ -9,9 +9,10 @@
 
     <properties>
         <!-- SonarCloud settings -->
-        <sonar.projectKey>Soft_MH</sonar.projectKey>
-        <sonar.organization>M4-Faraj</sonar.organization>
+        <sonar.projectKey>M4-Faraj_Soft_MH</sonar.projectKey>
+        <sonar.organization>m4-faraj</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+
 
         <!-- Java version -->
         <maven.compiler.source>21</maven.compiler.source>
