@@ -30,9 +30,5 @@ jobs:
           key: ${{ runner.os }}-sonar
           restore-keys: ${{ runner.os }}-sonar
 
-      - name: Build, test and analyze
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}   # يوفره GitHub تلقائياً
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}     # إنت أضفته قبل شوي
-        run: |
-          mvn -B clean verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar
+      - name: Build and test
+        run: mvn -B verify
