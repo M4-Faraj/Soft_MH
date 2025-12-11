@@ -5,7 +5,28 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-
+/**
+ * Handles login and authentication logic for admins, normal users, and librarians.
+ * <p>
+ * This class reads from simple text files (Admin.txt, Users.txt, Librarian.txt)
+ * and checks whether the provided username and password match any stored record.
+ * It can also return the corresponding {@link User} object when needed.
+ *
+ * <p>File formats used:
+ * <ul>
+ *     <li><b>Admin.txt</b>: {@code username,password}</li>
+ *     <li><b>Users.txt</b>: {@code firstName,lastName,username,email,password,books,isAdmin}</li>
+ *     <li><b>Librarian.txt</b>:
+ *         <ul>
+ *             <li>{@code username,password}</li>
+ *             <li>{@code username,password,firstName,lastName}</li>
+ *         </ul>
+ *     </li>
+ * </ul>
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class LoginControl {
 
     // ================== FILE PATHS ==================

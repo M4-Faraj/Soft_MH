@@ -1,7 +1,18 @@
 package org.Code;
 
 import java.time.LocalDate;
-
+/**
+ * Represents a user in the library system. A user may be a normal member,
+ * an administrator, or a librarian. Users store personal information,
+ * login credentials, borrowed book history, and fine information.
+ *
+ * <p>The class also includes helper methods for fine calculation,
+ * status checks, and book limits. Users can be associated with overdue
+ * books through the {@link FileControler} utilities.</p>
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class User {
     private String firstName;
     private String lastName;
@@ -17,6 +28,16 @@ public class User {
     // === Constructors ===
 
     // Constructor الأساسي اللي بتستخدمه في SignUp
+    /**
+     * Creates a new User with complete profile and a list of borrowed books.
+     *
+     * @param firstName user's first name
+     * @param lastName user's last name
+     * @param username unique username used for login
+     * @param email user's email address
+     * @param password login password
+     * @param books array of borrowed book identifiers (may be empty)
+     */
     public User(String firstName, String lastName, String username,
                 String email, String password, String[] books) {
         this.firstName = firstName;
@@ -28,6 +49,16 @@ public class User {
     }
 
     // Constructor بدون books → يخلق مصفوفة فاضية
+    /**
+     * Creates a new User without borrowed book information.
+     * Initializes the books array as empty.
+     *
+     * @param firstName user's first name
+     * @param lastName user's last name
+     * @param username unique username
+     * @param email user's email
+     * @param password login password
+     */
     public User(String firstName, String lastName, String username,
                 String email, String password) {
         this(firstName, lastName, username, email, password, new String[0]);
@@ -87,6 +118,11 @@ public class User {
     public String[] getBooks() {
         return books;
     }
+    /**
+     * Updates the user's borrowed books list.
+     *
+     * @param books array of book identifiers (null produces an empty array)
+     */
     public void setBooks(String[] books) {
         this.books = (books != null) ? books : new String[0];
     }
@@ -114,6 +150,12 @@ public class User {
 
         System.out.println("Fine paid. Remaining balance: " + fine);
     }
+    /**
+     * Applies overdue fines based on a loan and the current date.
+     *
+     * @param loan loan to evaluate
+     * @param currentDate today's date
+     */
     public void applyFineForLoan(Loan loan, LocalDate currentDate) {
         if (loan.isOverdue()) {
             Media item = loan.getItem(); // Media can be Book, CD, etc.

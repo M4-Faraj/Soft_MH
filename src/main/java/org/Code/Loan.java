@@ -3,6 +3,25 @@ package org.Code;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 
+/**
+ * Represents a loan record in the library system.
+ * <p>
+ * A {@code Loan} tracks:
+ * <ul>
+ *     <li>The borrowed media item (Book or CD)</li>
+ *     <li>The user who borrowed it</li>
+ *     <li>The borrow date and calculated due date</li>
+ *     <li>Whether the item has been returned</li>
+ *     <li>Overdue calculations and renewal status</li>
+ * </ul>
+ *
+ * Each loan stores a fixed loan duration (in days), which determines the due date.
+ * The class also provides helper methods for computing overdue days, loan fees,
+ * and checking if a renewal has been requested.
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class Loan {
     private Media item;
     private User user;

@@ -1,4 +1,15 @@
 package org.Code;
+/**
+ * Represents a CD (Compact Disc) in the library system.
+ * <p>
+ * A CD is a type of {@link Media} that has a shorter borrowing duration
+ * and higher overdue fines compared to books. This class stores CD-specific
+ * attributes such as the artist name and implements borrowing rules defined
+ * by the system.
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 
 public class CD extends Media {
     private String artist;

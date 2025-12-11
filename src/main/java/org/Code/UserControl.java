@@ -1,5 +1,21 @@
 package org.Code;
 
+/**
+ * Handles all file-based operations related to user management.
+ * <p>
+ * This controller reads from and writes to the {@code Users.txt} file,
+ * supporting CRUD operations (Create, Read, Update, Delete) for users.
+ * The file format per line is:
+ * <pre>
+ * firstName,lastName,username,email,password,book1|book2|...,fine,isAdmin
+ * </pre>
+ *
+ * <p>All methods are static, meaning the class functions as a utility
+ * component for user persistence.</p>
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,7 +30,13 @@ public class UserControl {
 
     // ================== عمليات أساسية ==================
 
-    /** إضافة مستخدم جديد للملف */
+    /* إضافة مستخدم جديد للملف */
+    /**
+     * Adds a new user to the Users.txt file by appending a serialized entry.
+     *
+     * @param user the user to add
+     * @throws IOException if file writing fails
+     */
     public static void addUser(User user) throws IOException {
         ensureFileExists();
 
@@ -28,7 +50,14 @@ public class UserControl {
         }
     }
 
-    /** البحث عن مستخدم حسب username، يرجّع User أو null لو مش موجود */
+    /*البحث عن مستخدم حسب username، يرجّع User أو null لو مش موجود */
+    /**
+     * Searches for a user by their username.
+     *
+     * @param username the username to search for
+     * @return a matching {@link User}, or {@code null} if not found
+     * @throws IOException if reading the file fails
+     */
     public static User findUserByUsername(String username) throws IOException {
         if (!Files.exists(USERS_FILE)) {
             return null;
@@ -47,7 +76,15 @@ public class UserControl {
         return null;
     }
 
-    /** حذف مستخدم حسب username – يرجع true لو انحذف فعلاً */
+    /* حذف مستخدم حسب username – يرجع true لو انحذف فعلاً */
+    /**
+     * Removes a user from the file based on the username.
+     * The method rewrites the file excluding that user.
+     *
+     * @param username the username to remove
+     * @return true if the user was successfully removed, false otherwise
+     * @throws IOException if file operations fail
+     */
     public static boolean removeUser(String username) throws IOException {
         if (!Files.exists(USERS_FILE)) {
             return false;
@@ -87,7 +124,14 @@ public class UserControl {
         return removed;
     }
 
-    /** تحديث بيانات مستخدم: يمسح القديم بنفس username ويضيف الجديد */
+    /* تحديث بيانات مستخدم: يمسح القديم بنفس username ويضيف الجديد */
+    /**
+     * Updates an existing user by replacing the old record with the new one.
+     *
+     * @param updatedUser the new version of the user
+     * @return true if the user existed and was updated, false otherwise
+     * @throws IOException if file writing fails
+     */
     public static boolean updateUser(User updatedUser) throws IOException {
         if (!Files.exists(USERS_FILE)) {
             return false;
@@ -121,7 +165,13 @@ public class UserControl {
         return true;
     }
 
-    /** رجّع كل المستخدمين من الملف */
+    /*رجّع كل المستخدمين من الملف */
+    /**
+     * Reads all users stored in {@code Users.txt}.
+     *
+     * @return a list of {@link User} objects
+     * @throws IOException if reading fails
+     */
     public static List<User> getAllUsers() throws IOException {
         List<User> users = new ArrayList<>();
 

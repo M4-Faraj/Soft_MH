@@ -1,5 +1,11 @@
 package org.Code;
-
+/**
+ * Represents an administrator in the library system.
+ * This class stores basic authentication information such as username and password.
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class Admin {
     private String username;
     private String password;

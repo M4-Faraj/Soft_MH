@@ -1,7 +1,19 @@
 package org.Code;
 
 import java.time.LocalDate;
-
+/**
+ * Represents a book or CD item in the library system.
+ * A book extends the {@link Media} class and adds bibliographic information
+ * such as name, author, ISBN, and category. It also defines borrowing rules
+ * specific to books (28-day loan duration, fixed overdue fine).
+ *
+ * This class supports multiple constructors to accommodate different data-loading
+ * formats used throughout the system and maintains backward compatibility
+ * with legacy UI components.
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class Book extends Media {
     private String name;
     private String author;

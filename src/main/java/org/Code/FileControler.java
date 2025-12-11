@@ -11,7 +11,27 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-
+/**
+ * Central utility class for all file-based operations in the library system.
+ * <p>
+ * This class reads and writes data for:
+ * <ul>
+ *     <li>Books and media (books, CDs)</li>
+ *     <li>Users and librarians</li>
+ *     <li>Borrowed items (Borrowed_Books.txt)</li>
+ *     <li>Loans history (Loan.txt)</li>
+ *     <li>Fines and prices (Prices.txt)</li>
+ *     <li>Logged mails and renew requests</li>
+ * </ul>
+ * It also maintains in-memory lists (e.g. {@code BooksList}, {@code UserList})
+ * and provides background synchronization logic between files.
+ *
+ * <p>Most methods are {@code static} and act as helpers for other
+ * controllers and UI classes.
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class FileControler {
 
     // مسارات الملفات (نفس المشروع اللي عندك)
@@ -40,6 +60,23 @@ public class FileControler {
 
     // ===================== ASYNC LOADERS (Threads) =====================
     // الأساس: يكتب Book أو CD حسب الـ type
+    /**
+     * Registers a borrowed book or CD in the system.
+     * <p>
+     * This method:
+     * <ul>
+     *     <li>Appends a record to {@code Borrowed_Books.txt}</li>
+     *     <li>Updates the book's borrowed flag in {@code Books.txt}</li>
+     *     <li>Appends a history record to {@code Loan.txt}</li>
+     * </ul>
+     *
+     * @param id the id of the book
+     * @param title the title of the book
+     * @param username the username of the borrower
+     * @param type the type of the media
+     * @param durationDays the duration of the days the book was borrowed
+     * @param finePerDay the fine for each day the book is borrowed
+     */
     private static void addBorrowedMediaCore(String id,
                                              String title,
                                              String username,
@@ -78,7 +115,21 @@ public class FileControler {
     public static void addBorrowedCD(String code, String title, String user) {
         addBorrowedMediaCore(code, title, user, "CD", 7, 20.0);
     }
-
+    /**
+     * Tries to return (un-borrow) a book for a given user only if there is no fine.
+     * <p>
+     * The method:
+     * <ul>
+     *     <li>Searches {@code Borrowed_Books.txt} for a matching ISBN and user</li>
+     *     <li>Checks if the item is overdue (more than 28 days)</li>
+     *     <li>If not overdue, removes the line and marks the book as available in {@code Books.txt}</li>
+     * </ul>
+     *
+     * @param isbn     the ISBN of the book to return
+     * @param username the username of the borrower
+     * @return {@code true} if the book was successfully returned without fines,
+     *         {@code false} if there is a fine, no matching loan, or an error occurs
+     */
     public static boolean unBorrowIfNoFine(String isbn, String username) {
         try {
             List<String> lines   = Files.readAllLines(Paths.get(BORROWED_PATH));
@@ -200,7 +251,18 @@ public class FileControler {
     }
 
 
-
+    /**
+     * Renews a borrowed item for a user by updating the borrow date to today.
+     * <p>
+     * This method searches {@code Borrowed_Books.txt} for the first line
+     * matching the given ISBN and username, then replaces its borrow date
+     * with the current date.
+     *
+     * @param isbn     the ISBN (or code) of the media item
+     * @param username the username of the borrower
+     * @return {@code true} if a matching loan was found and renewed,
+     *         {@code false} otherwise
+     */
     public static boolean renewLoan(String isbn, String username) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(BORROWED_PATH));
@@ -344,7 +406,13 @@ public class FileControler {
 
         return result;
     }
-
+    /**
+     * Asynchronously loads all books/media from {@code Books.txt}
+     * and populates {@link #BooksList}.
+     * <p>
+     * The data is read in a background daemon thread and uses
+     * {@code fillBooksDataSync()} internally.
+     */
     private static void fillLibrariansDataSync() {
         LibrarianList.clear();
         Path path = Paths.get(LIBRARIANS_PATH).toAbsolutePath();
@@ -391,6 +459,13 @@ public class FileControler {
     }
 
     // دالة عامة لتعديل الفلاغ لأي ISBN
+    /**
+     * Updates the {@code borrowed} flag of the first book in {@code Books.txt}
+     * that matches the given ISBN.
+     *
+     * @param isbn the ISBN of the book to update
+     * @param flag {@code true} if the book is borrowed, {@code false} otherwise
+     */
     public static void updateBookBorrowFlag(String isbn, boolean flag) {
         try {
             List<String> lines = Files.readAllLines(Paths.get(BOOKS_PATH));
@@ -430,7 +505,13 @@ public class FileControler {
             System.out.println("Error updating Books.txt: " + e.getMessage());
         }
     }
-
+    /**
+     * Synchronizes the borrowed status of books between {@code Borrowed_Books.txt}
+     * and {@code Books.txt}.
+     * <p>
+     * Counts the number of borrowed instances for each ISBN and updates the
+     * {@code borrowed} flag for each book line accordingly.
+     */
     public static void syncBorrowedStatusOnce() {
         try {
             // 1) اقرأ كل الـ ISBNs المستعارة من Borrowed_Books.txt مع عدد مرات الاستعارة
@@ -721,6 +802,12 @@ public class FileControler {
     // ===================== SEARCH USER (SYNC + ASYNC) =====================
 
     // نسخة عادية ترجع boolean (لو احتجتها في LoginControl)
+    /**
+     * Checks whether a user with the given username exists in {@code Users.txt}.
+     *
+     * @param username the username to search for
+     * @return {@code true} if a line with this username exists; {@code false} otherwise
+     */
     public static boolean searchUser(String username) {
         Path path = Paths.get(USERS_PATH).toAbsolutePath();
 
@@ -750,6 +837,15 @@ public class FileControler {
     }
 
     // نسخة Thread مع callback
+    /**
+     * Asynchronously searches for a user and passes the result to a callback.
+     * <p>
+     * Internally calls {@link #searchUser(String)} in a background daemon thread.
+     *
+     * @param username the username to search for
+     * @param callback a consumer that receives {@code true} if the user is found,
+     *                 or {@code false} otherwise; may be {@code null}
+     */
     public static void searchUserAsync(String username, Consumer<Boolean> callback) {
         Thread t = new Thread(() -> {
             boolean found = searchUser(username);
@@ -1269,6 +1365,11 @@ public class FileControler {
 
         return updated;
     }
+    /**
+     * Internal data structure representing a single loan entry from {@code Loan.txt}.
+     * <p>
+     * This class is mainly used for parsing and rewriting the raw CSV file.
+     */
     public static class LoanRecord {
         public String username;
         public String isbn;

@@ -6,7 +6,21 @@ import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
 
 import java.util.Properties;
-
+/**
+ * A utility class responsible for sending emails through Gmail's SMTP server.
+ * <p>
+ * This class supports:
+ * <ul>
+ *     <li>Sending plain-text email messages</li>
+ *     <li>Loading SMTP credentials from a <code>.env</code> file</li>
+ *     <li>Configuring secure SMTP properties (TLS)</li>
+ * </ul>
+ * It is used in the library system to deliver notifications such as book reminders,
+ * loan confirmations, or overdue alerts.
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class EmailService {
 
     private static final String SMTP_HOST = "smtp.gmail.com";

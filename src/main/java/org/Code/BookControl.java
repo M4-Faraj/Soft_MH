@@ -8,22 +8,58 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Controls borrowing, fines, and user-related operations
+ * for books and other media in the library system.
+ * <p>
+ * This class coordinates between {@link Books}, {@link MediaCollection},
+ * {@link Loan}, and {@link Users} to:
+ * <ul>
+ *   <li>Borrow media (books or CDs)</li>
+ *   <li>Check overdue items</li>
+ *   <li>Calculate fines</li>
+ *   <li>Unregister users (with conditions)</li>
+ * </ul>
+ *
+ * @author HamzaAbdulsalam & Mohammad Dhillieh
+ * @version 1.0
+ */
 public class BookControl {
     private Books books;
     private MediaCollection mediaCollection;
     private List<Loan> loans = new ArrayList<>();
     private Users users;
 
-
+    /**
+     * Creates a new {@code BookControl} using the given {@link Books}
+     * and {@link MediaCollection} instances.
+     *
+     * @param books           the books manager
+     * @param mediaCollection the media collection used for searching items
+     */
     public BookControl(Books books, MediaCollection mediaCollection) {
         this.books = books;
         this.mediaCollection = mediaCollection;
     }
+    /**
+     * Creates a new {@code BookControl} with a given {@link Books} instance
+     * and a default empty {@link MediaCollection}.
+     *
+     * @param books the books manager
+     */
     public BookControl(Books books) {
         this.books = books;
         this.mediaCollection = new MediaCollection(); // fallback
     }
 
+    /**
+     * Counts how many borrowed items are currently recorded in
+     * {@code src/main/InfoBase/Borrowed_Books.txt}.
+     * <p>
+     * If the file does not exist or an error occurs, this method returns {@code 0}.
+     *
+     * @return the number of borrowed records found in the file
+     */
     public int numberOfBorrowedBooks() {
         String filePath = "src/main/InfoBase/Borrowed_Books.txt";
         Path path = Paths.get(filePath).toAbsolutePath();
@@ -39,7 +75,23 @@ public class BookControl {
             return 0;
         }
     }
-
+    /**
+     * Attempts to borrow a media item (book or CD) for the given user,
+     * based on a search keyword.
+     * <p>
+     * Borrowing will be blocked if:
+     * <ul>
+     *   <li>The user has unpaid fines</li>
+     *   <li>The user has any overdue loans</li>
+     *   <li>The item cannot be found</li>
+     *   <li>The item is already borrowed</li>
+     * </ul>
+     * On success, a new {@link Loan} is created, the item is marked as borrowed,
+     * and a message with the due date is printed to the console.
+     *
+     * @param user         the user who is borrowing the item
+     * @param searchedWord keyword used to search for the media in {@link MediaCollection}
+     */
     public void borrowMedia(User user, String searchedWord){
         if (user.hasOutstandingFine()) {
             System.out.println("Cannot borrow until fine is fully paid. Outstanding balance: "
@@ -73,7 +125,13 @@ public class BookControl {
         System.out.println("Borrow successful! Due date: " + loan.getDueDate());
     }
 
-
+    /**
+     * Returns a list of all loans that are overdue relative
+     * to the provided date.
+     *
+     * @param currentDate the date used to check whether a loan is overdue
+     * @return list of overdue {@link Loan} objects
+     */
     public List<Loan> getOverDueBooks(LocalDate currentDate){
         List<Loan> overdueBooks = new ArrayList<>();
         for (Loan loan : loans) {
@@ -84,11 +142,31 @@ public class BookControl {
 
         return overdueBooks;
     }
-
+    /**
+     * Allows a user to pay part or all of their fine balance.
+     * This simply delegates to {@link User#payFine(double)}.
+     *
+     * @param user   the user who is paying
+     * @param amount the amount to pay
+     */
     public void payFine(User user, double amount) {
         user.payFine(amount);
     }
-
+    /**
+     * Unregisters a target user from the system, if allowed.
+     * <p>
+     * A user can be unregistered only if:
+     * <ul>
+     *     <li>The caller is an admin ({@link User#isAdmin()})</li>
+     *     <li>The target user has no unpaid fines</li>
+     *     <li>The target user has no active or overdue loans</li>
+     * </ul>
+     * If one of these conditions is not met, an explanatory message is printed
+     * and the operation is aborted.
+     *
+     * @param admin      the admin user requesting the operation
+     * @param targetUser the user to unregister
+     */
     public void unregisterUser(User admin, User targetUser) {
 
         if (!admin.isAdmin()) {
@@ -119,7 +197,17 @@ public class BookControl {
     public void setUsers(Users users) {
         this.users = users;
     }
-
+    /**
+     * Calculates the total overdue fine for a specific user
+     * based on all loans managed by this controller.
+     * <p>
+     * For each loan that is overdue as of {@code today}, the fine is:
+     * {@code daysOverdue * item.getFinePerDay()}.
+     *
+     * @param user  the user whose fines should be calculated
+     * @param today the date used to determine overdue days
+     * @return total fine amount for the user
+     */
     public double calculateOverdueFine(User user, LocalDate today) {
         double totalFine = 0;
         for (Loan loan : loans) {
@@ -129,7 +217,13 @@ public class BookControl {
         }
         return totalFine;
     }
-
+    /**
+     * Returns all overdue loans for the given user as of the specified date.
+     *
+     * @param user  the user whose overdue media should be fetched
+     * @param today the date used as the reference point for overdue calculation
+     * @return list of overdue {@link Loan} objects for the user
+     */
     public List<Loan> getAllOverdueMedia(User user, LocalDate today) {
         List<Loan> overdue = new ArrayList<>();
         for (Loan loan : loans) {
