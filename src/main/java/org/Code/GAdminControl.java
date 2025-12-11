@@ -940,7 +940,7 @@ public class GAdminControl {
                     FileControler.logMail(u.getUsername(), to, subject);
                     attempted++;
                 } catch (Exception ex) {
-                    ex.printStackTrace(); // خليه يطلع الـ error
+                   // ex.printStackTrace(); // خليه يطلع الـ error
                     System.out.println("Failed to email: " + to + " -> " + ex.getMessage());
                 }
             }
@@ -951,7 +951,7 @@ public class GAdminControl {
                             + "Users without due/overdue loans: " + noRelevantLoans);
 
         } catch (Exception e) {
-            e.printStackTrace();
+          //  e.printStackTrace();
             showAlert("Error", "Failed to send reminder emails.");
         }
     }
