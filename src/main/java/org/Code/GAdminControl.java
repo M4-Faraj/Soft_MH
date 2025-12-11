@@ -1,5 +1,6 @@
 package org.Code;
 
+import io.github.cdimascio.dotenv.Dotenv;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -864,11 +865,16 @@ public class GAdminControl {
     @FXML
     public void onSendReminder(ActionEvent actionEvent) {
         try {
-            EmailService emailService = EmailService.fromEnv();
+            // 💥 نفس اللي في librarian
+            Dotenv dotenv = Dotenv.load();
+            String mailUser = dotenv.get("EMAIL_USERNAME");
+            String mailPass = dotenv.get("EMAIL_PASSWORD");
+
+            EmailService emailService = new EmailService(mailUser, mailPass);
 
             int attempted = 0;
             int invalidEmails = 0;
-            int noLoans = 0;
+            int noRelevantLoans = 0;
 
             LocalDate today = LocalDate.now();
 
@@ -880,7 +886,6 @@ public class GAdminControl {
                     continue;
                 }
 
-                // validate email format
                 if (!to.contains("@") || !to.contains(".")) {
                     invalidEmails++;
                     continue;
@@ -888,7 +893,7 @@ public class GAdminControl {
 
                 List<Loan> loans = FileControler.loadLoansForUser(u);
                 if (loans == null || loans.isEmpty()) {
-                    noLoans++;
+                    noRelevantLoans++;
                     continue;
                 }
 
@@ -898,52 +903,58 @@ public class GAdminControl {
                 for (Loan loan : loans) {
                     if (loan.isReturned()) continue;
 
-                    long diff = ChronoUnit.DAYS.between(today, loan.getDueDate());
+                    LocalDate dueDate = loan.getDueDate();
+                    long diff = ChronoUnit.DAYS.between(today, dueDate);
 
-                    if (diff <= 3) {
+                    boolean almostDue = diff >= 0 && diff <= 3;
+                    boolean overdue   = diff < 0;
+
+                    if (almostDue || overdue) {
                         shouldNotify = true;
 
                         body.append("- ")
                                 .append(loan.getItem().getTitle())
                                 .append(" (ISBN: ")
                                 .append(loan.getBook() == null ? "N/A" : loan.getBook().getISBN())
-                                .append(")")
-                                .append(" | Due: ")
-                                .append(loan.getDueDate())
+                                .append(") | Due: ")
+                                .append(dueDate)
+                                .append(overdue ? " [OVERDUE]" : "")
                                 .append("\n");
                     }
                 }
 
                 if (!shouldNotify) {
-                    noLoans++;
+                    noRelevantLoans++;
                     continue;
                 }
 
                 String subject = "MH Library - Reminder";
                 String msg = "Dear " + u.getFirstName() + ",\n\n"
-                        + "These items are due soon:\n\n"
+                        + "These items are due soon or overdue:\n\n"
                         + body
-                        + "\nPlease return or renew.\nMH Library";
+                        + "\nPlease return or renew them as soon as possible.\n"
+                        + "MH Library";
 
                 try {
                     emailService.sendEmail(to, subject, msg);
+                    FileControler.logMail(u.getUsername(), to, subject);
                     attempted++;
                 } catch (Exception ex) {
-                    System.out.println("Failed to email: " + to);
+                    ex.printStackTrace(); // خليه يطلع الـ error
+                    System.out.println("Failed to email: " + to + " -> " + ex.getMessage());
                 }
             }
 
             showAlert("Info",
                     "Reminder emails attempted for " + attempted + " users.\n"
                             + "Skipped invalid emails: " + invalidEmails + "\n"
-                            + "Users without active loans/emails: " + noLoans);
+                            + "Users without due/overdue loans: " + noRelevantLoans);
 
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Error", "Failed to send reminder emails.");
         }
     }
-
 
     // ----- Reports (stubs) -----
 
