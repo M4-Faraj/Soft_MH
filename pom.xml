@@ -9,8 +9,8 @@
 
     <properties>
         <!-- SonarCloud settings -->
-        <sonar.projectKey>YOUR_PROJECT_KEY</sonar.projectKey>
-        <sonar.organization>YOUR_ORG_KEY</sonar.organization>
+        <sonar.projectKey>Soft_MH</sonar.projectKey>
+        <sonar.organization>M4-Faraj</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
 
         <!-- Java version -->

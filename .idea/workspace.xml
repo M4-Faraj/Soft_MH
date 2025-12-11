@@ -7,6 +7,7 @@
     <list default="true" id="62e3461f-01cf-4397-b623-ce4e5de07e5f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/org/Code/BookTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/org/Code/BookTest.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,43 +52,44 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.FileControler.executor": "Run",
-    "Application.LoginControlGUI.executor": "Run",
-    "Application.Unnamed.executor": "Run",
-    "Application.org.Code.LoginControlGUI.executor": "Run",
-    "JUnit.AdminControlTest.executor": "Run",
-    "JUnit.AdminTest.executor": "Run",
-    "JUnit.Code in SoftWare.executor": "Coverage",
-    "JUnit.Code in Soft_MH.executor": "Coverage",
-    "JUnit.FileControlerTest.executor": "Run",
-    "JUnit.org.Code in Soft_MH.executor": "Coverage",
-    "Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor": "Run",
-    "Maven.Soft_MH [clean].executor": "Run",
-    "Maven.Soft_MH [compile].executor": "Run",
-    "Maven.Soft_MH [install].executor": "Run",
-    "Maven.Soft_MH [site:run].executor": "Run",
-    "Maven.Soft_MH [test].executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "kotlin-language-version-configured": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "Libraries",
-    "project.structure.proportion": "0.15",
-    "project.structure.side.proportion": "0.2",
-    "settings.editor.selected.configurable": "preferences.JavaFX",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.FileControler.executor&quot;: &quot;Run&quot;,
+    &quot;Application.LoginControlGUI.executor&quot;: &quot;Run&quot;,
+    &quot;Application.Unnamed.executor&quot;: &quot;Run&quot;,
+    &quot;Application.org.Code.LoginControlGUI.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AdminControlTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.AdminTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.BookTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.Code in SoftWare.executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.Code in Soft_MH.executor&quot;: &quot;Coverage&quot;,
+    &quot;JUnit.FileControlerTest.executor&quot;: &quot;Run&quot;,
+    &quot;JUnit.org.Code in Soft_MH.executor&quot;: &quot;Coverage&quot;,
+    &quot;Maven. [org.apache.maven.plugins:maven-archetype-plugin:RELEASE:generate].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Soft_MH [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Soft_MH [compile].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Soft_MH [install].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Soft_MH [site:run].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.Soft_MH [test].executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;Libraries&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.15&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.JavaFX&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\Java_101\Soft_MH" />
@@ -106,7 +108,7 @@
       <command value="mvn test" />
     </option>
   </component>
-  <component name="RunManager" selected="JUnit.Code in Soft_MH">
+  <component name="RunManager" selected="JUnit.org.Code in Soft_MH">
     <configuration name="LoginControlGUI" type="Application" factoryName="Application" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="org.Code.LoginControlGUI" />
       <module name="Soft_MH" />
@@ -252,8 +254,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="JUnit.Code in Soft_MH" />
         <item itemvalue="JUnit.org.Code in Soft_MH" />
+        <item itemvalue="JUnit.Code in Soft_MH" />
         <item itemvalue="JUnit.FileControlerTest" />
         <item itemvalue="JUnit.AdminTest" />
         <item itemvalue="JUnit.Code in SoftWare" />
@@ -292,6 +294,9 @@
       <workItem from="1765303319909" duration="143000" />
       <workItem from="1765309822672" duration="5680000" />
       <workItem from="1765359995725" duration="9678000" />
+      <workItem from="1765392708604" duration="3191000" />
+      <workItem from="1765398917694" duration="176000" />
+      <workItem from="1765452428661" duration="249000" />
     </task>
     <servers />
   </component>
@@ -314,7 +319,7 @@
     <SUITE FILE_PATH="coverage/Soft$FileControlerTest.ic" NAME="FileControlerTest Coverage Results" MODIFIED="1764622177288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
-    <SUITE FILE_PATH="coverage/Soft_MH$org_Code_in_Soft_MH.ic" NAME="org.Code in Soft_MH Coverage Results" MODIFIED="1765370840313" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
+    <SUITE FILE_PATH="coverage/Soft_MH$org_Code_in_Soft_MH.ic" NAME="org.Code in Soft_MH Coverage Results" MODIFIED="1765396531570" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
       <FILTER>org.Code.*</FILTER>
     </SUITE>
     <SUITE FILE_PATH="coverage/Soft$Code_in_SoftWare.ic" NAME="Code in SoftWare Coverage Results" MODIFIED="1764622186620" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="true">
